@@ -1,6 +1,6 @@
 ## EPIC 1 – Project Setup & Architecture Foundations
 
-### Story 1.1 – Implement MVVM Folder Structure
+### Story 1.1 – ✅ Done Implement MVVM Folder Structure
 
 **Description:**
 
@@ -13,20 +13,7 @@ Define and create folders for `Models`, `Views`, `ViewModels`, and `Utilities`. 
 
 ---
 
-### Story 1.2 – Implement Placeholder Launch Screen & Icon
-
-**Description:**
-
-Add a basic app icon and static launch screen (white background, centered mint icon).
-
-**Acceptance Criteria:**
-
-- App icon is visible on home screen.
-- Launch screen matches design spec.
-
----
-
-### Story 1.3 – UUID Generation and Keychain Persistence
+### Story 1.2 – ✅ Done UUID Generation and Keychain Persistence
 
 **Description:**
 
@@ -40,7 +27,7 @@ Generate an anonymous UUID and persist it in the Keychain so it survives app rei
 
 ---
 
-### Story 1.4 – Integrate Mixpanel Analytics SDK
+### Story 1.3 – Integrate Mixpanel Analytics SDK
 
 **Description:**
 
@@ -54,7 +41,7 @@ Install Mixpanel SDK and set up basic configuration with an environment flag (`p
 
 ---
 
-### Story 1.5 – UserDefaults Wrappers for State Flags
+### Story 1.4 – UserDefaults Wrappers for State Flags
 
 **Description:**
 

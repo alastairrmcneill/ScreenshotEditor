@@ -35,16 +35,6 @@
 			path = ScreenshotEditor;
 			sourceTree = "<group>";
 		};
-		D38F487B2E44861C0035E177 /* ScreenshotEditorTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScreenshotEditorTests;
-			sourceTree = "<group>";
-		};
-		D38F48852E44861D0035E177 /* ScreenshotEditorUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScreenshotEditorUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,8 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				D38F486D2E44861B0035E177 /* ScreenshotEditor */,
-				D38F487B2E44861C0035E177 /* ScreenshotEditorTests */,
-				D38F48852E44861D0035E177 /* ScreenshotEditorUITests */,
 				D38F486C2E44861B0035E177 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -130,9 +118,6 @@
 			dependencies = (
 				D38F487A2E44861C0035E177 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				D38F487B2E44861C0035E177 /* ScreenshotEditorTests */,
-			);
 			name = ScreenshotEditorTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +137,6 @@
 			);
 			dependencies = (
 				D38F48842E44861D0035E177 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D38F48852E44861D0035E177 /* ScreenshotEditorUITests */,
 			);
 			name = ScreenshotEditorUITests;
 			packageProductDependencies = (

@@ -8,14 +8,54 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var currentUUID: String = ""
+    @State private var isFirstLaunch: Bool = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
+        VStack(spacing: 20) {
+            Image(systemName: "camera.viewfinder")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world!")
+            
+            Text("ScreenshotEditor")
+                .font(.title)
+                .fontWeight(.bold)
+            
+            VStack(spacing: 10) {
+                Text("Anonymous UUID:")
+                    .font(.headline)
+                
+                Text(currentUUID)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                
+                if isFirstLaunch {
+                    Text("✅ New UUID generated and stored")
+                        .foregroundColor(.green)
+                        .font(.caption)
+                } else {
+                    Text("✅ UUID retrieved from Keychain")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+                }
+            }
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(10)
+            
+            Button("Regenerate UUID") {
+                currentUUID = UUIDManager.shared.regenerateUUID()
+                isFirstLaunch = true
+            }
+            .buttonStyle(.bordered)
         }
         .padding()
+        .onAppear {
+            currentUUID = UUIDManager.shared.anonymousUUID
+            isFirstLaunch = !UUIDManager.shared.hasExistingUUID
+        }
     }
 }
 
