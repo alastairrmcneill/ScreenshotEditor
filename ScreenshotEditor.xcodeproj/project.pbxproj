@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D32681912E4555BA00842D52 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = D32681902E4555BA00842D52 /* Mixpanel */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D38F48792E44861C0035E177 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -42,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D32681912E4555BA00842D52 /* Mixpanel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +105,7 @@
 			);
 			name = ScreenshotEditor;
 			packageProductDependencies = (
+				D32681902E4555BA00842D52 /* Mixpanel */,
 			);
 			productName = ScreenshotEditor;
 			productReference = D38F486B2E44861B0035E177 /* ScreenshotEditor.app */;
@@ -177,6 +183,9 @@
 			);
 			mainGroup = D38F48622E44861B0035E177;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D326818F2E4555BA00842D52 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D38F486C2E44861B0035E177 /* Products */;
 			projectDirPath = "";
@@ -540,6 +549,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D326818F2E4555BA00842D52 /* XCRemoteSwiftPackageReference "mixpanel-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mixpanel/mixpanel-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D32681902E4555BA00842D52 /* Mixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D326818F2E4555BA00842D52 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
+			productName = Mixpanel;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D38F48632E44861B0035E177 /* Project object */;
 }

@@ -48,8 +48,19 @@ struct ContentView: View {
             Button("Regenerate UUID") {
                 currentUUID = UUIDManager.shared.regenerateUUID()
                 isFirstLaunch = true
+                
+                // Track the UUID regeneration event
+                AnalyticsManager.shared.track("UUID Regenerated")
             }
             .buttonStyle(.bordered)
+            
+            Button("Test Analytics Event") {
+                AnalyticsManager.shared.track("Test Button Pressed", properties: [
+                    "button_name": "test_analytics",
+                    "current_uuid": currentUUID
+                ])
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
         .onAppear {

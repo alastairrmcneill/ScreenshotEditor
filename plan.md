@@ -27,7 +27,7 @@ Generate an anonymous UUID and persist it in the Keychain so it survives app rei
 
 ---
 
-### Story 1.3 – Integrate Mixpanel Analytics SDK
+### Story 1.3 – ✅ Done Integrate Mixpanel Analytics SDK
 
 **Description:**
 
