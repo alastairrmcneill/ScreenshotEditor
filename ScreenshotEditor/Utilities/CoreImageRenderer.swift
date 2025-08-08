@@ -126,7 +126,8 @@ class CoreImageRenderer {
     private func applyCrop(to image: CIImage, cropRect: CGRect) -> CIImage {
         let imageExtent = image.extent
         let cropX = cropRect.origin.x * imageExtent.width
-        let cropY = cropRect.origin.y * imageExtent.height
+        // Flip Y coordinate for Core Image's bottom-left origin coordinate system
+        let cropY = (1.0 - cropRect.origin.y - cropRect.height) * imageExtent.height
         let cropWidth = cropRect.width * imageExtent.width
         let cropHeight = cropRect.height * imageExtent.height
         

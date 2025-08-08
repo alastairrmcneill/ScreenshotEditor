@@ -12,6 +12,7 @@ struct ContentView: View {
     @StateObject private var editingViewModel = ImageEditingViewModel()
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showingShareSheet = false
+    @State private var showingCropView = false
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
     
@@ -143,7 +144,7 @@ struct ContentView: View {
                         
                         HStack {
                             Button(AppStrings.UI.crop) {
-                                // TODO: Implement crop functionality
+                                showingCropView = true
                                 AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
                             }
                             .foregroundColor(.accentColor)
@@ -190,6 +191,17 @@ struct ContentView: View {
         .sheet(isPresented: $showingShareSheet) {
             if let imageToShare = imageToShare {
                 ShareSheet(items: [imageToShare])
+            }
+        }
+        .fullScreenCover(isPresented: $showingCropView) {
+            if let originalImage = editingViewModel.originalImage {
+                CropView(
+                    originalImage: originalImage,
+                    initialCropRect: editingViewModel.parameters.cropRect,
+                    onCropComplete: { cropRect in
+                        editingViewModel.updateCropRect(cropRect)
+                    }
+                )
             }
         }
     }
