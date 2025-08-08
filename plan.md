@@ -109,7 +109,7 @@ Render "Made with SnapPolish" watermark in bottom-right corner for free users.
 
 ---
 
-### Story 2.5 – Core Image Pipeline for Rendering
+### Story 2.5 – ✅ Done Core Image Pipeline for Rendering
 
 **Description:**
 

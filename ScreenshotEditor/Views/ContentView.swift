@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct ContentView: View {
-    @State private var selectedImage: UIImage?
+    @StateObject private var editingViewModel = ImageEditingViewModel()
     @State private var showingImagePicker = false
     @State private var showingShareSheet = false
     @State private var imageToShare: UIImage?
@@ -20,7 +20,7 @@ struct ContentView: View {
             Color(.systemBackground)
                 .ignoresSafeArea()
             
-            if selectedImage == nil {
+            if editingViewModel.originalImage == nil {
                 // Empty State UI
                 VStack(spacing: 24) {
                     // Icon
@@ -61,7 +61,7 @@ struct ContentView: View {
                     // Navigation Bar Area
                     HStack {
                         Button("Back") {
-                            selectedImage = nil
+                            editingViewModel.setOriginalImage(nil)
                             AnalyticsManager.shared.track("Editor Back Button Tapped")
                         }
                         .foregroundColor(.accentColor)
@@ -86,8 +86,8 @@ struct ContentView: View {
                         Spacer()
                         
                         Button("Share") {
-                            if let image = selectedImage {
-                                imageToShare = ImageRenderer.shared.renderFinalImage(from: image)
+                            if let finalImage = editingViewModel.generateFinalImage() {
+                                imageToShare = finalImage
                                 showingShareSheet = true
                                 AnalyticsManager.shared.track("Editor Share Button Tapped")
                             }
@@ -102,16 +102,27 @@ struct ContentView: View {
                     ZStack {
                         Color(.systemGray6)
                         
-                        // Image Canvas
-                        if let image = selectedImage {
+                        // Image Canvas with live rendering
+                        if let renderedImage = editingViewModel.renderedImage {
                             ImageRenderer.createImageView(
-                                image: image,
+                                image: renderedImage,
                                 showWatermark: !UserDefaultsManager.shared.isSubscribed
                             )
                             .aspectRatio(contentMode: .fit)
                             .padding(20)
                             .cornerRadius(12)
                             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        } else if let originalImage = editingViewModel.originalImage {
+                            // Fallback while rendering
+                            ImageRenderer.createImageView(
+                                image: originalImage,
+                                showWatermark: !UserDefaultsManager.shared.isSubscribed
+                            )
+                            .aspectRatio(contentMode: .fit)
+                            .padding(20)
+                            .cornerRadius(12)
+                            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                            .opacity(0.5)
                         }
                     }
                     
@@ -130,6 +141,9 @@ struct ContentView: View {
                             
                             Button("Style") {
                                 // TODO: Implement style panel
+                                // For now, let's add a demo corner radius change
+                                let newRadius = editingViewModel.parameters.cornerRadius == 0 ? 12.0 : 0.0
+                                editingViewModel.updateCornerRadius(newRadius)
                                 AnalyticsManager.shared.track("Style Button Tapped")
                             }
                             .foregroundColor(.accentColor)
@@ -148,15 +162,24 @@ struct ContentView: View {
                     .background(Color(.systemBackground))
                 }
                 .onAppear {
-                    AnalyticsManager.shared.track("Editor Opened", properties: [
-                        "image_width": Double(selectedImage?.size.width ?? 0),
-                        "image_height": Double(selectedImage?.size.height ?? 0)
-                    ])
+                    if let originalImage = editingViewModel.originalImage {
+                        AnalyticsManager.shared.track("Editor Opened", properties: [
+                            "image_width": Double(originalImage.size.width),
+                            "image_height": Double(originalImage.size.height)
+                        ])
+                    }
                 }
             }
         }
         .sheet(isPresented: $showingImagePicker) {
-            PhotoPickerView(selectedImage: $selectedImage)
+            PhotoPickerView(selectedImage: Binding(
+                get: { editingViewModel.originalImage },
+                set: { newImage in
+                    if let image = newImage {
+                        editingViewModel.setOriginalImage(image)
+                    }
+                }
+            ))
         }
         .sheet(isPresented: $showingShareSheet) {
             if let imageToShare = imageToShare {
