@@ -42,17 +42,17 @@ class CropViewModel: ObservableObject {
     func updateCropRect(_ rect: CGRect) {
         // Ensure crop rect stays within bounds [0, 1]
         let constrainedRect = CGRect(
-            x: max(0, min(rect.origin.x, 1)),
-            y: max(0, min(rect.origin.y, 1)),
-            width: max(0.1, min(rect.width, 1 - rect.origin.x)), // Minimum 10% size
-            height: max(0.1, min(rect.height, 1 - rect.origin.y))
+            x: max(AppConstants.Crop.minimumCropCoordinate, min(rect.origin.x, AppConstants.Crop.maximumCropCoordinate)),
+            y: max(AppConstants.Crop.minimumCropCoordinate, min(rect.origin.y, AppConstants.Crop.maximumCropCoordinate)),
+            width: max(AppConstants.Crop.minimumCropSize, min(rect.width, AppConstants.Crop.maximumCropCoordinate - rect.origin.x)), // Minimum 10% size
+            height: max(AppConstants.Crop.minimumCropSize, min(rect.height, AppConstants.Crop.maximumCropCoordinate - rect.origin.y))
         )
         cropRect = constrainedRect
     }
     
     /// Resets crop to original state
     func resetCrop() {
-        cropRect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        cropRect = CGRect(x: AppConstants.Crop.minimumCropCoordinate, y: AppConstants.Crop.minimumCropCoordinate, width: AppConstants.Crop.maximumCropCoordinate, height: AppConstants.Crop.maximumCropCoordinate)
     }
     
     /// Gets the position of a specific handle in normalized coordinates
@@ -81,8 +81,8 @@ class CropViewModel: ObservableObject {
     func updateCropForHandle(_ handle: Handle, draggedTo point: CGPoint) {
         // Constrain the point to be within image bounds [0, 1]
         let constrainedPoint = CGPoint(
-            x: max(0, min(1, point.x)),
-            y: max(0, min(1, point.y))
+            x: max(AppConstants.Crop.minimumCropCoordinate, min(AppConstants.Crop.maximumCropCoordinate, point.x)),
+            y: max(AppConstants.Crop.minimumCropCoordinate, min(AppConstants.Crop.maximumCropCoordinate, point.y))
         )
         
         var newRect = cropRect
@@ -92,7 +92,7 @@ class CropViewModel: ObservableObject {
             let newWidth = newRect.maxX - constrainedPoint.x
             let newHeight = newRect.maxY - constrainedPoint.y
             // Ensure minimum size
-            if newWidth >= 0.1 && newHeight >= 0.1 {
+            if newWidth >= AppConstants.Crop.minimumCropSize && newHeight >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: constrainedPoint.x,
                     y: constrainedPoint.y,
@@ -104,7 +104,7 @@ class CropViewModel: ObservableObject {
         case .topCenter:
             let newHeight = newRect.maxY - constrainedPoint.y
             // Ensure minimum size
-            if newHeight >= 0.1 {
+            if newHeight >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: newRect.minX,
                     y: constrainedPoint.y,
@@ -117,7 +117,7 @@ class CropViewModel: ObservableObject {
             let newWidth = constrainedPoint.x - newRect.minX
             let newHeight = newRect.maxY - constrainedPoint.y
             // Ensure minimum size
-            if newWidth >= 0.1 && newHeight >= 0.1 {
+            if newWidth >= AppConstants.Crop.minimumCropSize && newHeight >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: newRect.minX,
                     y: constrainedPoint.y,
@@ -129,7 +129,7 @@ class CropViewModel: ObservableObject {
         case .centerLeft:
             let newWidth = newRect.maxX - constrainedPoint.x
             // Ensure minimum size
-            if newWidth >= 0.1 {
+            if newWidth >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: constrainedPoint.x,
                     y: newRect.minY,
@@ -141,7 +141,7 @@ class CropViewModel: ObservableObject {
         case .centerRight:
             let newWidth = constrainedPoint.x - newRect.minX
             // Ensure minimum size
-            if newWidth >= 0.1 {
+            if newWidth >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: newRect.minX,
                     y: newRect.minY,
@@ -154,7 +154,7 @@ class CropViewModel: ObservableObject {
             let newWidth = newRect.maxX - constrainedPoint.x
             let newHeight = constrainedPoint.y - newRect.minY
             // Ensure minimum size
-            if newWidth >= 0.1 && newHeight >= 0.1 {
+            if newWidth >= AppConstants.Crop.minimumCropSize && newHeight >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: constrainedPoint.x,
                     y: newRect.minY,
@@ -166,7 +166,7 @@ class CropViewModel: ObservableObject {
         case .bottomCenter:
             let newHeight = constrainedPoint.y - newRect.minY
             // Ensure minimum size
-            if newHeight >= 0.1 {
+            if newHeight >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: newRect.minX,
                     y: newRect.minY,
@@ -179,7 +179,7 @@ class CropViewModel: ObservableObject {
             let newWidth = constrainedPoint.x - newRect.minX
             let newHeight = constrainedPoint.y - newRect.minY
             // Ensure minimum size
-            if newWidth >= 0.1 && newHeight >= 0.1 {
+            if newWidth >= AppConstants.Crop.minimumCropSize && newHeight >= AppConstants.Crop.minimumCropSize {
                 newRect = CGRect(
                     x: newRect.minX,
                     y: newRect.minY,

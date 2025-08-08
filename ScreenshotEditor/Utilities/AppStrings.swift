@@ -24,6 +24,9 @@ struct AppStrings {
         static let noImageSelected = "No Image Selected"
         static let importPhotoToGetStarted = "Import a photo to get started"
         static let madeWithSnapPolish = "Made with SnapPolish"
+        static let cancel = "Cancel"
+        static let done = "Done"
+        static let reset = "Reset"
     }
     
     // MARK: - Analytics Events

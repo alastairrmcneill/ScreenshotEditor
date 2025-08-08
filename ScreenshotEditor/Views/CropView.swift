@@ -52,37 +52,37 @@ struct CropView: View {
                         
                         // Bottom controls
                         HStack(spacing: 32) {
-                            Button("Reset") {
+                            Button(AppStrings.UI.reset) {
                                 cropViewModel.resetCrop()
                             }
                             .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, AppConstants.Layout.standardPadding)
+                            .padding(.vertical, AppConstants.Layout.cornerRadius)
                             .background(Color.white.opacity(0.2))
-                            .cornerRadius(8)
+                            .cornerRadius(AppConstants.Layout.cornerRadius)
                             
                             Spacer()
                             
-                            Button("Done") {
+                            Button(AppStrings.UI.done) {
                                 onCropComplete(cropViewModel.cropRect)
                                 dismiss()
                             }
                             .foregroundColor(.black)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, AppConstants.Layout.standardPadding)
+                            .padding(.vertical, AppConstants.Layout.cornerRadius)
                             .background(Color.white)
-                            .cornerRadius(8)
+                            .cornerRadius(AppConstants.Layout.cornerRadius)
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, AppConstants.Layout.standardPadding)
                         .padding(.bottom, 32)
                     }
                 }
             }
-            .navigationTitle("Crop")
+            .navigationTitle(AppStrings.UI.crop)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button(AppStrings.UI.cancel) {
                         dismiss()
                     }
                     .foregroundColor(.white)

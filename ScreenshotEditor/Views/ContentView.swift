@@ -24,7 +24,7 @@ struct ContentView: View {
             
             if editingViewModel.originalImage == nil {
                 // Empty State UI
-                VStack(spacing: 24) {
+                VStack(spacing: AppConstants.Layout.extraLargePadding) {
                     // Icon
                     Image(systemName: "photo.badge.plus")
                         .font(.system(size: 64))
@@ -52,11 +52,11 @@ struct ContentView: View {
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
+                            .padding(.vertical, AppConstants.Layout.standardPadding)
                             .background(Color.accentColor)
-                            .cornerRadius(12)
+                            .cornerRadius(AppConstants.Layout.largeCornerRadius)
                     }
-                    .padding(.horizontal, 48)
+                    .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
                 }
             } else {
                 // Editor Canvas
@@ -106,8 +106,8 @@ struct ContentView: View {
                         }
                         .disabled(isGeneratingShareImage)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, AppConstants.Layout.largePadding)
+                    .padding(.vertical, AppConstants.Layout.standardPadding)
                     .background(Color(.systemBackground))
                     
                     // Main Canvas Area
@@ -121,9 +121,9 @@ struct ContentView: View {
                                 showWatermark: !UserDefaultsManager.shared.isSubscribed
                             )
                             .aspectRatio(contentMode: .fit)
-                            .padding(20)
-                            .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                            .padding(AppConstants.Layout.largePadding)
+                            .cornerRadius(AppConstants.Layout.largeCornerRadius)
+                            .shadow(color: .black.opacity(AppConstants.Shadow.defaultOpacity), radius: AppConstants.Shadow.defaultRadius, x: AppConstants.Shadow.defaultOffsetX, y: AppConstants.Shadow.defaultOffsetY)
                         } else if let originalImage = editingViewModel.originalImage {
                             // Fallback while rendering
                             ImageRenderer.createImageView(
@@ -131,9 +131,9 @@ struct ContentView: View {
                                 showWatermark: !UserDefaultsManager.shared.isSubscribed
                             )
                             .aspectRatio(contentMode: .fit)
-                            .padding(20)
-                            .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                            .padding(AppConstants.Layout.largePadding)
+                            .cornerRadius(AppConstants.Layout.largeCornerRadius)
+                            .shadow(color: .black.opacity(AppConstants.Shadow.defaultOpacity), radius: AppConstants.Shadow.defaultRadius, x: AppConstants.Shadow.defaultOffsetX, y: AppConstants.Shadow.defaultOffsetY)
                             .opacity(0.5)
                         }
                     }
@@ -169,7 +169,7 @@ struct ContentView: View {
                             .foregroundColor(.accentColor)
                         }
                         .padding(.horizontal, 40)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, AppConstants.Layout.standardPadding)
                     }
                     .background(Color(.systemBackground))
                 }
