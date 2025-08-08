@@ -11,7 +11,7 @@ struct StylePanel: View {
     @ObservedObject var editingViewModel: ImageEditingViewModel
     @Binding var isPresented: Bool
     
-    private let maxCornerRadius: CGFloat = 48
+    private let maxCornerRadius: CGFloat = 200
     private let maxPadding: CGFloat = 48
     
     var body: some View {

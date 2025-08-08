@@ -176,7 +176,7 @@ Add a bottom sheet view with controls for corner radius, padding, and shadow opt
 
 ---
 
-### Story 4.2 – Corner Radius Slider Implementation
+### Story 4.2 – ✅ Done Corner Radius Slider Implementation
 
 **Description:**
 Add a slider for corner radius from 0–48pt with live updates.

@@ -136,9 +136,29 @@ class CoreImageRenderer {
     }
     
     private func applyCornerRadius(to image: CIImage, radius: CGFloat) -> CIImage {
-        // For now, return the original image as corner radius with Core Image is complex
-        // This will be implemented in a future iteration or using a different approach
-        return image
+        guard radius > 0 else { return image }
+        
+        let imageExtent = image.extent
+        let imageSize = imageExtent.size
+        
+        // Scale radius based on image size to maintain consistent appearance
+        let scaledRadius = min(radius, min(imageSize.width, imageSize.height) / 2)
+        
+        // Create a rounded rectangle mask using CIFilter
+        let maskFilter = CIFilter.roundedRectangleGenerator()
+        maskFilter.extent = imageExtent
+        maskFilter.radius = Float(scaledRadius)
+        maskFilter.color = CIColor.white
+        
+        guard let maskImage = maskFilter.outputImage else { return image }
+        
+        // Apply the mask to the image
+        let blendFilter = CIFilter.blendWithMask()
+        blendFilter.inputImage = image
+        blendFilter.backgroundImage = CIImage.empty()
+        blendFilter.maskImage = maskImage
+        
+        return blendFilter.outputImage ?? image
     }
     
     private func calculateCanvasSize(for image: CIImage, parameters: ImageEditingParameters) -> CGSize {

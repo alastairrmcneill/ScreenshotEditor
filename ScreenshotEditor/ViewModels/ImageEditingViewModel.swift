@@ -40,72 +40,84 @@ class ImageEditingViewModel: ObservableObject {
     
     /// Updates corner radius and triggers re-render
     func updateCornerRadius(_ radius: CGFloat) {
+        objectWillChange.send()
         parameters.cornerRadius = radius
         renderImage()
     }
     
     /// Updates padding and triggers re-render
     func updatePadding(_ padding: CGFloat) {
+        objectWillChange.send()
         parameters.padding = padding
         renderImage()
     }
     
     /// Updates shadow enabled state and triggers re-render
     func updateShadowEnabled(_ enabled: Bool) {
+        objectWillChange.send()
         parameters.shadowEnabled = enabled
         renderImage()
     }
     
     /// Updates shadow offset and triggers re-render
     func updateShadowOffset(_ offset: CGFloat) {
+        objectWillChange.send()
         parameters.shadowOffset = offset
         renderImage()
     }
     
     /// Updates shadow blur and triggers re-render
     func updateShadowBlur(_ blur: CGFloat) {
+        objectWillChange.send()
         parameters.shadowBlur = blur
         renderImage()
     }
     
     /// Updates shadow opacity and triggers re-render
     func updateShadowOpacity(_ opacity: CGFloat) {
+        objectWillChange.send()
         parameters.shadowOpacity = opacity
         renderImage()
     }
     
     /// Updates background type and triggers re-render
     func updateBackgroundType(_ type: BackgroundType) {
+        objectWillChange.send()
         parameters.backgroundType = type
         renderImage()
     }
     
     /// Updates selected solid color and triggers re-render
     func updateSolidColor(_ color: BackgroundColor) {
+        objectWillChange.send()
         parameters.selectedSolidColor = color
         renderImage()
     }
     
     /// Updates selected gradient and triggers re-render
     func updateGradient(_ gradient: BackgroundGradient) {
+        objectWillChange.send()
         parameters.selectedGradient = gradient
         renderImage()
     }
     
     /// Updates aspect ratio and triggers re-render
     func updateAspectRatio(_ ratio: AspectRatio) {
+        objectWillChange.send()
         parameters.aspectRatio = ratio
         renderImage()
     }
     
     /// Updates crop rect and triggers re-render
     func updateCropRect(_ rect: CGRect) {
+        objectWillChange.send()
         parameters.cropRect = rect
         renderImage()
     }
     
     /// Resets all parameters to default values
     func resetParameters() {
+        objectWillChange.send()
         parameters = ImageEditingParameters.defaultParameters
         renderImage()
     }
@@ -126,13 +138,8 @@ class ImageEditingViewModel: ObservableObject {
     
     /// Sets up observation of parameter changes for automatic re-rendering
     private func setupParameterObservation() {
-        // Observe parameter changes with debouncing to avoid excessive re-renders
-        $parameters
-            .debounce(for: .milliseconds(50), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.renderImage()
-            }
-            .store(in: &cancellables)
+        // Manual parameter updates handle rendering, no automatic observation needed
+        // This method is kept for future use if we need automatic parameter observation
     }
     
     /// Renders the image with current parameters
