@@ -10,9 +10,10 @@ import PhotosUI
 
 struct ContentView: View {
     @StateObject private var editingViewModel = ImageEditingViewModel()
-    @State private var showingImagePicker = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showingShareSheet = false
     @State private var imageToShare: UIImage?
+    @State private var isGeneratingShareImage = false
     
     var body: some View {
         ZStack {
@@ -30,22 +31,23 @@ struct ContentView: View {
                     
                     // Title and subtitle
                     VStack(spacing: 8) {
-                        Text("No Image Selected")
+                        Text(AppStrings.UI.noImageSelected)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
                         
-                        Text("Import a photo to get started")
+                        Text(AppStrings.UI.importPhotoToGetStarted)
                             .font(.body)
                             .foregroundColor(.secondary)
                     }
                     
                     // Import Button
-                    Button(action: {
-                        showingImagePicker = true
-                        AnalyticsManager.shared.track("Import Photo Button Tapped")
-                    }) {
-                        Text("Import Photo")
+                    PhotosPicker(
+                        selection: $selectedPhotoItem,
+                        matching: .screenshots,
+                        photoLibrary: .shared()
+                    ) {
+                        Text(AppStrings.UI.importPhoto)
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -60,21 +62,21 @@ struct ContentView: View {
                 VStack(spacing: 0) {
                     // Navigation Bar Area
                     HStack {
-                        Button("Back") {
+                        Button(AppStrings.UI.back) {
                             editingViewModel.setOriginalImage(nil)
-                            AnalyticsManager.shared.track("Editor Back Button Tapped")
+                            AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
                         }
                         .foregroundColor(.accentColor)
                         
                         Spacer()
                         
                         VStack(spacing: 2) {
-                            Text("Edit Photo")
+                            Text(AppStrings.UI.editPhoto)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             
                             // Debug subscription status indicator
-                            Text(UserDefaultsManager.shared.isSubscribed ? "Premium" : "Free")
+                            Text(UserDefaultsManager.shared.isSubscribed ? AppStrings.UI.premium : AppStrings.UI.free)
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                                 .onTapGesture {
@@ -85,14 +87,23 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        Button("Share") {
-                            if let finalImage = editingViewModel.generateFinalImage() {
-                                imageToShare = finalImage
-                                showingShareSheet = true
-                                AnalyticsManager.shared.track("Editor Share Button Tapped")
+                        Button(action: {
+                            Task {
+                                await shareImage()
+                            }
+                        }) {
+                            HStack {
+                                if isGeneratingShareImage {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                        .foregroundColor(.accentColor)
+                                } else {
+                                    Text(AppStrings.UI.share)
+                                        .foregroundColor(.accentColor)
+                                }
                             }
                         }
-                        .foregroundColor(.accentColor)
+                        .disabled(isGeneratingShareImage)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
@@ -131,28 +142,28 @@ struct ContentView: View {
                         Divider()
                         
                         HStack {
-                            Button("Crop") {
+                            Button(AppStrings.UI.crop) {
                                 // TODO: Implement crop functionality
-                                AnalyticsManager.shared.track("Crop Button Tapped")
+                                AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
                             }
                             .foregroundColor(.accentColor)
                             
                             Spacer()
                             
-                            Button("Style") {
+                            Button(AppStrings.UI.style) {
                                 // TODO: Implement style panel
                                 // For now, let's add a demo corner radius change
                                 let newRadius = editingViewModel.parameters.cornerRadius == 0 ? 12.0 : 0.0
                                 editingViewModel.updateCornerRadius(newRadius)
-                                AnalyticsManager.shared.track("Style Button Tapped")
+                                AnalyticsManager.shared.track(AppStrings.Analytics.styleButtonTapped)
                             }
                             .foregroundColor(.accentColor)
                             
                             Spacer()
                             
-                            Button("Background") {
+                            Button(AppStrings.UI.background) {
                                 // TODO: Implement background panel
-                                AnalyticsManager.shared.track("Background Button Tapped")
+                                AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
                             }
                             .foregroundColor(.accentColor)
                         }
@@ -163,28 +174,78 @@ struct ContentView: View {
                 }
                 .onAppear {
                     if let originalImage = editingViewModel.originalImage {
-                        AnalyticsManager.shared.track("Editor Opened", properties: [
-                            "image_width": Double(originalImage.size.width),
-                            "image_height": Double(originalImage.size.height)
+                        AnalyticsManager.shared.track(AppStrings.Analytics.editorOpened, properties: [
+                            AppStrings.AnalyticsProperties.imageWidth: Double(originalImage.size.width),
+                            AppStrings.AnalyticsProperties.imageHeight: Double(originalImage.size.height)
                         ])
                     }
                 }
             }
         }
-        .sheet(isPresented: $showingImagePicker) {
-            PhotoPickerView(selectedImage: Binding(
-                get: { editingViewModel.originalImage },
-                set: { newImage in
-                    if let image = newImage {
-                        editingViewModel.setOriginalImage(image)
-                    }
-                }
-            ))
+        .onChange(of: selectedPhotoItem) { _, newItem in
+            Task {
+                await loadSelectedImage(from: newItem)
+            }
         }
         .sheet(isPresented: $showingShareSheet) {
             if let imageToShare = imageToShare {
                 ShareSheet(items: [imageToShare])
             }
+        }
+    }
+    
+    /// Loads the selected image asynchronously using the modern PhotosPicker API
+    /// - Parameter item: The selected PhotosPickerItem
+    @MainActor
+    private func loadSelectedImage(from item: PhotosPickerItem?) async {
+        guard let item = item else {
+            AnalyticsManager.shared.track(AppStrings.Analytics.photoImportCancelled)
+            return
+        }
+        
+        // Track that user tapped the import button
+        AnalyticsManager.shared.track(AppStrings.Analytics.importPhotoButtonTapped)
+        
+        do {
+            if let data = try await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                editingViewModel.setOriginalImage(image)
+                AnalyticsManager.shared.track(AppStrings.Analytics.photoImportSuccess, properties: [
+                    AppStrings.AnalyticsProperties.imageWidth: Double(image.size.width),
+                    AppStrings.AnalyticsProperties.imageHeight: Double(image.size.height),
+                    AppStrings.AnalyticsProperties.hasAlpha: image.cgImage?.alphaInfo != .none ? true : false
+                ])
+            }
+        } catch {
+            print("Error loading image: \(error)")
+            AnalyticsManager.shared.track(AppStrings.Analytics.photoImportFailed, properties: [
+                AppStrings.AnalyticsProperties.error: error.localizedDescription
+            ])
+        }
+    }
+    
+    /// Generates final image and presents share sheet
+    @MainActor
+    private func shareImage() async {
+        // Start loading state
+        isGeneratingShareImage = true
+        
+        // Generate image on background thread
+        let finalImage = await Task.detached {
+            return editingViewModel.generateFinalImage()
+        }.value
+        
+        // Update UI on main thread
+        if let finalImage = finalImage {
+            imageToShare = finalImage
+            AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
+            
+            // End loading state and show share sheet
+            isGeneratingShareImage = false
+            showingShareSheet = true
+        } else {
+            // End loading state if generation failed
+            isGeneratingShareImage = false
         }
     }
 }
