@@ -56,7 +56,7 @@ Create UserDefaults utility to track onboarding completion and free export count
 
 ## EPIC 2 – Image Import & Editor Canvas
 
-### Story 2.1 – Empty State UI with Import Button
+### Story 2.1 – ✅ Done Empty State UI with Import Button
 
 **Description:**
 

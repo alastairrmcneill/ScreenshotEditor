@@ -8,64 +8,60 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var currentUUID: String = ""
-    @State private var isFirstLaunch: Bool = false
+    @State private var selectedImage: UIImage?
+    @State private var showingImagePicker = false
     
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "camera.viewfinder")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
+        ZStack {
+            // Background
+            Color(.systemBackground)
+                .ignoresSafeArea()
             
-            Text("ScreenshotEditor")
-                .font(.title)
-                .fontWeight(.bold)
-            
-            VStack(spacing: 10) {
-                Text("Anonymous UUID:")
-                    .font(.headline)
-                
-                Text(currentUUID)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                if isFirstLaunch {
-                    Text("✅ New UUID generated and stored")
-                        .foregroundColor(.green)
-                        .font(.caption)
-                } else {
-                    Text("✅ UUID retrieved from Keychain")
-                        .foregroundColor(.blue)
-                        .font(.caption)
+            if selectedImage == nil {
+                // Empty State UI
+                VStack(spacing: 24) {
+                    // Icon
+                    Image(systemName: "photo.badge.plus")
+                        .font(.system(size: 64))
+                        .foregroundColor(.secondary)
+                    
+                    // Title and subtitle
+                    VStack(spacing: 8) {
+                        Text("No Image Selected")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                        
+                        Text("Import a photo to get started")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    // Import Button
+                    Button(action: {
+                        showingImagePicker = true
+                        AnalyticsManager.shared.track("Import Photo Button Tapped")
+                    }) {
+                        Text("Import Photo")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color.accentColor)
+                            .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 48)
                 }
+            } else {
+                // TODO: Display selected image in editor canvas
+                Text("Image selected - Editor UI coming in Story 2.3")
+                    .foregroundColor(.secondary)
             }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(10)
-            
-            Button("Regenerate UUID") {
-                currentUUID = UUIDManager.shared.regenerateUUID()
-                isFirstLaunch = true
-                
-                // Track the UUID regeneration event
-                AnalyticsManager.shared.track("UUID Regenerated")
-            }
-            .buttonStyle(.bordered)
-            
-            Button("Test Analytics Event") {
-                AnalyticsManager.shared.track("Test Button Pressed", properties: [
-                    "button_name": "test_analytics",
-                    "current_uuid": currentUUID
-                ])
-            }
-            .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .onAppear {
-            currentUUID = UUIDManager.shared.anonymousUUID
-            isFirstLaunch = !UUIDManager.shared.hasExistingUUID
+        .sheet(isPresented: $showingImagePicker) {
+            // TODO: Implement PHPicker in Story 2.2
+            Text("PHPicker implementation coming in Story 2.2")
+                .presentationDetents([.medium])
         }
     }
 }
