@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ContentView: View {
     @State private var selectedImage: UIImage?
@@ -59,9 +60,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingImagePicker) {
-            // TODO: Implement PHPicker in Story 2.2
-            Text("PHPicker implementation coming in Story 2.2")
-                .presentationDetents([.medium])
+            PhotoPickerView(selectedImage: $selectedImage)
         }
     }
 }
