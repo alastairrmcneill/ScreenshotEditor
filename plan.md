@@ -123,9 +123,9 @@ Set up a basic image processing pipeline using Core Image. Render the imported i
 
 ---
 
-## EPIC 3 – Crop Functionality
+## EPIC 3 – ✅ Done Crop Functionality
 
-### Story 3.1 – Build Crop Screen UI
+### Story 3.1 – ✅ Done Build Crop Screen UI
 
 **Description:**
 Create a modal crop view that shows the original bitmap with a rule-of-thirds overlay grid and draggable crop handles.
@@ -138,7 +138,7 @@ Create a modal crop view that shows the original bitmap with a rule-of-thirds ov
 
 ---
 
-### Story 3.2 – Store Crop as CGRect Mask
+### Story 3.2 – ✅ Done Store Crop as CGRect Mask
 
 **Description:**
 When cropping, save the user-selected area as a CGRect rather than modifying the image data.
@@ -150,7 +150,7 @@ When cropping, save the user-selected area as a CGRect rather than modifying the
 
 ---
 
-### Story 3.3 – Apply Non-Destructive Crop in Editor Preview
+### Story 3.3 – ✅ Done Apply Non-Destructive Crop in Editor Preview
 
 **Description:**
 Use Core Image to apply the crop mask in real-time preview without changing the original image.
