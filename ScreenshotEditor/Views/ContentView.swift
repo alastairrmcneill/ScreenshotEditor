@@ -11,6 +11,8 @@ import PhotosUI
 struct ContentView: View {
     @State private var selectedImage: UIImage?
     @State private var showingImagePicker = false
+    @State private var showingShareSheet = false
+    @State private var imageToShare: UIImage?
     
     var body: some View {
         ZStack {
@@ -66,15 +68,29 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        Text("Edit Photo")
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                        VStack(spacing: 2) {
+                            Text("Edit Photo")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            
+                            // Debug subscription status indicator
+                            Text(UserDefaultsManager.shared.isSubscribed ? "Premium" : "Free")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .onTapGesture {
+                                    // Toggle subscription for testing
+                                    UserDefaultsManager.shared.setSubscribed(!UserDefaultsManager.shared.isSubscribed)
+                                }
+                        }
                         
                         Spacer()
                         
                         Button("Share") {
-                            // TODO: Implement share functionality in future stories
-                            AnalyticsManager.shared.track("Editor Share Button Tapped")
+                            if let image = selectedImage {
+                                imageToShare = ImageRenderer.shared.renderFinalImage(from: image)
+                                showingShareSheet = true
+                                AnalyticsManager.shared.track("Editor Share Button Tapped")
+                            }
                         }
                         .foregroundColor(.accentColor)
                     }
@@ -83,25 +99,21 @@ struct ContentView: View {
                     .background(Color(.systemBackground))
                     
                     // Main Canvas Area
-                    ScrollView {
-                        VStack {
-                            Spacer(minLength: 40)
-                            
-                            // Image Canvas
-                            if let image = selectedImage {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(maxWidth: UIScreen.main.bounds.width - 40)
-                                    .cornerRadius(12)
-                                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
-                                    .padding(.horizontal, 20)
-                            }
-                            
-                            Spacer(minLength: 40)
+                    ZStack {
+                        Color(.systemGray6)
+                        
+                        // Image Canvas
+                        if let image = selectedImage {
+                            ImageRenderer.createImageView(
+                                image: image,
+                                showWatermark: !UserDefaultsManager.shared.isSubscribed
+                            )
+                            .aspectRatio(contentMode: .fit)
+                            .padding(20)
+                            .cornerRadius(12)
+                            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                         }
                     }
-                    .background(Color(.systemGray6))
                     
                     // Bottom Controls Area (placeholder for future stories)
                     VStack {
@@ -145,6 +157,11 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingImagePicker) {
             PhotoPickerView(selectedImage: $selectedImage)
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let imageToShare = imageToShare {
+                ShareSheet(items: [imageToShare])
+            }
         }
     }
 }

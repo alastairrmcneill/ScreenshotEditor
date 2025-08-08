@@ -18,6 +18,7 @@ class UserDefaultsManager {
     private enum Keys {
         static let onboardingCompleted = "com.screenshoteditor.onboarding_completed"
         static let freeExportCount = "com.screenshoteditor.free_export_count"
+        static let isSubscribed = "com.screenshoteditor.is_subscribed"
     }
     
     private init() {}
@@ -66,12 +67,33 @@ class UserDefaultsManager {
         freeExportCount = 0
     }
     
+    // MARK: - Subscription Status
+    
+    /// Indicates whether the user has an active subscription
+    var isSubscribed: Bool {
+        get {
+            return userDefaults.bool(forKey: Keys.isSubscribed)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.isSubscribed)
+        }
+    }
+    
+    /// Marks user as subscribed and resets export count
+    func setSubscribed(_ subscribed: Bool) {
+        isSubscribed = subscribed
+        if subscribed {
+            resetFreeExportCount()
+        }
+    }
+    
     // MARK: - Utility Methods
     
     /// Resets all app state flags (useful for testing or factory reset)
     func resetAllFlags() {
         resetOnboarding()
         resetFreeExportCount()
+        isSubscribed = false
     }
 }
 

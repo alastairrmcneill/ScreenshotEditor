@@ -96,7 +96,7 @@ Display the selected image in the main canvas.
 
 ---
 
-### Story 2.4 – Add Watermark for Free Users
+### Story 2.4 – ✅ Done Add Watermark for Free Users
 
 **Description:**
 
