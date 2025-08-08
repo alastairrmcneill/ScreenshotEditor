@@ -17,8 +17,8 @@ class AnalyticsManager {
     }
 
     func setup() {
-        let apiKey = Bundle.main.object(forInfoDictionaryKey: "MixpanelAPIKey") as? String
-        print("📱 ~ AnalyticsManager ~ funcsetup ~ apiKey: \(apiKey)");
+        let apiKey = Bundle.main.object(forInfoDictionaryKey: "MixpanelApiKey") as? String
+        print("📱 ~ AnalyticsManager ~ funcsetup ~ apiKey: \(apiKey ?? "")");
         Mixpanel.initialize(token: apiKey ?? "", trackAutomaticEvents: true)
         
         setupSuperProperties()
