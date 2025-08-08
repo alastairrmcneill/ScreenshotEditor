@@ -1,4 +1,4 @@
-## EPIC 1 – Project Setup & Architecture Foundations
+## EPIC 1 – ✅ Done Project Setup & Architecture Foundations
 
 ### Story 1.1 – ✅ Done Implement MVVM Folder Structure
 
@@ -41,7 +41,7 @@ Install Mixpanel SDK and set up basic configuration with an environment flag (`p
 
 ---
 
-### Story 1.4 – UserDefaults Wrappers for State Flags
+### Story 1.4 – ✅ Done UserDefaults Wrappers for State Flags
 
 **Description:**
 
