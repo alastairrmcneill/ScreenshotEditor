@@ -54,9 +54,93 @@ struct ContentView: View {
                     .padding(.horizontal, 48)
                 }
             } else {
-                // TODO: Display selected image in editor canvas
-                Text("Image selected - Editor UI coming in Story 2.3")
-                    .foregroundColor(.secondary)
+                // Editor Canvas
+                VStack(spacing: 0) {
+                    // Navigation Bar Area
+                    HStack {
+                        Button("Back") {
+                            selectedImage = nil
+                            AnalyticsManager.shared.track("Editor Back Button Tapped")
+                        }
+                        .foregroundColor(.accentColor)
+                        
+                        Spacer()
+                        
+                        Text("Edit Photo")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        Button("Share") {
+                            // TODO: Implement share functionality in future stories
+                            AnalyticsManager.shared.track("Editor Share Button Tapped")
+                        }
+                        .foregroundColor(.accentColor)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(Color(.systemBackground))
+                    
+                    // Main Canvas Area
+                    ScrollView {
+                        VStack {
+                            Spacer(minLength: 40)
+                            
+                            // Image Canvas
+                            if let image = selectedImage {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: UIScreen.main.bounds.width - 40)
+                                    .cornerRadius(12)
+                                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                                    .padding(.horizontal, 20)
+                            }
+                            
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .background(Color(.systemGray6))
+                    
+                    // Bottom Controls Area (placeholder for future stories)
+                    VStack {
+                        Divider()
+                        
+                        HStack {
+                            Button("Crop") {
+                                // TODO: Implement crop functionality
+                                AnalyticsManager.shared.track("Crop Button Tapped")
+                            }
+                            .foregroundColor(.accentColor)
+                            
+                            Spacer()
+                            
+                            Button("Style") {
+                                // TODO: Implement style panel
+                                AnalyticsManager.shared.track("Style Button Tapped")
+                            }
+                            .foregroundColor(.accentColor)
+                            
+                            Spacer()
+                            
+                            Button("Background") {
+                                // TODO: Implement background panel
+                                AnalyticsManager.shared.track("Background Button Tapped")
+                            }
+                            .foregroundColor(.accentColor)
+                        }
+                        .padding(.horizontal, 40)
+                        .padding(.vertical, 16)
+                    }
+                    .background(Color(.systemBackground))
+                }
+                .onAppear {
+                    AnalyticsManager.shared.track("Editor Opened", properties: [
+                        "image_width": Double(selectedImage?.size.width ?? 0),
+                        "image_height": Double(selectedImage?.size.height ?? 0)
+                    ])
+                }
             }
         }
         .sheet(isPresented: $showingImagePicker) {

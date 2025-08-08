@@ -69,7 +69,7 @@ Design an empty state with a centered button to import photos.
 
 ---
 
-### Story 2.2 – Configure PHPicker with Screenshot Filter
+### Story 2.2 – ✅ Done Configure PHPicker with Screenshot Filter
 
 **Description:**
 
@@ -83,7 +83,7 @@ Use PHPicker to allow users to pick screenshots. Fallback to all photos if unava
 
 ---
 
-### Story 2.3 – Load Selected Image into Editor
+### Story 2.3 – ✅ Done Load Selected Image into Editor
 
 **Description:**
 
