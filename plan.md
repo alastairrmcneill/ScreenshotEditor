@@ -162,7 +162,7 @@ Use Core Image to apply the crop mask in real-time preview without changing the 
 
 ---
 
-## EPIC 4 – Style Editing Panel
+## EPIC 4 – ✅ Done Style Editing Panel
 
 ### Story 4.1 – Create Bottom Sheet UI for Style Panel
 

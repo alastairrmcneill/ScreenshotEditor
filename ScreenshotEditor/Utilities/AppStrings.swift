@@ -27,6 +27,9 @@ struct AppStrings {
         static let cancel = "Cancel"
         static let done = "Done"
         static let reset = "Reset"
+        static let cornerRadius = "Corner Radius"
+        static let padding = "Padding"
+        static let shadow = "Shadow"
     }
     
     // MARK: - Analytics Events
