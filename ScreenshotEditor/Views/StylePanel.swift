@@ -14,6 +14,12 @@ struct StylePanel: View {
     private let maxCornerRadius: CGFloat = 200
     private let maxPadding: CGFloat = 48
     
+    // Local state for slider values during dragging
+    @State private var tempCornerRadius: CGFloat = 0
+    @State private var tempPadding: CGFloat = 24
+    @State private var isDraggingCornerRadius = false
+    @State private var isDraggingPadding = false
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -64,20 +70,32 @@ struct StylePanel: View {
                                     
                                     Spacer()
                                     
-                                    Text("\(Int(editingViewModel.parameters.cornerRadius))pt")
+                                    Text("\(Int(isDraggingCornerRadius ? tempCornerRadius : editingViewModel.parameters.cornerRadius))pt")
                                         .font(.body)
                                         .foregroundColor(.secondary)
                                 }
                                 
                                 Slider(
                                     value: Binding(
-                                        get: { editingViewModel.parameters.cornerRadius },
+                                        get: { 
+                                            isDraggingCornerRadius ? tempCornerRadius : editingViewModel.parameters.cornerRadius 
+                                        },
                                         set: { newValue in
-                                            editingViewModel.updateCornerRadius(newValue)
+                                            tempCornerRadius = newValue
+                                            if !isDraggingCornerRadius {
+                                                isDraggingCornerRadius = true
+                                            }
                                         }
                                     ),
                                     in: 0...maxCornerRadius,
-                                    step: 1
+                                    step: 1,
+                                    onEditingChanged: { editing in
+                                        if !editing && isDraggingCornerRadius {
+                                            // User released the slider, apply the change
+                                            editingViewModel.updateCornerRadius(tempCornerRadius)
+                                            isDraggingCornerRadius = false
+                                        }
+                                    }
                                 )
                                 .accentColor(.accentColor)
                             }
@@ -90,20 +108,32 @@ struct StylePanel: View {
                                     
                                     Spacer()
                                     
-                                    Text("\(Int(editingViewModel.parameters.padding))pt")
+                                    Text("\(Int(isDraggingPadding ? tempPadding : editingViewModel.parameters.padding))pt")
                                         .font(.body)
                                         .foregroundColor(.secondary)
                                 }
                                 
                                 Slider(
                                     value: Binding(
-                                        get: { editingViewModel.parameters.padding },
+                                        get: { 
+                                            isDraggingPadding ? tempPadding : editingViewModel.parameters.padding 
+                                        },
                                         set: { newValue in
-                                            editingViewModel.updatePadding(newValue)
+                                            tempPadding = newValue
+                                            if !isDraggingPadding {
+                                                isDraggingPadding = true
+                                            }
                                         }
                                     ),
                                     in: 0...maxPadding,
-                                    step: 1
+                                    step: 1,
+                                    onEditingChanged: { editing in
+                                        if !editing && isDraggingPadding {
+                                            // User released the slider, apply the change
+                                            editingViewModel.updatePadding(tempPadding)
+                                            isDraggingPadding = false
+                                        }
+                                    }
                                 )
                                 .accentColor(.accentColor)
                             }
@@ -141,6 +171,11 @@ struct StylePanel: View {
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
                 }
             }
+        }
+        .onAppear {
+            // Initialize temp values with current parameters
+            tempCornerRadius = editingViewModel.parameters.cornerRadius
+            tempPadding = editingViewModel.parameters.padding
         }
     }
 }
