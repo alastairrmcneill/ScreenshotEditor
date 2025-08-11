@@ -30,6 +30,15 @@ struct AppConstants {
         static let buttonHorizontalPadding: CGFloat = 48
         static let cornerRadius: CGFloat = 8
         static let largeCornerRadius: CGFloat = 12
+        
+        // ContentView specific
+        static let emptyStateIconSize: CGFloat = 64
+        static let emptyStateTitleSpacing: CGFloat = 8
+        static let emptyStateProgressScale: CGFloat = 0.8
+        static let fallbackImageOpacity: CGFloat = 0.5
+        static let controlsHorizontalPadding: CGFloat = 40
+        static let navigationAreaSpacing: CGFloat = 2
+        static let zeroSpacing: CGFloat = 0
     }
     
     // MARK: - Shadow Constants
@@ -38,5 +47,18 @@ struct AppConstants {
         static let defaultRadius: CGFloat = 10
         static let defaultOffsetX: CGFloat = 0
         static let defaultOffsetY: CGFloat = 5
+    }
+    
+    // MARK: - Style Panel Constants
+    struct StylePanel {
+        static let maxCornerRadius: CGFloat = 200
+        static let maxPadding: CGFloat = 200
+        static let maxShadowBlur: CGFloat = 50
+        static let backgroundOpacity: CGFloat = 0.3
+        static let handleIndicatorWidth: CGFloat = 36
+        static let handleIndicatorHeight: CGFloat = 6
+        static let handleIndicatorCornerRadius: CGFloat = 3
+        static let handleIndicatorOpacity: CGFloat = 0.6
+        static let animationDuration: CGFloat = 0.3
     }
 }

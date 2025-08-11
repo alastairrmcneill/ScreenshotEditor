@@ -11,10 +11,6 @@ struct StylePanel: View {
     @ObservedObject var editingViewModel: ImageEditingViewModel
     @Binding var isPresented: Bool
     
-    private let maxCornerRadius: CGFloat = 200
-    private let maxPadding: CGFloat = 200
-    private let maxShadowBlur: CGFloat = 50
-    
     // Local state for slider values during dragging
     @State private var tempCornerRadius: CGFloat = 0
     @State private var tempPadding: CGFloat = 24
@@ -27,10 +23,10 @@ struct StylePanel: View {
         GeometryReader { geometry in
             ZStack {
                 // Background overlay that dismisses on tap
-                Color.black.opacity(0.3)
+                Color.black.opacity(AppConstants.StylePanel.backgroundOpacity)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.3)) {
+                        withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                             isPresented = false
                         }
                     }
@@ -41,9 +37,9 @@ struct StylePanel: View {
                     // Bottom Sheet
                     VStack(spacing: 0) {
                         // Handle indicator
-                        RoundedRectangle(cornerRadius: 3)
-                            .fill(Color.secondary.opacity(0.6))
-                            .frame(width: 36, height: 6)
+                        RoundedRectangle(cornerRadius: AppConstants.StylePanel.handleIndicatorCornerRadius)
+                            .fill(Color.secondary.opacity(AppConstants.StylePanel.handleIndicatorOpacity))
+                            .frame(width: AppConstants.StylePanel.handleIndicatorWidth, height: AppConstants.StylePanel.handleIndicatorHeight)
                             .padding(.top, 12)
                             .padding(.bottom, 8)
                         
@@ -58,7 +54,7 @@ struct StylePanel: View {
                                 Spacer()
                                 
                                 Button(AppStrings.UI.done) {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                         isPresented = false
                                     }
                                 }
@@ -90,7 +86,7 @@ struct StylePanel: View {
                                             }
                                         }
                                     ),
-                                    in: 0...maxCornerRadius,
+                                    in: 0...AppConstants.StylePanel.maxCornerRadius,
                                     step: 1,
                                     onEditingChanged: { editing in
                                         if !editing && isDraggingCornerRadius {
@@ -128,7 +124,7 @@ struct StylePanel: View {
                                             }
                                         }
                                     ),
-                                    in: 0...maxPadding,
+                                    in: 0...AppConstants.StylePanel.maxPadding,
                                     step: 1,
                                     onEditingChanged: { editing in
                                         if !editing && isDraggingPadding {
@@ -166,7 +162,7 @@ struct StylePanel: View {
                                             }
                                         }
                                     ),
-                                    in: 0...maxShadowBlur,
+                                    in: 0...AppConstants.StylePanel.maxShadowBlur,
                                     step: 1,
                                     onEditingChanged: { editing in
                                         if !editing && isDraggingShadowBlur {
@@ -222,8 +218,8 @@ struct RoundedCorner: Shape {
 
 // MARK: - Preview
 #Preview {
-    @State var isPresented = true
-    @StateObject var viewModel = ImageEditingViewModel()
+    @Previewable @State var isPresented = true
+    @Previewable @StateObject var viewModel = ImageEditingViewModel()
     
     return StylePanel(
         editingViewModel: viewModel,

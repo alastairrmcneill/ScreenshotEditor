@@ -18,7 +18,7 @@ class AnalyticsManager {
 
     func setup() {
         let apiKey = Bundle.main.object(forInfoDictionaryKey: "MixpanelApiKey") as? String
-        print("📱 ~ AnalyticsManager ~ funcsetup ~ apiKey: \(apiKey ?? "")");
+        print("\(AppStrings.Debug.analyticsSetup) \(apiKey ?? "")");
         Mixpanel.initialize(token: apiKey ?? "", trackAutomaticEvents: true)
         
         setupSuperProperties()
@@ -31,7 +31,7 @@ class AnalyticsManager {
         ]
         
         Mixpanel.mainInstance().registerSuperProperties(superProperties)
-        print("📱 ~ AnalyticsManager ~ Super properties set: \(superProperties)")
+        print("\(AppStrings.Debug.superPropertiesSet) \(superProperties)")
     }
 
     func track(_ event: String, properties: Properties? = nil) {
@@ -41,7 +41,7 @@ class AnalyticsManager {
         finalProperties["anonymous_uuid"] = UUIDManager.shared.anonymousUUID
         finalProperties["debug"] = isDebugMode
         
-        print("📱 ~ \(event): \(finalProperties)")
+        print("\(AppStrings.Debug.analyticsEvent) \(event): \(finalProperties)")
         Mixpanel.mainInstance().track(event: event, properties: finalProperties)
     }
 }

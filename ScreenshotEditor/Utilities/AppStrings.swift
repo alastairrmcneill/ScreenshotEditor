@@ -53,4 +53,13 @@ struct AppStrings {
         static let hasAlpha = "has_alpha"
         static let error = "error"
     }
+    
+    // MARK: - Debug Messages
+    struct Debug {
+        static let analyticsSetup = "📱 ~ AnalyticsManager ~ funcsetup ~ apiKey:"
+        static let superPropertiesSet = "📱 ~ AnalyticsManager ~ Super properties set:"
+        static let analyticsEvent = "📱 ~"
+        static let appLaunchedWithUUID = "App launched with anonymous UUID:"
+        static let errorLoadingImage = "Error loading image:"
+    }
 }

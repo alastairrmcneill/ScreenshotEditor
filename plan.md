@@ -162,7 +162,7 @@ Use Core Image to apply the crop mask in real-time preview without changing the 
 
 ---
 
-## EPIC 4 – Style Editing Panel
+## EPIC 4 – ✅ Done Style Editing Panel
 
 ### Story 4.1 – ✅ Done Create Bottom Sheet UI for Style Panel
 
@@ -229,7 +229,7 @@ Create a bottom sheet with segmented control for Solid and Gradient backgrounds.
 ### Story 5.2 – Display Grid of Predefined Solid Colours
 
 **Description:**
-Display circle buttons with 6 solid colour swatches. Update background on tap.
+Display circle buttons with 10 solid colour swatches. Update background on tap.
 
 **Acceptance Criteria:**
 
@@ -241,7 +241,7 @@ Display circle buttons with 6 solid colour swatches. Update background on tap.
 ### Story 5.3 – Display Grid of Gradient Presets
 
 **Description:**
-When Gradient segment is selected, show 6 gradient swatches.
+When Gradient segment is selected, show 10 gradient swatches.
 
 **Acceptance Criteria:**
 

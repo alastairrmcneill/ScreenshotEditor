@@ -23,7 +23,7 @@ class ImageEditingViewModel: ObservableObject {
     
     // MARK: - Initialization
     init() {
-        setupParameterObservation()
+        // ViewModel is ready for use immediately
     }
     
     // MARK: - Public Methods
@@ -40,84 +40,61 @@ class ImageEditingViewModel: ObservableObject {
     
     /// Updates corner radius and triggers re-render
     func updateCornerRadius(_ radius: CGFloat) {
-        objectWillChange.send()
-        parameters.cornerRadius = radius
-        renderImage()
+        updateParameter { $0.cornerRadius = radius }
     }
     
     /// Updates padding and triggers re-render
     func updatePadding(_ padding: CGFloat) {
-        objectWillChange.send()
-        parameters.padding = padding
-        renderImage()
+        updateParameter { $0.padding = padding }
     }
     
     /// Updates shadow enabled state and triggers re-render
     func updateShadowEnabled(_ enabled: Bool) {
-        objectWillChange.send()
-        parameters.shadowEnabled = enabled
-        renderImage()
+        updateParameter { $0.shadowEnabled = enabled }
     }
     
     /// Updates shadow offset and triggers re-render
     func updateShadowOffset(_ offset: CGFloat) {
-        objectWillChange.send()
-        parameters.shadowOffset = offset
-        renderImage()
+        updateParameter { $0.shadowOffset = offset }
     }
     
     /// Updates shadow blur and triggers re-render
     func updateShadowBlur(_ blur: CGFloat) {
-        objectWillChange.send()
-        parameters.shadowBlur = blur
-        renderImage()
+        updateParameter { $0.shadowBlur = blur }
     }
     
     /// Updates shadow opacity and triggers re-render
     func updateShadowOpacity(_ opacity: CGFloat) {
-        objectWillChange.send()
-        parameters.shadowOpacity = opacity
-        renderImage()
+        updateParameter { $0.shadowOpacity = opacity }
     }
     
     /// Updates background type and triggers re-render
     func updateBackgroundType(_ type: BackgroundType) {
-        objectWillChange.send()
-        parameters.backgroundType = type
-        renderImage()
+        updateParameter { $0.backgroundType = type }
     }
     
     /// Updates selected solid color and triggers re-render
     func updateSolidColor(_ color: BackgroundColor) {
-        objectWillChange.send()
-        parameters.selectedSolidColor = color
-        renderImage()
+        updateParameter { $0.selectedSolidColor = color }
     }
     
     /// Updates selected gradient and triggers re-render
     func updateGradient(_ gradient: BackgroundGradient) {
-        objectWillChange.send()
-        parameters.selectedGradient = gradient
-        renderImage()
+        updateParameter { $0.selectedGradient = gradient }
     }
     
     /// Updates aspect ratio and triggers re-render
     func updateAspectRatio(_ ratio: AspectRatio) {
-        objectWillChange.send()
-        parameters.aspectRatio = ratio
-        renderImage()
+        updateParameter { $0.aspectRatio = ratio }
     }
     
     /// Updates crop rect and triggers re-render
     func updateCropRect(_ rect: CGRect) {
-        objectWillChange.send()
-        parameters.cropRect = rect
-        renderImage()
+        updateParameter { $0.cropRect = rect }
     }
     
     /// Resets all parameters to default values
     func resetParameters() {
-        objectWillChange.send()
         parameters = ImageEditingParameters.defaultParameters
         renderImage()
     }
@@ -136,10 +113,10 @@ class ImageEditingViewModel: ObservableObject {
     
     // MARK: - Private Methods
     
-    /// Sets up observation of parameter changes for automatic re-rendering
-    private func setupParameterObservation() {
-        // Manual parameter updates handle rendering, no automatic observation needed
-        // This method is kept for future use if we need automatic parameter observation
+    /// Generic helper method to update parameters and trigger re-render
+    private func updateParameter(_ update: (inout ImageEditingParameters) -> Void) {
+        update(&parameters)
+        renderImage()
     }
     
     /// Renders the image with current parameters

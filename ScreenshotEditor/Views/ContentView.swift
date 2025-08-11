@@ -30,11 +30,11 @@ struct ContentView: View {
                     VStack(spacing: AppConstants.Layout.extraLargePadding) {
                         // Icon
                         Image(systemName: "photo.badge.plus")
-                            .font(.system(size: 64))
+                            .font(.system(size: AppConstants.Layout.emptyStateIconSize))
                             .foregroundColor(.secondary)
                         
                         // Title and subtitle
-                        VStack(spacing: 8) {
+                        VStack(spacing: AppConstants.Layout.emptyStateTitleSpacing) {
                             Text(AppStrings.UI.noImageSelected)
                                 .font(.title2)
                                 .fontWeight(.semibold)
@@ -63,7 +63,7 @@ struct ContentView: View {
                     }
                 } else {
                     // Editor Canvas
-                    VStack(spacing: 0) {
+                    VStack(spacing: AppConstants.Layout.zeroSpacing) {
                         // Navigation Bar Area
                         HStack {
                             Button(AppStrings.UI.back) {
@@ -74,7 +74,7 @@ struct ContentView: View {
                             
                             Spacer()
                             
-                            VStack(spacing: 2) {
+                            VStack(spacing: AppConstants.Layout.navigationAreaSpacing) {
                                 Text(AppStrings.UI.editPhoto)
                                     .font(.headline)
                                     .fontWeight(.semibold)
@@ -99,7 +99,7 @@ struct ContentView: View {
                                 HStack {
                                     if isGeneratingShareImage {
                                         ProgressView()
-                                            .scaleEffect(0.8)
+                                            .scaleEffect(AppConstants.Layout.emptyStateProgressScale)
                                             .foregroundColor(.accentColor)
                                     } else {
                                         Text(AppStrings.UI.share)
@@ -133,7 +133,7 @@ struct ContentView: View {
                                 )
                                 .aspectRatio(contentMode: .fit)
                                 .padding(AppConstants.Layout.standardPadding)
-                                .opacity(0.5)
+                                .opacity(AppConstants.Layout.fallbackImageOpacity)
                             }
                         }
                         
@@ -151,7 +151,7 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 Button(AppStrings.UI.style) {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                         showingStylePanel = true
                                     }
                                     AnalyticsManager.shared.track(AppStrings.Analytics.styleButtonTapped)
@@ -166,7 +166,7 @@ struct ContentView: View {
                                 }
                                 .foregroundColor(.accentColor)
                             }
-                            .padding(.horizontal, 40)
+                            .padding(.horizontal, AppConstants.Layout.controlsHorizontalPadding)
                             .padding(.vertical, AppConstants.Layout.standardPadding)
                         }
                         .background(Color(.systemBackground))
@@ -233,11 +233,11 @@ struct ContentView: View {
                 AnalyticsManager.shared.track(AppStrings.Analytics.photoImportSuccess, properties: [
                     AppStrings.AnalyticsProperties.imageWidth: Double(image.size.width),
                     AppStrings.AnalyticsProperties.imageHeight: Double(image.size.height),
-                    AppStrings.AnalyticsProperties.hasAlpha: image.cgImage?.alphaInfo != .none ? true : false
+                    AppStrings.AnalyticsProperties.hasAlpha: image.cgImage?.alphaInfo != CGImageAlphaInfo.none ? true : false
                 ])
             }
         } catch {
-            print("Error loading image: \(error)")
+            print("\(AppStrings.Debug.errorLoadingImage) \(error)")
             AnalyticsManager.shared.track(AppStrings.Analytics.photoImportFailed, properties: [
                 AppStrings.AnalyticsProperties.error: error.localizedDescription
             ])
@@ -251,7 +251,7 @@ struct ContentView: View {
         isGeneratingShareImage = true
         
         // Generate image on background thread
-        let finalImage = await Task.detached {
+        let finalImage = await Task.detached { [editingViewModel] in
             return editingViewModel.generateFinalImage()
         }.value
         
