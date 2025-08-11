@@ -60,23 +60,31 @@ class CoreImageRenderer {
         
         // For live preview, also apply background and padding if padding > 0
         if parameters.padding > 0 {
-            // Calculate canvas size based on aspect ratio and padding
+            // Store the original image size before shadow is applied
+            let originalImageSize = processedImage.extent.size
+            
+            // Apply shadow to the foreground image if enabled (before compositing)
+            var foregroundImage = processedImage
+            if parameters.shadowEnabled {
+                foregroundImage = applyShadow(to: foregroundImage, parameters: parameters)
+            }
+            
+            // Calculate canvas size based on original image size and parameters
             let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
             
             // Create background
             let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
             
-            // Composite image onto background with padding
+            // Composite image onto background with padding using original size for centering
             processedImage = compositeImageOnBackground(
-                foreground: processedImage,
+                foreground: foregroundImage,
                 background: backgroundImage,
+                originalSize: originalImageSize,
                 parameters: parameters
             )
             
-            // Apply shadow if enabled
-            if parameters.shadowEnabled {
-                processedImage = applyShadow(to: processedImage, parameters: parameters)
-            }
+            // Crop to canvas bounds to clip any shadow that extends beyond
+            processedImage = processedImage.cropped(to: CGRect(origin: .zero, size: canvasSize))
         }
         
         // Convert back to UIImage
@@ -108,24 +116,30 @@ class CoreImageRenderer {
             processedImage = applyCornerRadius(to: processedImage, radius: parameters.cornerRadius)
         }
         
-        // Calculate canvas size based on aspect ratio and padding
-        let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
+        // Store the original image size before shadow is applied
+        let originalImageSize = processedImage.extent.size
+        
+        // Apply shadow to the foreground image if enabled (before compositing)
+        if parameters.shadowEnabled {
+            processedImage = applyShadow(to: processedImage, parameters: parameters)
+        }
+        
+        // Calculate canvas size based on original image size and parameters
+        let canvasSize = calculateCanvasSize(for: CIImage(image: image)!, parameters: parameters)
         
         // Create background
         let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
         
-        // Composite image onto background with padding
+        // Composite image onto background with padding using original size for centering
         let compositedImage = compositeImageOnBackground(
             foreground: processedImage,
             background: backgroundImage,
+            originalSize: originalImageSize,
             parameters: parameters
         )
         
-        // Apply shadow if enabled
-        var finalImage = compositedImage
-        if parameters.shadowEnabled {
-            finalImage = applyShadow(to: finalImage, parameters: parameters)
-        }
+        // Crop to canvas bounds to clip any shadow that extends beyond
+        let finalImage = compositedImage.cropped(to: CGRect(origin: .zero, size: canvasSize))
         
         // Convert to UIImage
         guard let cgImage = ciContext.createCGImage(finalImage, from: finalImage.extent) else {
@@ -186,6 +200,7 @@ class CoreImageRenderer {
         let imageSize = image.extent.size
         let padding = parameters.padding * 2 // Padding on all sides
         
+        // Don't account for shadow in canvas size - let shadow extend beyond canvas if needed
         var canvasWidth = imageSize.width + padding
         var canvasHeight = imageSize.height + padding
         
@@ -253,13 +268,13 @@ class CoreImageRenderer {
         return gradientImage.cropped(to: CGRect(origin: .zero, size: size))
     }
     
-    private func compositeImageOnBackground(foreground: CIImage, background: CIImage, parameters: ImageEditingParameters) -> CIImage {
+    private func compositeImageOnBackground(foreground: CIImage, background: CIImage, originalSize: CGSize? = nil, parameters: ImageEditingParameters) -> CIImage {
         let backgroundSize = background.extent.size
-        let foregroundSize = foreground.extent.size
+        let sizeForCentering = originalSize ?? foreground.extent.size
         
-        // Calculate position to center the foreground image
-        let x = (backgroundSize.width - foregroundSize.width) / 2
-        let y = (backgroundSize.height - foregroundSize.height) / 2
+        // Calculate position to center the foreground image based on original size
+        let x = (backgroundSize.width - sizeForCentering.width) / 2
+        let y = (backgroundSize.height - sizeForCentering.height) / 2
         
         let translatedForeground = foreground.transformed(by: CGAffineTransform(translationX: x, y: y))
         
@@ -281,20 +296,24 @@ class CoreImageRenderer {
         
         guard let blurredShadow = shadowFilter.outputImage else { return image }
         
+        // Convert shadow to black using color matrix
+        guard let blackFilter = CIFilter(name: "CIColorMatrix") else { return image }
+        blackFilter.setValue(blurredShadow, forKey: kCIInputImageKey)
+        // Set RGB to 0 (black) but keep alpha
+        blackFilter.setValue(CIVector(x: 0, y: 0, z: 0, w: 0), forKey: "inputRVector")
+        blackFilter.setValue(CIVector(x: 0, y: 0, z: 0, w: 0), forKey: "inputGVector")
+        blackFilter.setValue(CIVector(x: 0, y: 0, z: 0, w: 0), forKey: "inputBVector")
+        blackFilter.setValue(CIVector(x: 0, y: 0, z: 0, w: parameters.shadowOpacity), forKey: "inputAVector")
+        
+        guard let blackShadow = blackFilter.outputImage else { return image }
+        
         // Offset shadow
-        let offsetShadow = blurredShadow.transformed(by: CGAffineTransform(translationX: parameters.shadowOffset, y: -parameters.shadowOffset))
-        
-        // Apply shadow opacity using color matrix
-        guard let opacityFilter = CIFilter(name: "CIColorMatrix") else { return image }
-        opacityFilter.setValue(offsetShadow, forKey: kCIInputImageKey)
-        opacityFilter.setValue(CIVector(x: 0, y: 0, z: 0, w: parameters.shadowOpacity), forKey: "inputAVector")
-        
-        guard let fadedShadow = opacityFilter.outputImage else { return image }
+        let offsetShadow = blackShadow.transformed(by: CGAffineTransform(translationX: parameters.shadowOffset, y: -parameters.shadowOffset))
         
         // Composite original image over shadow
         guard let compositeFilter = CIFilter(name: "CISourceOverCompositing") else { return image }
         compositeFilter.setValue(image, forKey: kCIInputImageKey)
-        compositeFilter.setValue(fadedShadow, forKey: kCIInputBackgroundImageKey)
+        compositeFilter.setValue(offsetShadow, forKey: kCIInputBackgroundImageKey)
         
         return compositeFilter.outputImage ?? image
     }

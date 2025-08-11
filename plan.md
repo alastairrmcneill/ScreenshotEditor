@@ -200,7 +200,7 @@ Add a slider to adjust padding from 0–48pt.
 
 ---
 
-### Story 4.4 – Shadow Toggle and Sliders
+### Story 4.4 – ✅ Done Shadow Toggle and Sliders
 
 **Description:**
 Implment shadow slider for enabling and determining the size of the drop shadow. One slider will be used to control the drop shadow properties such as offset, blur and opacity.

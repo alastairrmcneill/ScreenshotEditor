@@ -13,12 +13,15 @@ struct StylePanel: View {
     
     private let maxCornerRadius: CGFloat = 200
     private let maxPadding: CGFloat = 200
+    private let maxShadowBlur: CGFloat = 50
     
     // Local state for slider values during dragging
     @State private var tempCornerRadius: CGFloat = 0
     @State private var tempPadding: CGFloat = 24
+    @State private var tempShadowBlur: CGFloat = 0
     @State private var isDraggingCornerRadius = false
     @State private var isDraggingPadding = false
+    @State private var isDraggingShadowBlur = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -138,7 +141,7 @@ struct StylePanel: View {
                                 .accentColor(.accentColor)
                             }
                             
-                            // Shadow Control (placeholder for future implementation)
+                            // Shadow Control
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Text(AppStrings.UI.shadow)
@@ -146,22 +149,37 @@ struct StylePanel: View {
                                     
                                     Spacer()
                                     
-                                    Toggle("", isOn: Binding(
-                                        get: { editingViewModel.parameters.shadowEnabled },
-                                        set: { newValue in
-                                            editingViewModel.updateShadowEnabled(newValue)
-                                        }
-                                    ))
-                                    .labelsHidden()
+                                    Text("\(Int(isDraggingShadowBlur ? tempShadowBlur : editingViewModel.parameters.shadowBlur))pt")
+                                        .font(.body)
+                                        .foregroundColor(.secondary)
                                 }
                                 
-                                if editingViewModel.parameters.shadowEnabled {
-                                    // Shadow controls will be implemented in future stories
-                                    Text("Shadow controls coming soon")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding(.top, 4)
-                                }
+                                Slider(
+                                    value: Binding(
+                                        get: { 
+                                            isDraggingShadowBlur ? tempShadowBlur : editingViewModel.parameters.shadowBlur 
+                                        },
+                                        set: { newValue in
+                                            tempShadowBlur = newValue
+                                            if !isDraggingShadowBlur {
+                                                isDraggingShadowBlur = true
+                                            }
+                                        }
+                                    ),
+                                    in: 0...maxShadowBlur,
+                                    step: 1,
+                                    onEditingChanged: { editing in
+                                        if !editing && isDraggingShadowBlur {
+                                            // Set fixed values for offset and opacity
+                                            editingViewModel.updateShadowOffset(0) // Fixed at 0
+                                            editingViewModel.updateShadowOpacity(0.3) // Fixed at 30%
+                                            editingViewModel.updateShadowBlur(tempShadowBlur)
+                                            editingViewModel.updateShadowEnabled(tempShadowBlur > 0)
+                                            isDraggingShadowBlur = false
+                                        }
+                                    }
+                                )
+                                .accentColor(.accentColor)
                             }
                         }
                         .padding(16)
@@ -176,6 +194,7 @@ struct StylePanel: View {
             // Initialize temp values with current parameters
             tempCornerRadius = editingViewModel.parameters.cornerRadius
             tempPadding = editingViewModel.parameters.padding
+            tempShadowBlur = editingViewModel.parameters.shadowBlur
         }
     }
 }

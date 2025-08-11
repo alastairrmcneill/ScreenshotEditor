@@ -21,12 +21,12 @@ struct ImageEditingParameters {
     // MARK: - Shadow Parameters
     var shadowEnabled: Bool = false
     var shadowOffset: CGFloat = 0
-    var shadowBlur: CGFloat = 20
+    var shadowBlur: CGFloat = 0
     var shadowOpacity: CGFloat = 0.3
     
     // MARK: - Background Parameters
-    var backgroundType: BackgroundType = .gradient
-    var selectedSolidColor: BackgroundColor = .white
+    var backgroundType: BackgroundType = .solid
+    var selectedSolidColor: BackgroundColor = .blue
     var selectedGradient: BackgroundGradient = .sunset
     
     // MARK: - Canvas Parameters
@@ -58,7 +58,7 @@ enum BackgroundColor: String, CaseIterable {
         case .black:
             return CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         case .blue:
-            return CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 1.0)
+            return CGColor(red: 0.97, green: 0.98, blue: 1.0, alpha: 1.0) // Very light blue, almost off-white
         case .purple:
             return CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1.0)
         case .pink:
