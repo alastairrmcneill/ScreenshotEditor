@@ -124,9 +124,7 @@ struct ContentView: View {
                                     showWatermark: !UserDefaultsManager.shared.isSubscribed
                                 )
                                 .aspectRatio(contentMode: .fit)
-                                .padding(AppConstants.Layout.largePadding)
-                                .cornerRadius(AppConstants.Layout.largeCornerRadius)
-                                .shadow(color: .black.opacity(AppConstants.Shadow.defaultOpacity), radius: AppConstants.Shadow.defaultRadius, x: AppConstants.Shadow.defaultOffsetX, y: AppConstants.Shadow.defaultOffsetY)
+                                .padding(AppConstants.Layout.standardPadding)
                             } else if let originalImage = editingViewModel.originalImage {
                                 // Fallback while rendering
                                 ImageRenderer.createImageView(
@@ -134,9 +132,7 @@ struct ContentView: View {
                                     showWatermark: !UserDefaultsManager.shared.isSubscribed
                                 )
                                 .aspectRatio(contentMode: .fit)
-                                .padding(AppConstants.Layout.largePadding)
-                                .cornerRadius(AppConstants.Layout.largeCornerRadius)
-                                .shadow(color: .black.opacity(AppConstants.Shadow.defaultOpacity), radius: AppConstants.Shadow.defaultRadius, x: AppConstants.Shadow.defaultOffsetX, y: AppConstants.Shadow.defaultOffsetY)
+                                .padding(AppConstants.Layout.standardPadding)
                                 .opacity(0.5)
                             }
                         }

@@ -42,7 +42,7 @@ class CoreImageRenderer {
     /// - Parameters:
     ///   - image: Source image to process
     ///   - parameters: Editing parameters to apply
-    /// - Returns: Processed UIImage
+    /// - Returns: Processed UIImage with full styling applied for live preview
     func renderImage(from image: UIImage, parameters: ImageEditingParameters) -> UIImage? {
         guard let ciImage = CIImage(image: image) else { return image }
         
@@ -56,6 +56,27 @@ class CoreImageRenderer {
         // Apply corner radius if needed
         if parameters.cornerRadius > 0 {
             processedImage = applyCornerRadius(to: processedImage, radius: parameters.cornerRadius)
+        }
+        
+        // For live preview, also apply background and padding if padding > 0
+        if parameters.padding > 0 {
+            // Calculate canvas size based on aspect ratio and padding
+            let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
+            
+            // Create background
+            let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
+            
+            // Composite image onto background with padding
+            processedImage = compositeImageOnBackground(
+                foreground: processedImage,
+                background: backgroundImage,
+                parameters: parameters
+            )
+            
+            // Apply shadow if enabled
+            if parameters.shadowEnabled {
+                processedImage = applyShadow(to: processedImage, parameters: parameters)
+            }
         }
         
         // Convert back to UIImage

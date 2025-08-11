@@ -188,7 +188,7 @@ Add a slider for corner radius from 0–48pt with live updates.
 
 ---
 
-### Story 4.3 – Padding Slider Implementation
+### Story 4.3 – ✅ Done Padding Slider Implementation
 
 **Description:**
 Add a slider to adjust padding from 0–48pt.
@@ -203,12 +203,12 @@ Add a slider to adjust padding from 0–48pt.
 ### Story 4.4 – Shadow Toggle and Sliders
 
 **Description:**
-Add toggle for enabling/disabling shadow. If enabled, allow editing offset, blur, and opacity.
+Implment shadow slider for enabling and determining the size of the drop shadow. One slider will be used to control the drop shadow properties such as offset, blur and opacity.
 
 **Acceptance Criteria:**
 
-- Toggle hides/disables sliders when OFF.
-- Sliders reflect and control offset (0pt default), blur (20pt), opacity (30%).
+- Slider reflect and control offset (0pt default), blur (20pt), opacity (30%).
+- Properties get applied live to the selected image on the canvas, but inside the outer background.
 
 ---
 

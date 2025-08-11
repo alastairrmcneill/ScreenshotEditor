@@ -12,7 +12,7 @@ struct StylePanel: View {
     @Binding var isPresented: Bool
     
     private let maxCornerRadius: CGFloat = 200
-    private let maxPadding: CGFloat = 48
+    private let maxPadding: CGFloat = 200
     
     // Local state for slider values during dragging
     @State private var tempCornerRadius: CGFloat = 0
