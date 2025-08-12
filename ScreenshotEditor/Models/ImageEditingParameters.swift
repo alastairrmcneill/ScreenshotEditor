@@ -27,7 +27,7 @@ struct ImageEditingParameters {
     // MARK: - Background Parameters
     var backgroundType: BackgroundType = .gradient
     var selectedSolidColor: BackgroundColor = .lightBlue
-    var selectedGradient: BackgroundGradient = .blueToWhite
+    var selectedGradient: BackgroundGradient = .sunset
     
     // MARK: - Canvas Parameters
     var aspectRatio: AspectRatio = .free
@@ -83,68 +83,68 @@ enum BackgroundColor: String, CaseIterable {
 
 // MARK: - Predefined Gradients
 enum BackgroundGradient: String, CaseIterable {
-    case blueToWhite = "Blue to White"
-    case pinkToWhite = "Pink to White"
-    case purpleToWhite = "Purple to White"
-    case greenToWhite = "Green to White"
-    case peachToWhite = "Peach to White"
-    case lavenderToWhite = "Lavender to White"
-    case mintToCream = "Mint to Cream"
-    case peachToLavender = "Peach to Lavender"
-    case blueToMint = "Blue to Mint"
-    case pinkToPeach = "Pink to Peach"
+    case sunset = "Sunset"
+    case ocean = "Ocean"
+    case forest = "Forest"
+    case midnight = "Midnight"
+    case rose = "Rose"
+    case golden = "Golden"
+    case aurora = "Aurora"
+    case cosmic = "Cosmic"
+    case tropical = "Tropical"
+    case autumn = "Autumn"
     
     var colors: [CGColor] {
         switch self {
-        case .blueToWhite:
+        case .sunset:
             return [
-                CGColor(red: 0.68, green: 0.85, blue: 0.95, alpha: 1.0), // More visible pastel blue
-                CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)    // White
+                CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1.0),
+                CGColor(red: 1.0, green: 0.0, blue: 0.5, alpha: 1.0)
             ]
-        case .pinkToWhite:
+        case .ocean:
             return [
-                CGColor(red: 0.95, green: 0.68, blue: 0.85, alpha: 1.0), // More visible pastel pink
-                CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)    // White
+                CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 1.0),
+                CGColor(red: 0.0, green: 1.0, blue: 0.5, alpha: 1.0)
             ]
-        case .purpleToWhite:
+        case .forest:
             return [
-                CGColor(red: 0.85, green: 0.68, blue: 0.95, alpha: 1.0), // More visible pastel purple
-                CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)    // White
+                CGColor(red: 0.0, green: 0.5, blue: 0.0, alpha: 1.0),
+                CGColor(red: 0.5, green: 1.0, blue: 0.0, alpha: 1.0)
             ]
-        case .greenToWhite:
+        case .midnight:
             return [
-                CGColor(red: 0.68, green: 0.95, blue: 0.75, alpha: 1.0), // More visible pastel green
-                CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)    // White
+                CGColor(red: 0.0, green: 0.0, blue: 0.5, alpha: 1.0),
+                CGColor(red: 0.5, green: 0.0, blue: 0.5, alpha: 1.0)
             ]
-        case .peachToWhite:
+        case .rose:
             return [
-                CGColor(red: 0.95, green: 0.80, blue: 0.68, alpha: 1.0), // More visible peach
-                CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)    // White
+                CGColor(red: 1.0, green: 0.0, blue: 0.5, alpha: 1.0),
+                CGColor(red: 1.0, green: 0.5, blue: 0.5, alpha: 1.0)
             ]
-        case .lavenderToWhite:
+        case .golden:
             return [
-                CGColor(red: 0.80, green: 0.75, blue: 0.95, alpha: 1.0), // More visible lavender
-                CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)    // White
+                CGColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0),
+                CGColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1.0)
             ]
-        case .mintToCream:
+        case .aurora:
             return [
-                CGColor(red: 0.68, green: 0.95, blue: 0.88, alpha: 1.0), // More visible mint
-                CGColor(red: 0.95, green: 0.90, blue: 0.75, alpha: 1.0)  // More visible cream
+                CGColor(red: 0.0, green: 1.0, blue: 0.5, alpha: 1.0),
+                CGColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1.0)
             ]
-        case .peachToLavender:
+        case .cosmic:
             return [
-                CGColor(red: 0.95, green: 0.80, blue: 0.68, alpha: 1.0), // More visible peach
-                CGColor(red: 0.80, green: 0.75, blue: 0.95, alpha: 1.0)  // More visible lavender
+                CGColor(red: 0.2, green: 0.0, blue: 0.4, alpha: 1.0),
+                CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
             ]
-        case .blueToMint:
+        case .tropical:
             return [
-                CGColor(red: 0.68, green: 0.85, blue: 0.95, alpha: 1.0), // More visible pastel blue
-                CGColor(red: 0.68, green: 0.95, blue: 0.88, alpha: 1.0)  // More visible mint
+                CGColor(red: 0.0, green: 0.8, blue: 0.6, alpha: 1.0),
+                CGColor(red: 0.0, green: 0.6, blue: 1.0, alpha: 1.0)
             ]
-        case .pinkToPeach:
+        case .autumn:
             return [
-                CGColor(red: 0.95, green: 0.68, blue: 0.85, alpha: 1.0), // More visible pastel pink
-                CGColor(red: 0.95, green: 0.80, blue: 0.68, alpha: 1.0)  // More visible peach
+                CGColor(red: 1.0, green: 0.3, blue: 0.0, alpha: 1.0),
+                CGColor(red: 0.8, green: 0.0, blue: 0.0, alpha: 1.0)
             ]
         }
     }
