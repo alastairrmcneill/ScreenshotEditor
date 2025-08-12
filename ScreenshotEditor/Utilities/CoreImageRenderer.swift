@@ -124,8 +124,8 @@ class CoreImageRenderer {
             processedImage = applyShadow(to: processedImage, parameters: parameters)
         }
         
-        // Calculate canvas size based on original image size and parameters
-        let canvasSize = calculateCanvasSize(for: CIImage(image: image)!, parameters: parameters)
+        // Calculate canvas size based on processed (cropped) image size and parameters
+        let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
         
         // Create background
         let backgroundImage = createBackground(size: canvasSize, parameters: parameters)

@@ -278,7 +278,7 @@ Use the system share sheet to allow image exporting.
 
 ---
 
-### Story 6.2 – Export Final Image as PNG
+### Story 6.2 – ✅ Done Export Final Image as PNG
 
 **Description:**
 Combine cropped image, padding, background and style settings into a final image.
