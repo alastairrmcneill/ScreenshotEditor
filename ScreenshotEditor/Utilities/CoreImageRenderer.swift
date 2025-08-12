@@ -60,26 +60,22 @@ class CoreImageRenderer {
         
         // For live preview, also apply background and padding if padding > 0
         if parameters.padding > 0 {
-            // Store the original image size before shadow is applied
-            let originalImageSize = processedImage.extent.size
-            
             // Apply shadow to the foreground image if enabled (before compositing)
             var foregroundImage = processedImage
             if parameters.shadowEnabled {
                 foregroundImage = applyShadow(to: foregroundImage, parameters: parameters)
             }
             
-            // Calculate canvas size based on original image size and parameters
+            // Calculate canvas size based on processed image size and parameters
             let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
             
             // Create background
             let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
             
-            // Composite image onto background with padding using original size for centering
+            // Composite image onto background with padding - center based on actual image size
             processedImage = compositeImageOnBackground(
                 foreground: foregroundImage,
                 background: backgroundImage,
-                originalSize: originalImageSize,
                 parameters: parameters
             )
             
@@ -116,9 +112,6 @@ class CoreImageRenderer {
             processedImage = applyCornerRadius(to: processedImage, radius: parameters.cornerRadius)
         }
         
-        // Store the original image size before shadow is applied
-        let originalImageSize = processedImage.extent.size
-        
         // Apply shadow to the foreground image if enabled (before compositing)
         if parameters.shadowEnabled {
             processedImage = applyShadow(to: processedImage, parameters: parameters)
@@ -130,11 +123,10 @@ class CoreImageRenderer {
         // Create background
         let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
         
-        // Composite image onto background with padding using original size for centering
+        // Composite image onto background with padding - center based on actual image size
         let compositedImage = compositeImageOnBackground(
             foreground: processedImage,
             background: backgroundImage,
-            originalSize: originalImageSize,
             parameters: parameters
         )
         
@@ -167,7 +159,12 @@ class CoreImageRenderer {
         let cropHeight = cropRect.height * imageExtent.height
         
         let cropRectPixels = CGRect(x: cropX, y: cropY, width: cropWidth, height: cropHeight)
-        return image.cropped(to: cropRectPixels)
+        let croppedImage = image.cropped(to: cropRectPixels)
+        
+        // CRITICAL FIX: Reset the origin to (0,0) so positioning works correctly
+        // Transform the cropped image to move its origin to (0,0)
+        let translation = CGAffineTransform(translationX: -cropRectPixels.origin.x, y: -cropRectPixels.origin.y)
+        return croppedImage.transformed(by: translation)
     }
     
     private func applyCornerRadius(to image: CIImage, radius: CGFloat) -> CIImage {
