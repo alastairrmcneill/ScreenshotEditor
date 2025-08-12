@@ -62,21 +62,21 @@ enum BackgroundColor: String, CaseIterable {
         case .black:
             return CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         case .lightBlue:
-            return CGColor(red: 0.68, green: 0.85, blue: 0.95, alpha: 1.0) // More visible pastel blue
+            return CGColor(red: 0.5, green: 0.75, blue: 0.95, alpha: 1.0) // More vibrant blue
         case .lightPink:
-            return CGColor(red: 0.95, green: 0.68, blue: 0.85, alpha: 1.0) // More visible pastel pink
+            return CGColor(red: 0.95, green: 0.5, blue: 0.75, alpha: 1.0) // More vibrant pink
         case .lightGreen:
-            return CGColor(red: 0.68, green: 0.95, blue: 0.75, alpha: 1.0) // More visible pastel green
+            return CGColor(red: 0.5, green: 0.9, blue: 0.6, alpha: 1.0) // More vibrant green
         case .lightPurple:
-            return CGColor(red: 0.85, green: 0.68, blue: 0.95, alpha: 1.0) // More visible pastel purple
+            return CGColor(red: 0.8, green: 0.5, blue: 0.95, alpha: 1.0) // More vibrant purple
         case .peach:
-            return CGColor(red: 0.95, green: 0.80, blue: 0.68, alpha: 1.0) // More visible peach
+            return CGColor(red: 0.95, green: 0.7, blue: 0.5, alpha: 1.0) // More vibrant peach
         case .lavender:
-            return CGColor(red: 0.80, green: 0.75, blue: 0.95, alpha: 1.0) // More visible lavender
+            return CGColor(red: 0.75, green: 0.6, blue: 0.95, alpha: 1.0) // More vibrant lavender
         case .mint:
-            return CGColor(red: 0.68, green: 0.95, blue: 0.88, alpha: 1.0) // More visible mint
+            return CGColor(red: 0.5, green: 0.9, blue: 0.8, alpha: 1.0) // More vibrant mint
         case .cream:
-            return CGColor(red: 0.95, green: 0.90, blue: 0.75, alpha: 1.0) // More visible cream
+            return CGColor(red: 0.95, green: 0.85, blue: 0.6, alpha: 1.0) // More vibrant cream
         }
     }
 }
