@@ -31,6 +31,20 @@ class ImageRenderer {
         ) ?? sourceImage
     }
     
+    /// Renders the final image with custom parameters and optional watermark
+    /// - Parameters:
+    ///   - sourceImage: The original image to render
+    ///   - parameters: The editing parameters to apply
+    ///   - includeWatermark: Whether to include the watermark
+    /// - Returns: The final rendered image with all effects applied
+    func renderFinalImage(from sourceImage: UIImage, parameters: ImageEditingParameters, includeWatermark: Bool) -> UIImage? {
+        return CoreImageRenderer.shared.renderFinalImage(
+            from: sourceImage,
+            parameters: parameters,
+            includeWatermark: includeWatermark
+        )
+    }
+    
     /// Creates a SwiftUI view representation of the image with live rendering
     /// - Parameters:
     ///   - image: The source image
