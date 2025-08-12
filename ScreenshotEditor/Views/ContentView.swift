@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var showingShareSheet = false
     @State private var showingCropView = false
     @State private var showingStylePanel = false
+    @State private var showingBackgroundPanel = false
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
     
@@ -161,7 +162,9 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 Button(AppStrings.UI.background) {
-                                    // TODO: Implement background panel
+                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                        showingBackgroundPanel = true
+                                    }
                                     AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
                                 }
                                 .foregroundColor(.accentColor)
@@ -187,6 +190,15 @@ struct ContentView: View {
                 StylePanel(
                     editingViewModel: editingViewModel,
                     isPresented: $showingStylePanel
+                )
+                .transition(.opacity)
+            }
+            
+            // Background Panel Overlay
+            if showingBackgroundPanel {
+                BackgroundPanel(
+                    editingViewModel: editingViewModel,
+                    isPresented: $showingBackgroundPanel
                 )
                 .transition(.opacity)
             }

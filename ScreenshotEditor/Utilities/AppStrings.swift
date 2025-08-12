@@ -30,6 +30,8 @@ struct AppStrings {
         static let cornerRadius = "Corner Radius"
         static let padding = "Padding"
         static let shadow = "Shadow"
+        static let solid = "Solid"
+        static let gradient = "Gradient"
     }
     
     // MARK: - Analytics Events
