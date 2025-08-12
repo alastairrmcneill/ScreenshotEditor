@@ -53,6 +53,39 @@ struct BackgroundPanel: View {
                                 .foregroundColor(.accentColor)
                             }
                             
+                            // Aspect Ratio Section
+                            VStack(spacing: 16) {
+                                // Aspect Ratio Title
+                                HStack {
+                                    Text(AppStrings.UI.aspectRatio)
+                                        .font(.headline)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                }
+                                
+                                // Aspect Ratio Controls
+                                HStack(spacing: 12) {
+                                    ForEach(AspectRatio.allCases, id: \.self) { ratio in
+                                        Button(action: {
+                                            editingViewModel.updateAspectRatio(ratio)
+                                            AnalyticsManager.shared.track(AppStrings.Analytics.aspectRatioChanged, properties: [
+                                                "aspect_ratio": ratio.rawValue
+                                            ])
+                                        }) {
+                                            Text(ratio.rawValue)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(editingViewModel.parameters.aspectRatio == ratio ? .white : .primary)
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 36)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 8)
+                                                        .fill(editingViewModel.parameters.aspectRatio == ratio ? Color.accentColor : Color(.systemGray5))
+                                                )
+                                        }
+                                    }
+                                }
+                            }
+                            
                             // Segmented Control
                             Picker("Background Type", selection: Binding(
                                 get: { editingViewModel.parameters.backgroundType },

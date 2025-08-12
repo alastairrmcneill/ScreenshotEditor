@@ -250,7 +250,7 @@ When Gradient segment is selected, show 10 gradient swatches.
 
 ---
 
-### Story 5.4 – Implement Aspect Ratio Control Panel
+### Story 5.4 – ✅ Done Implement Aspect Ratio Control Panel
 
 **Description:**
 Provide 4 options: 1:1, 9:16, 16:9, Free. Applies only to background area.

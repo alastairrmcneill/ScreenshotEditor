@@ -32,6 +32,10 @@ struct AppStrings {
         static let shadow = "Shadow"
         static let solid = "Solid"
         static let gradient = "Gradient"
+        static let aspectRatio = "Aspect Ratio"
+        static let square = "1:1"
+        static let portrait = "9:16"
+        static let landscape = "16:9"
     }
     
     // MARK: - Analytics Events
@@ -42,6 +46,7 @@ struct AppStrings {
         static let cropButtonTapped = "Crop Button Tapped"
         static let styleButtonTapped = "Style Button Tapped"
         static let backgroundButtonTapped = "Background Button Tapped"
+        static let aspectRatioChanged = "Aspect Ratio Changed"
         static let editorOpened = "Editor Opened"
         static let photoImportCancelled = "Photo Import Cancelled"
         static let photoImportFailed = "Photo Import Failed"

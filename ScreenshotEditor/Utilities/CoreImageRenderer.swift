@@ -200,23 +200,48 @@ class CoreImageRenderer {
         let imageSize = image.extent.size
         let padding = parameters.padding * 2 // Padding on all sides
         
-        // Don't account for shadow in canvas size - let shadow extend beyond canvas if needed
-        var canvasWidth = imageSize.width + padding
-        var canvasHeight = imageSize.height + padding
+        // Calculate minimum canvas size to fit the image with padding
+        let minCanvasWidth = imageSize.width + padding
+        let minCanvasHeight = imageSize.height + padding
         
-        // Apply aspect ratio constraints
+        var canvasWidth = minCanvasWidth
+        var canvasHeight = minCanvasHeight
+        
+        // Apply aspect ratio constraints while ensuring the image always fits
         if let aspectRatio = parameters.aspectRatio.ratio {
             if aspectRatio == 1.0 {
-                // Square - use the larger dimension
-                let maxDimension = max(canvasWidth, canvasHeight)
+                // Square - use the larger dimension to ensure image fits
+                let maxDimension = max(minCanvasWidth, minCanvasHeight)
                 canvasWidth = maxDimension
                 canvasHeight = maxDimension
             } else if aspectRatio < 1.0 {
-                // Portrait - adjust width based on height
-                canvasWidth = canvasHeight * aspectRatio
+                // Portrait aspect ratio (e.g., 9:16)
+                // Calculate what width would be needed for this height
+                let requiredWidth = minCanvasHeight * aspectRatio
+                
+                if requiredWidth >= minCanvasWidth {
+                    // We can achieve the aspect ratio with minimum dimensions
+                    canvasWidth = requiredWidth
+                    canvasHeight = minCanvasHeight
+                } else {
+                    // Need to expand height to maintain aspect ratio while fitting image
+                    canvasWidth = minCanvasWidth
+                    canvasHeight = minCanvasWidth / aspectRatio
+                }
             } else {
-                // Landscape - adjust height based on width
-                canvasHeight = canvasWidth / aspectRatio
+                // Landscape aspect ratio (e.g., 16:9)
+                // Calculate what height would be needed for this width
+                let requiredHeight = minCanvasWidth / aspectRatio
+                
+                if requiredHeight >= minCanvasHeight {
+                    // We can achieve the aspect ratio with minimum dimensions
+                    canvasWidth = minCanvasWidth
+                    canvasHeight = requiredHeight
+                } else {
+                    // Need to expand width to maintain aspect ratio while fitting image
+                    canvasWidth = minCanvasHeight * aspectRatio
+                    canvasHeight = minCanvasHeight
+                }
             }
         }
         
