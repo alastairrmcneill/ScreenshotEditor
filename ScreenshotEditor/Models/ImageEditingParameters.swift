@@ -49,11 +49,11 @@ enum BackgroundColor: String, CaseIterable {
     case lightBlue = "Light Blue"
     case lightPink = "Light Pink"
     case lightGreen = "Light Green"
-    case lightPurple = "Light Purple"
+    case coral = "Coral"
     case peach = "Peach"
-    case lavender = "Lavender"
+    case yellow = "Yellow"
     case mint = "Mint"
-    case cream = "Cream"
+    case sage = "Sage"
     
     var color: CGColor {
         switch self {
@@ -62,21 +62,21 @@ enum BackgroundColor: String, CaseIterable {
         case .black:
             return CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         case .lightBlue:
-            return CGColor(red: 0.5, green: 0.75, blue: 0.95, alpha: 1.0) // More vibrant blue
+            return CGColor(red: 0.5, green: 0.75, blue: 0.95, alpha: 1.0) // Vibrant sky blue
         case .lightPink:
-            return CGColor(red: 0.95, green: 0.5, blue: 0.75, alpha: 1.0) // More vibrant pink
+            return CGColor(red: 0.95, green: 0.5, blue: 0.75, alpha: 1.0) // Vibrant rose pink
         case .lightGreen:
-            return CGColor(red: 0.5, green: 0.9, blue: 0.6, alpha: 1.0) // More vibrant green
-        case .lightPurple:
-            return CGColor(red: 0.8, green: 0.5, blue: 0.95, alpha: 1.0) // More vibrant purple
+            return CGColor(red: 0.5, green: 0.9, blue: 0.6, alpha: 1.0) // Fresh vibrant green
+        case .coral:
+            return CGColor(red: 0.95, green: 0.6, blue: 0.5, alpha: 1.0) // Vibrant coral
         case .peach:
-            return CGColor(red: 0.95, green: 0.7, blue: 0.5, alpha: 1.0) // More vibrant peach
-        case .lavender:
-            return CGColor(red: 0.75, green: 0.6, blue: 0.95, alpha: 1.0) // More vibrant lavender
+            return CGColor(red: 0.95, green: 0.75, blue: 0.4, alpha: 1.0) // More orange peach
+        case .yellow:
+            return CGColor(red: 0.95, green: 0.9, blue: 0.4, alpha: 1.0) // Soft vibrant yellow
         case .mint:
-            return CGColor(red: 0.5, green: 0.9, blue: 0.8, alpha: 1.0) // More vibrant mint
-        case .cream:
-            return CGColor(red: 0.95, green: 0.85, blue: 0.6, alpha: 1.0) // More vibrant cream
+            return CGColor(red: 0.5, green: 0.9, blue: 0.8, alpha: 1.0) // Fresh vibrant mint
+        case .sage:
+            return CGColor(red: 0.6, green: 0.8, blue: 0.6, alpha: 1.0) // Sage green
         }
     }
 }

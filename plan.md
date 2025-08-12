@@ -214,7 +214,7 @@ Implment shadow slider for enabling and determining the size of the drop shadow.
 
 ## EPIC 5 – Background & Sizing Options
 
-### Story 5.1 – Background Panel with Segmented Control
+### Story 5.1 – ✅ Done Background Panel with Segmented Control
 
 **Description:**
 Create a bottom sheet with segmented control for Solid and Gradient backgrounds.
@@ -226,7 +226,7 @@ Create a bottom sheet with segmented control for Solid and Gradient backgrounds.
 
 ---
 
-### Story 5.2 – Display Grid of Predefined Solid Colours
+### Story 5.2 – ✅ Done Display Grid of Predefined Solid Colours
 
 **Description:**
 Display circle buttons with 10 solid colour swatches. Update background on tap.
@@ -238,7 +238,7 @@ Display circle buttons with 10 solid colour swatches. Update background on tap.
 
 ---
 
-### Story 5.3 – Display Grid of Gradient Presets
+### Story 5.3 – ✅ Done Display Grid of Gradient Presets
 
 **Description:**
 When Gradient segment is selected, show 10 gradient swatches.
