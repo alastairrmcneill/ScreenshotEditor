@@ -302,7 +302,7 @@ Track how many exports a free user has done. Show paywall if limit exceeded.
 
 ---
 
-### Story 6.4 – Trigger In-App Review Prompt
+### Story 6.4 – ✅ Done Trigger In-App Review Prompt
 
 **Description:**
 Prompt user for a review after their first successful export.

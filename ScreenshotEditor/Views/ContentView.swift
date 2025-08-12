@@ -310,6 +310,9 @@ struct ContentView: View {
             ])
             AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
             
+            // Request review after first successful export
+            ReviewManager.shared.requestExportReview()
+            
             // End loading state and show share sheet
             isGeneratingShareImage = false
             showingShareSheet = true

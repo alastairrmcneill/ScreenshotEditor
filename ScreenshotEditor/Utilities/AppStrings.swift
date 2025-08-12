@@ -68,6 +68,7 @@ struct AppStrings {
         static let paywallShown = "Paywall Shown"
         static let paywallDismissed = "Paywall Dismissed"
         static let paywallUpgradeClicked = "Paywall Upgrade Clicked"
+        static let reviewPromptShown = "Review Prompt Shown"
     }
     
     // MARK: - Analytics Properties

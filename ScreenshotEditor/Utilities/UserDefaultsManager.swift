@@ -19,6 +19,7 @@ class UserDefaultsManager {
         static let onboardingCompleted = "com.screenshoteditor.onboarding_completed"
         static let freeExportCount = "com.screenshoteditor.free_export_count"
         static let isSubscribed = "com.screenshoteditor.is_subscribed"
+        static let hasShownReviewPrompt = "com.screenshoteditor.has_shown_review_prompt"
     }
     
     private init() {}
@@ -94,6 +95,24 @@ class UserDefaultsManager {
         resetOnboarding()
         resetFreeExportCount()
         isSubscribed = false
+        hasShownReviewPrompt = false
+    }
+    
+    // MARK: - Review Prompt
+    
+    /// Indicates whether the user has been shown the review prompt
+    var hasShownReviewPrompt: Bool {
+        get {
+            return userDefaults.bool(forKey: Keys.hasShownReviewPrompt)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.hasShownReviewPrompt)
+        }
+    }
+    
+    /// Marks the review prompt as shown
+    func markReviewPromptShown() {
+        hasShownReviewPrompt = true
     }
 }
 
