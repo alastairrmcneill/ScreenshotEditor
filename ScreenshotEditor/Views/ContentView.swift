@@ -210,7 +210,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingShareSheet) {
             if let imageToShare = imageToShare {
-                ShareSheet(items: [imageToShare])
+                ShareSheet.forImageSaving(image: imageToShare)
             }
         }
         .fullScreenCover(isPresented: $showingCropView) {

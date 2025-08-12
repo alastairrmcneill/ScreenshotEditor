@@ -212,7 +212,7 @@ Implment shadow slider for enabling and determining the size of the drop shadow.
 
 ---
 
-## EPIC 5 – Background & Sizing Options
+## EPIC 5 – ✅ Done Background & Sizing Options
 
 ### Story 5.1 – ✅ Done Background Panel with Segmented Control
 
@@ -265,7 +265,7 @@ Provide 4 options: 1:1, 9:16, 16:9, Free. Applies only to background area.
 
 ## EPIC 6 – Exporting & Share Sheet
 
-### Story 6.1 – Add Share Button and UIActivityViewController
+### Story 6.1 – ✅ Done Add Share Button and UIActivityViewController
 
 **Description:**
 Use the system share sheet to allow image exporting.
@@ -274,6 +274,7 @@ Use the system share sheet to allow image exporting.
 
 - Share button opens share sheet.
 - Image preview is shared in current state (crop + style + background).
+- Option to just save photo or to share to other apps
 
 ---
 

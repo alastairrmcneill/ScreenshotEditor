@@ -18,12 +18,31 @@ struct ShareSheet: UIViewControllerRepresentable {
         self.excludedActivityTypes = excludedActivityTypes
     }
     
+    /// Creates a ShareSheet optimized for saving images to Photos
+    static func forImageSaving(image: UIImage) -> ShareSheet {
+        // Exclude less relevant activities to make "Save to Photos" more prominent
+        let excludedTypes: [UIActivity.ActivityType] = [
+            .assignToContact,
+            .print,
+            .addToReadingList,
+            .postToVimeo,
+            .postToWeibo,
+            .postToFlickr,
+            .postToTencentWeibo,
+            .openInIBooks,
+            .markupAsPDF
+        ]
+        
+        return ShareSheet(items: [image], excludedActivityTypes: excludedTypes)
+    }
+    
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let activityViewController = UIActivityViewController(
             activityItems: items,
             applicationActivities: nil
         )
         activityViewController.excludedActivityTypes = excludedActivityTypes
+        
         return activityViewController
     }
     
