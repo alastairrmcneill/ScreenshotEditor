@@ -290,7 +290,7 @@ Combine cropped image, padding, background and style settings into a final image
 
 ---
 
-### Story 6.3 – Enforce Free Export Limit
+### Story 6.3 – ✅ Done Enforce Free Export Limit
 
 **Description:**
 Track how many exports a free user has done. Show paywall if limit exceeded.

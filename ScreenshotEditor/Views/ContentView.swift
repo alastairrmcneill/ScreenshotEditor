@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var showingBackgroundPanel = false
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
+    @State private var showingPaywall = false
     
     var body: some View {
         ZStack {
@@ -202,6 +203,16 @@ struct ContentView: View {
                 )
                 .transition(.opacity)
             }
+            
+            // Paywall Overlay
+            if showingPaywall {
+                PaywallView(isPresented: $showingPaywall) {
+                    // For now, just toggle subscription status for testing
+                    // In a real app, this would trigger StoreKit purchase flow
+                    UserDefaultsManager.shared.setSubscribed(true)
+                    showingPaywall = false
+                }
+            }
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
             Task {
@@ -259,6 +270,23 @@ struct ContentView: View {
     /// Generates final image and presents share sheet
     @MainActor
     private func shareImage() async {
+        // Track export attempt
+        AnalyticsManager.shared.track(AppStrings.Analytics.exportStarted, properties: [
+            AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
+            AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed
+        ])
+        
+        // Check export limit for free users
+        if !UserDefaultsManager.shared.isSubscribed && UserDefaultsManager.shared.hasReachedFreeExportLimit {
+            // Show paywall for free users who have reached the limit
+            AnalyticsManager.shared.track(AppStrings.Analytics.exportLimitReached, properties: [
+                AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
+                AppStrings.AnalyticsProperties.exportLimitReason: "free_limit_reached"
+            ])
+            showingPaywall = true
+            return
+        }
+        
         // Start loading state
         isGeneratingShareImage = true
         
@@ -270,6 +298,16 @@ struct ContentView: View {
         // Update UI on main thread
         if let finalImage = finalImage {
             imageToShare = finalImage
+            
+            // Increment export count for free users after successful generation
+            if !UserDefaultsManager.shared.isSubscribed {
+                UserDefaultsManager.shared.incrementFreeExportCount()
+            }
+            
+            AnalyticsManager.shared.track(AppStrings.Analytics.exportCompleted, properties: [
+                AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
+                AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed
+            ])
             AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
             
             // End loading state and show share sheet

@@ -36,6 +36,17 @@ struct AppStrings {
         static let square = "1:1"
         static let portrait = "9:16"
         static let landscape = "16:9"
+        
+        // Paywall
+        static let exportLimitReached = "Export Limit Reached"
+        static let upgradeToPremium = "Upgrade to Premium"
+        static let exportLimitMessage = "You've reached your limit of 3 free exports. Upgrade to Premium for unlimited exports and remove the watermark."
+        static let continueFree = "Continue with Free"
+        static let getUnlimitedExports = "Get Unlimited Exports"
+        static let premiumFeatures = "Premium Features:"
+        static let unlimitedExports = "• Unlimited exports"
+        static let noWatermark = "• No watermark"
+        static let restorePurchases = "Restore Purchases"
     }
     
     // MARK: - Analytics Events
@@ -51,6 +62,12 @@ struct AppStrings {
         static let photoImportCancelled = "Photo Import Cancelled"
         static let photoImportFailed = "Photo Import Failed"
         static let photoImportSuccess = "Photo Import Success"
+        static let exportStarted = "Export Started"
+        static let exportCompleted = "Export Completed"
+        static let exportLimitReached = "Export Limit Reached"
+        static let paywallShown = "Paywall Shown"
+        static let paywallDismissed = "Paywall Dismissed"
+        static let paywallUpgradeClicked = "Paywall Upgrade Clicked"
     }
     
     // MARK: - Analytics Properties
@@ -59,6 +76,9 @@ struct AppStrings {
         static let imageHeight = "image_height"
         static let hasAlpha = "has_alpha"
         static let error = "error"
+        static let exportCount = "export_count"
+        static let isSubscribed = "is_subscribed"
+        static let exportLimitReason = "export_limit_reason"
     }
     
     // MARK: - Debug Messages
