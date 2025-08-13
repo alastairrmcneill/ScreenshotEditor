@@ -17,9 +17,17 @@ struct ScreenshotEditorApp: App {
         let uuid = UUIDManager.shared.anonymousUUID
         print("\(AppStrings.Debug.appLaunchedWithUUID) \(uuid)")
         
-        // Initialize analytics
-        // This will set up Mixpanel with the appropriate environment
+        // Initialize analytics first
+        // This will set up Mixpanel with the appropriate environment and user identity
         AnalyticsManager.shared.setup()
+        
+        // Initialize subscription manager (which will configure RevenueCat and sync user IDs)
+        _ = SubscriptionManager.shared
+        
+        // Check user ID sync after a brief delay to ensure everything is initialized
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            SubscriptionManager.shared.checkUserIdSync()
+        }
     }
     
     var body: some Scene {

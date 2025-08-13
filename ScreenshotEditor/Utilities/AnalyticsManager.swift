@@ -21,7 +21,18 @@ class AnalyticsManager {
         print("\(AppStrings.Debug.analyticsSetup) \(apiKey ?? "")");
         Mixpanel.initialize(token: apiKey ?? "", trackAutomaticEvents: true)
         
+        setupUserIdentity()
         setupSuperProperties()
+    }
+    
+    /// Set up user identity using the same UUID as SubscriptionManager
+    private func setupUserIdentity() {
+        let anonymousUUID = UUIDManager.shared.anonymousUUID
+        print("👤 [AnalyticsManager] Setting up user identity with UUID: \(anonymousUUID)")
+        
+        // Set the user ID in Mixpanel
+        Mixpanel.mainInstance().identify(distinctId: anonymousUUID)
+        print("✅ [AnalyticsManager] User identity set in Mixpanel")
     }
     
     private func setupSuperProperties() {
@@ -32,6 +43,40 @@ class AnalyticsManager {
         
         Mixpanel.mainInstance().registerSuperProperties(superProperties)
         print("\(AppStrings.Debug.superPropertiesSet) \(superProperties)")
+    }
+    
+    // MARK: - User Management
+    
+    /// Get the current user ID from Mixpanel
+    func getUserId() -> String {
+        return Mixpanel.mainInstance().distinctId
+    }
+    
+    /// Set a new user ID and sync with SubscriptionManager
+    func setUserId(_ userId: String) {
+        print("👤 [AnalyticsManager] Setting user ID to: \(userId)")
+        Mixpanel.mainInstance().identify(distinctId: userId)
+        
+        // Notify SubscriptionManager about user change (with delay to avoid circular calls)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            SubscriptionManager.shared.syncUserIdWithAnalytics()
+        }
+        print("✅ [AnalyticsManager] User ID updated and will sync with SubscriptionManager")
+    }
+    
+    /// Reset user to anonymous and sync with SubscriptionManager
+    func resetUser() {
+        print("🔄 [AnalyticsManager] Resetting user to anonymous...")
+        Mixpanel.mainInstance().reset()
+        
+        // Re-setup identity with new anonymous ID
+        setupUserIdentity()
+        
+        // Notify SubscriptionManager about user logout (with delay to avoid circular calls)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            SubscriptionManager.shared.handleUserLogout()
+        }
+        print("✅ [AnalyticsManager] User reset and will sync with SubscriptionManager")
     }
 
     func track(_ event: String, properties: Properties? = nil) {

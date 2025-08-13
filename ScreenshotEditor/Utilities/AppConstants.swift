@@ -61,4 +61,21 @@ struct AppConstants {
         static let handleIndicatorOpacity: CGFloat = 0.6
         static let animationDuration: CGFloat = 0.3
     }
+    
+    // MARK: - RevenueCat Constants
+    struct RevenueCat {
+        static let apiKey: String = {
+            guard let path = Bundle.main.path(forResource: "Config", ofType: "xcconfig"),
+                  let contents = try? String(contentsOfFile: path),
+                  let apiKey = contents.components(separatedBy: .newlines)
+                    .first(where: { $0.hasPrefix("REVENUECAT_API_KEY") })?
+                    .components(separatedBy: " = ").last?.trimmingCharacters(in: .whitespaces) else {
+                return "appl_your_revenuecat_api_key_here" // Fallback
+            }
+            return apiKey
+        }()
+        static let weeklyProductId = "com.alastairrmcneill.screenshoteditor.weekly"
+        static let yearlyProductId = "com.alastairrmcneill.screenshoteditor.yearly"
+        static let defaultOfferingId = "default"
+    }
 }

@@ -4,9 +4,5 @@
 <dict>
 	<key>MixpanelApiKey</key>
 	<string>${MIXPANEL_API_KEY}</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your Photos library to import screenshots for editing and to save your edited images.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app needs access to save your edited screenshots to your Photos library.</string>
 </dict>
 </plist>

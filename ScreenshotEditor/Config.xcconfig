@@ -9,3 +9,4 @@
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 
 MIXPANEL_API_KEY = 78c84d451160adff2d5a8751c97c8b93
+REVENUECAT_API_KEY = appl_FiYtkalIXoSmbOnjMYXdmLKxPZT
