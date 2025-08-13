@@ -19,6 +19,10 @@ struct PaywallView: View {
     @State private var cooldownTimeRemaining: Int = 3
     @State private var timer: Timer?
     @State private var isPurchasing: Bool = false
+    @State private var showCloseButton: Bool = false
+    @State private var progress: CGFloat = 0.0
+    
+    private let allowCloseAfter: CGFloat = 3.0 // time in seconds until close is allowed
     
     enum PricingPlan {
         case yearly
@@ -77,8 +81,7 @@ struct PaywallView: View {
                                 originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
                                 currentPrice: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
                                 badge: calculateYearlySavings(yearlyProduct),
-                                isSelected: selectedPlan == .yearly && !freeTrialEnabled,
-                                showRadio: !freeTrialEnabled
+                                isSelected: selectedPlan == .yearly && !freeTrialEnabled
                             ) {
                                 selectedPlan = .yearly
                                 freeTrialEnabled = false
@@ -90,8 +93,7 @@ struct PaywallView: View {
                                 originalPrice: nil,
                                 currentPrice: "Loading pricing...",
                                 badge: "Best Value",
-                                isSelected: selectedPlan == .yearly && !freeTrialEnabled,
-                                showRadio: !freeTrialEnabled
+                                isSelected: selectedPlan == .yearly && !freeTrialEnabled
                             ) {
                                 selectedPlan = .yearly
                                 freeTrialEnabled = false
@@ -109,7 +111,6 @@ struct PaywallView: View {
                                 badge: hasFreeTrial ? "FREE" : "Weekly",
                                 badgeColor: hasFreeTrial ? .green : .blue,
                                 isSelected: selectedPlan == .weekly || (freeTrialEnabled && hasFreeTrial),
-                                showRadio: true,
                                 isTrialPlan: hasFreeTrial
                             ) {
                                 selectedPlan = .weekly
@@ -125,7 +126,6 @@ struct PaywallView: View {
                                 badge: "FREE",
                                 badgeColor: .green,
                                 isSelected: selectedPlan == .weekly || freeTrialEnabled,
-                                showRadio: true,
                                 isTrialPlan: true
                             ) {
                                 selectedPlan = .weekly
@@ -205,27 +205,23 @@ struct PaywallView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        if cooldownTimeRemaining > 0 {
-                            startCooldownTimer()
-                        } else {
+                    if !showCloseButton {
+                        Circle()
+                            .trim(from: 0.0, to: progress)
+                            .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                            .foregroundColor(.gray)
+                            .opacity(0.3 + 0.3 * self.progress)
+                            .rotationEffect(Angle(degrees: -90))
+                            .frame(width: 30, height: 30)
+                    } else {
+                        Button(action: {
                             dismissPaywall()
-                        }
-                    }) {
-                        if cooldownTimeRemaining > 0 {
-                            Text("\(cooldownTimeRemaining)")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(width: 30, height: 30)
-                                .background(Color.gray)
-                                .clipShape(Circle())
-                        } else {
+                        }) {
                             Image(systemName: "xmark")
                                 .font(.headline)
                                 .foregroundColor(.gray)
                         }
                     }
-                    .disabled(cooldownTimeRemaining > 0)
                 }
             }
         }
@@ -234,10 +230,21 @@ struct PaywallView: View {
                 AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
                 AppStrings.AnalyticsProperties.exportLimitReason: "free_limit_reached"
             ])
-            startCooldownTimer()
             
             // Fetch offerings when paywall appears
             subscriptionManager.fetchOfferings()
+            
+            // Start the progress animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.linear(duration: allowCloseAfter)) {
+                    self.progress = 1.0
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + allowCloseAfter) {
+                    withAnimation {
+                        showCloseButton = true
+                    }
+                }
+            }
         }
         .onReceive(subscriptionManager.$weeklyProduct) { weeklyProduct in
             // Update free trial state when weekly product loads
@@ -248,17 +255,7 @@ struct PaywallView: View {
             }
         }
         .onDisappear {
-            timer?.invalidate()
-        }
-    }
-    
-    private func startCooldownTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if cooldownTimeRemaining > 0 {
-                cooldownTimeRemaining -= 1
-            } else {
-                timer?.invalidate()
-            }
+            // Clean up if needed
         }
     }
     
@@ -417,7 +414,6 @@ private struct PricingPlanView: View {
     let badge: String
     var badgeColor: Color = .red
     let isSelected: Bool
-    let showRadio: Bool
     var isTrialPlan: Bool = false
     let onTap: () -> Void
     
@@ -464,11 +460,9 @@ private struct PricingPlanView: View {
                         .cornerRadius(6)
                     
                     // Radio button
-                    if showRadio {
-                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                            .font(.title2)
-                            .foregroundColor(isSelected ? .blue : .gray)
-                    }
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.title2)
+                        .foregroundColor(isSelected ? .blue : .gray)
                 }
             }
             .padding(16)

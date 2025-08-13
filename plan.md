@@ -502,7 +502,7 @@ Update the paywall visuals to have the right placeholder items, such as hero ima
 - Exit button
 - Text buttons for documents
 
-### Story 10.5 – Fetch Products & Offerings in App
+### Story 10.5 – ✅ Done Fetch Products & Offerings in App
 
 **Description:**
 
