@@ -74,8 +74,8 @@ struct AppConstants {
             }
             return apiKey
         }()
-        static let weeklyProductId = "com.alastairrmcneill.screenshoteditor.weekly"
-        static let yearlyProductId = "com.alastairrmcneill.screenshoteditor.yearly"
+        static let weeklyProductId = "vanta_299_1w_3d0"
+        static let yearlyProductId = "vanta_1499_1y"
         static let defaultOfferingId = "default"
     }
 }

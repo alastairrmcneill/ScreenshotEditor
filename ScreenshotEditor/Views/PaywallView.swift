@@ -84,12 +84,12 @@ struct PaywallView: View {
                                 freeTrialEnabled = false
                             }
                         } else {
-                            // Fallback to static pricing while loading
+                            // Fallback to loading state while fetching
                             PricingPlanView(
                                 title: AppStrings.UI.yearlyPlan,
-                                originalPrice: "Loading...",
-                                currentPrice: "Loading...",
-                                badge: AppStrings.UI.save90Percent,
+                                originalPrice: nil,
+                                currentPrice: "Loading pricing...",
+                                badge: "Best Value",
                                 isSelected: selectedPlan == .yearly && !freeTrialEnabled,
                                 showRadio: !freeTrialEnabled
                             ) {
@@ -98,26 +98,31 @@ struct PaywallView: View {
                             }
                         }
                         
-                        // Weekly Plan
+                        // Weekly Plan with Free Trial
                         if let weeklyProduct = subscriptionManager.weeklyProduct {
+                            let hasFreeTrial = weeklyProduct.storeProduct.introductoryDiscount != nil
+                            let trialText = hasFreeTrial ? formatTrialPeriod(weeklyProduct.storeProduct.introductoryDiscount!) : nil
+                            
                             PricingPlanView(
-                                title: weeklyProduct.storeProduct.introductoryDiscount != nil ? AppStrings.UI.threeDayTrial : "Weekly Plan",
-                                subtitle: weeklyProduct.storeProduct.introductoryDiscount != nil ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : weeklyProduct.storeProduct.localizedPriceString,
-                                badge: weeklyProduct.storeProduct.introductoryDiscount != nil ? AppStrings.UI.freeBadge : "Weekly",
-                                badgeColor: weeklyProduct.storeProduct.introductoryDiscount != nil ? .green : .blue,
-                                isSelected: selectedPlan == .weekly || freeTrialEnabled,
+                                title: hasFreeTrial ? (trialText ?? "3-Day Free Trial") : "Weekly Plan",
+                                subtitle: hasFreeTrial ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : "\(weeklyProduct.storeProduct.localizedPriceString) weekly",
+                                badge: hasFreeTrial ? "FREE" : "Weekly",
+                                badgeColor: hasFreeTrial ? .green : .blue,
+                                isSelected: selectedPlan == .weekly || (freeTrialEnabled && hasFreeTrial),
                                 showRadio: true,
-                                isTrialPlan: weeklyProduct.storeProduct.introductoryDiscount != nil
+                                isTrialPlan: hasFreeTrial
                             ) {
                                 selectedPlan = .weekly
-                                freeTrialEnabled = weeklyProduct.storeProduct.introductoryDiscount != nil
+                                if hasFreeTrial {
+                                    freeTrialEnabled = true
+                                }
                             }
                         } else {
-                            // Fallback to static pricing while loading
+                            // Fallback to loading state while fetching
                             PricingPlanView(
-                                title: AppStrings.UI.threeDayTrial,
-                                subtitle: AppStrings.UI.thenWeekly,
-                                badge: AppStrings.UI.freeBadge,
+                                title: "Free Trial",
+                                subtitle: "Loading pricing...",
+                                badge: "FREE",
                                 badgeColor: .green,
                                 isSelected: selectedPlan == .weekly || freeTrialEnabled,
                                 showRadio: true,
@@ -130,20 +135,23 @@ struct PaywallView: View {
                     }
                     .padding(.horizontal)
                     
-                    // Free Trial Toggle
-                    HStack {
-                        Text(AppStrings.UI.freeTrialEnabled)
-                            .font(.headline)
-                        Spacer()
-                        Toggle("", isOn: $freeTrialEnabled)
-                            .toggleStyle(SwitchToggleStyle())
-                    }
-                    .padding(.horizontal)
-                    .onChange(of: freeTrialEnabled) { enabled in
-                        if enabled {
-                            selectedPlan = .weekly
-                        } else {
-                            selectedPlan = .yearly
+                    // Free Trial Toggle (only show if weekly product has free trial)
+                    if let weeklyProduct = subscriptionManager.weeklyProduct,
+                       weeklyProduct.storeProduct.introductoryDiscount != nil {
+                        HStack {
+                            Text(AppStrings.UI.freeTrialEnabled)
+                                .font(.headline)
+                            Spacer()
+                            Toggle("", isOn: $freeTrialEnabled)
+                                .toggleStyle(SwitchToggleStyle())
+                        }
+                        .padding(.horizontal)
+                        .onChange(of: freeTrialEnabled) { enabled in
+                            if enabled {
+                                selectedPlan = .weekly
+                            } else {
+                                selectedPlan = .yearly
+                            }
                         }
                     }
                     
@@ -160,7 +168,7 @@ struct PaywallView: View {
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             } else {
-                                Text(freeTrialEnabled ? AppStrings.UI.tryForFree : AppStrings.UI.continueButton)
+                                Text(getPurchaseButtonText())
                                     .font(.headline)
                                     .fontWeight(.semibold)
                                 
@@ -230,6 +238,14 @@ struct PaywallView: View {
             
             // Fetch offerings when paywall appears
             subscriptionManager.fetchOfferings()
+        }
+        .onReceive(subscriptionManager.$weeklyProduct) { weeklyProduct in
+            // Update free trial state when weekly product loads
+            if let weeklyProduct = weeklyProduct,
+               weeklyProduct.storeProduct.introductoryDiscount != nil {
+                freeTrialEnabled = true
+                selectedPlan = .weekly
+            }
         }
         .onDisappear {
             timer?.invalidate()
@@ -336,6 +352,37 @@ struct PaywallView: View {
         let roundedSavings = Int(savings.rounded())
         
         return "Save \(roundedSavings)%"
+    }
+    
+    /// Get the appropriate purchase button text based on selected plan and trial status
+    private func getPurchaseButtonText() -> String {
+        if selectedPlan == .weekly,
+           let weeklyProduct = subscriptionManager.weeklyProduct,
+           weeklyProduct.storeProduct.introductoryDiscount != nil,
+           freeTrialEnabled {
+            return AppStrings.UI.tryForFree
+        } else {
+            return AppStrings.UI.continueButton
+        }
+    }
+    
+    /// Format the trial period from IntroductoryDiscount
+    private func formatTrialPeriod(_ introDiscount: StoreProductDiscount) -> String? {
+        let period = introDiscount.subscriptionPeriod
+        let numberOfUnits = period.value
+        
+        switch period.unit {
+        case .day:
+            return "\(numberOfUnits)-Day Free Trial"
+        case .week:
+            return "\(numberOfUnits)-Week Free Trial"
+        case .month:
+            return "\(numberOfUnits)-Month Free Trial"
+        case .year:
+            return "\(numberOfUnits)-Year Free Trial"
+        @unknown default:
+            return "Free Trial"
+        }
     }
 }
 
