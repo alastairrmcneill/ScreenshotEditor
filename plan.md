@@ -100,7 +100,7 @@ Display the selected image in the main canvas.
 
 **Description:**
 
-Render "Made with SnapPolish" watermark in bottom-right corner for free users.
+Render "Made with Vanta" watermark in bottom-right corner for free users.
 
 **Acceptance Criteria:**
 
@@ -367,9 +367,9 @@ Log paywall views and purchases in Mixpanel.
 
 ---
 
-## EPIC 8 – ✅ Done Limits & Freemium Logic
+## EPIC 8 – Limits & Freemium Logic
 
-### Story 8.1 – ✅ Done Implement Export Count Tracking
+### Story 8.1 – Implement Export Count Tracking
 
 **Description:**
 Use UserDefaults to track the number of exports done by free users.
@@ -381,7 +381,7 @@ Use UserDefaults to track the number of exports done by free users.
 
 ---
 
-### Story 8.2 – ✅ Done Add Watermark for Free Users Only
+### Story 8.2 – Add Watermark for Free Users Only
 
 **Description:**
 Watermark is visible in canvas and final export for free users.
@@ -393,9 +393,21 @@ Watermark is visible in canvas and final export for free users.
 
 ---
 
-## EPIC 9 – ✅ DoneAnalytics & Event Tracking
+### Story 8.3 – Disable Save Presets for Free Users
 
-### Story 9.1 – ✅ DoneTrack Onboarding Step Views
+**Description:**
+In free version, UI to save style presets is disabled or hidden.
+
+**Acceptance Criteria:**
+
+- Long-press Save Preset disabled or greyed out.
+- Tooltip or alert prompts upgrade.
+
+---
+
+## EPIC 9 – Analytics & Event Tracking
+
+### Story 9.1 – Track Onboarding Step Views
 
 **Description:**
 Log each onboarding slide view in Mixpanel with slide number.
@@ -407,7 +419,7 @@ Log each onboarding slide view in Mixpanel with slide number.
 
 ---
 
-### Story 9.2 – ✅ DoneTrack Export Parameters
+### Story 9.2 – Track Export Parameters
 
 **Description:**
 When user exports, log snapshot of corner radius, padding, shadow, background type.
@@ -419,7 +431,7 @@ When user exports, log snapshot of corner radius, padding, shadow, background ty
 
 ---
 
-### Story 9.3 – ✅ DoneTrack Share Sheet Opens
+### Story 9.3 – ✅ Done Track Share Sheet Opens
 
 **Description:**
 Log when share sheet is presented.
@@ -431,121 +443,9 @@ Log when share sheet is presented.
 
 ---
 
-## EPIC 10 – Final Polish, QA & Compliance
+## **EPIC 10 – RevenueCat Integration & Subscription Logic**
 
-### Story 10.1 – Replace Onboarding Placeholder Text
-
-**Description:**
-Use real reviews and social proof quotes in onboarding Slide 1.
-
-**Acceptance Criteria:**
-
-- Text content reviewed and approved.
-- Star rating UI visible.
-
----
-
-### Story 10.2 – Shadow Value Tuning
-
-**Description:**
-Adjust default shadow blur/opacity based on beta testing feedback.
-
-**Acceptance Criteria:**
-
-- Final values set and documented.
-- QA validated on all test devices.
-
----
-
-### Story 10.3 – QA Device Matrix Testing
-
-**Description:**
-Run final QA on iPhone SE-3 and iPhone 15 Pro Max.
-
-**Acceptance Criteria:**
-
-- All flows function correctly.
-- UI scales appropriately.
-
----
-
-### Story 10.4 – Ensure GDPR/CCPA Compliance
-
-**Description:**
-Validate analytics are anonymous and compliant.
-
-**Acceptance Criteria:**
-
-- No user PII collected.
-- UUID is anonymous and opt-out not required.
-
----
-
-## EPIC 11 – Post-Launch Enhancements
-
-### Story 11.1 – Add iPad & Landscape Layout Support
-
-**Description:**
-Support layout variations for iPad and horizontal orientation.
-
-**Acceptance Criteria:**
-
-- Editor screen adapts to larger layout.
-- Landscape orientation behaves correctly.
-
----
-
-### Story 11.2 – Implement Saved Style Presets (Premium)
-
-**Description:**
-Allow SnapPolish+ users to save and apply custom style presets.
-
-**Acceptance Criteria:**
-
-- Long-press saves style config.
-- Presets UI shows list for reuse.
-
----
-
-### Story 11.3 – Build Multi-Screenshot Collage Tool
-
-**Description:**
-Add functionality to combine multiple screenshots in a layout.
-
-**Acceptance Criteria:**
-
-- User can import 2–4 images.
-- Choose layout (grid, vertical, side-by-side).
-
----
-
-### Story 11.4 – Shortcuts & Siri Intent Integration
-
-**Description:**
-Enable automation for styling and exporting via Shortcuts app.
-
-**Acceptance Criteria:**
-
-- Expose Siri intents.
-- App supports Shortcut actions.
-
----
-
-### Story 11.5 – Push Notification Engagement Flow
-
-**Description:**
-Create a notification flow for engagement and reactivation.
-
-**Acceptance Criteria:**
-
-- User prompted for permission.
-- Notifications triggered by inactivity or new features.
-
----
-
-## **EPIC 12 – RevenueCat Integration & Subscription Logic**
-
-### Story 12.1 – Integrate RevenueCat SDK
+### Story 10.1 – ✅ Done Integrate RevenueCat SDK
 
 **Description:**
 
@@ -559,7 +459,7 @@ Add the RevenueCat Swift SDK to the project and initialize it with the project A
 
 ---
 
-### Story 12.2 – Configure Products in App Store Connect
+### Story 10.2 – ✅ Done Configure Products in App Store Connect
 
 **Description:**
 
@@ -567,13 +467,13 @@ Create in-app purchase products in App Store Connect for `weekly` and `annual` s
 
 **Acceptance Criteria:**
 
-- `com.snapPolish.weekly` and `com.snapPolish.annual` created.
-- Pricing tiers match the spec (£2.99/week, £14.99/year).
+- `com.vanta.weekly` and `com.vanta.annual` created.
+- Pricing tiers match the spec (£2.99/week, £12.99/year).
 - Review notes in App Store Connect include demo account credentials.
 
 ---
 
-### Story 12.3 – Sync Products to RevenueCat Dashboard
+### Story 10.3 – ✅ Done Sync Products to RevenueCat Dashboard
 
 **Description:**
 
@@ -587,11 +487,26 @@ Link the App Store Connect products to RevenueCat offerings.
 
 ---
 
-### Story 12.4 – Fetch Products & Offerings in App
+### Story 10.4 - Update Paywall visuals
+
+Update the paywall visuals to have the right placeholder items, such as hero image, headline, bullet points, plans, purchase button, text buttons for documents and cooldown timer exit button. The plans should have 2 options and the user can switch between them with only one selected at once. There should also be a Free Trial Enabled toggle which when it is True it selects the weekly plan buttton and when it is false it selects the yearly plan button. This toggle will be controlled by the plan buttons as well as controlling the plan buttons. It will also control the text on the purchase button between "Try for free" and "Continue". The actual plans and purchasing logic will be implemented in a later story.
+
+**Acceptance Criteria:**
+
+- Hero image at the top
+- Headline text below
+- Feature list with icons and text
+- Payment plan buttons
+- Free trial toggle
+- Purchase button
+- Cooldown timer exit button
+- Text buttons for documents
+
+### Story 10.5 – Fetch Products & Offerings in App
 
 **Description:**
 
-Use RevenueCat API to fetch available offerings for display in the paywall.
+Use RevenueCat API to fetch available offerings for display in the paywall payment plan options. These should also be printed to the console for debugging.
 
 **Acceptance Criteria:**
 
@@ -600,7 +515,7 @@ Use RevenueCat API to fetch available offerings for display in the paywall.
 
 ---
 
-### Story 12.5 – Implement Purchase Flow
+### Story 10.6 – Implement Purchase Flow
 
 **Description:**
 
@@ -608,13 +523,13 @@ Call RevenueCat purchase methods from the paywall “Continue” button.
 
 **Acceptance Criteria:**
 
-- Successful purchase unlocks SnapPolish+ instantly.
+- Successful purchase unlocks Vanta premium instantly.
 - Purchases handled gracefully if interrupted or cancelled.
 - Error handling shows user-friendly messages.
 
 ---
 
-### Story 12.6 – Restore Purchases Logic
+### Story 10.7 – Restore Purchases Logic
 
 **Description:**
 
@@ -628,11 +543,11 @@ Allow users to restore existing subscriptions from the paywall footer link.
 
 ---
 
-### Story 12.7 – RevenueCat Entitlement Check
+### Story 10.8 – RevenueCat Entitlement Check
 
 **Description:**
 
-Control app features based on active entitlements.
+Control app features based on active entitlements. When the app loads up I want it to print out the users current entitlements and if they change at any point I want this updated in state. Show this on the import screen of the app. If the user has access to premium they have unlimited exports and no watermark on the screenshots.
 
 **Acceptance Criteria:**
 
@@ -641,11 +556,17 @@ Control app features based on active entitlements.
 
 ---
 
----
+### Story 10.9 - Paywall cooldown timer
 
-## **EPIC 13 – Subscription Compliance & App Review Readiness**
+I don't want it to be a hard paywall, but I do want to break their flow. In the top right hand corner of the paywall there should be an exit button, but this button should have a 2 second cool down timer. When the paywall is displayed I want it to start filling in a circular ring and then when it is completed replace it with a grey cross and when the user taps that button it exits the paywall.
 
-### Story 13.1 – Add Terms of Use & Privacy Policy Pages
+**Acceptance Criteria:**
+
+- Exit button with 2 second cooldown
+
+## **EPIC 11 – Subscription Compliance & App Review Readiness**
+
+### Story 11.1 – Add Terms of Use & Privacy Policy Pages
 
 **Description:**
 
@@ -659,7 +580,7 @@ Create hosted URLs for Terms and Privacy Policy, and link them in the paywall an
 
 ---
 
-### Story 13.2 – Update App Store Connect Metadata
+### Story 11.2 – Update App Store Connect Metadata
 
 **Description:**
 
@@ -673,7 +594,7 @@ Ensure App Store Connect listing contains required subscription information.
 
 ---
 
-### Story 13.3 – Display Subscription Terms on Paywall
+### Story 11.3 – Display Subscription Terms on Paywall
 
 **Description:**
 
@@ -690,7 +611,7 @@ Apple requires clear display of pricing, billing period, auto-renewal terms, and
 
 ---
 
-### Story 13.4 – Localize Subscription Terms
+### Story 11.4 – Localize Subscription Terms
 
 **Description:**
 
@@ -703,7 +624,7 @@ Localize the subscription terms and pricing for all supported App Store regions.
 
 ---
 
-### Story 13.5 – Test Purchase & Restore in Sandbox
+### Story 11.5 – Test Purchase & Restore in Sandbox
 
 **Description:**
 
@@ -717,7 +638,7 @@ Validate the subscription flow with Apple’s sandbox environment.
 
 ---
 
-### Story 13.6 – App Review Test Account Setup
+### Story 11.6 – App Review Test Account Setup
 
 **Description:**
 
@@ -730,9 +651,9 @@ Prepare Apple’s reviewer with test account credentials.
 
 ---
 
-## **EPIC 14 – Analytics for Subscription Funnel & Paywall Events**
+## **EPIC 12 – Analytics for Subscription Funnel & Paywall Events**
 
-### Story 14.1 – Track Paywall Exposure & Attention Events
+### Story 12.1 – Track Paywall Exposure & Attention Events
 
 **Description:**
 
@@ -749,7 +670,7 @@ Fire events when the paywall is shown to the user, including placement and sessi
 
 ---
 
-### Story 14.2 – Track Interest & Optioning Actions
+### Story 12.2 – Track Interest & Optioning Actions
 
 **Description:**
 
@@ -765,7 +686,7 @@ Log when the user shows intent by selecting an option or pressing the CTA.
 
 ---
 
-### Story 14.3 – Track Checkout & Purchase Lifecycle
+### Story 12.3 – Track Checkout & Purchase Lifecycle
 
 **Description:**
 
@@ -783,7 +704,7 @@ Log events from store sheet presentation to confirmed purchase or failure.
 
 ---
 
-### Story 14.4 – Track Dismissal & Outcome Events
+### Story 12.4 – Track Dismissal & Outcome Events
 
 **Description:**
 
@@ -796,3 +717,50 @@ Capture how the paywall session ends, whether purchased or dismissed.
   - Properties:
     - `outcome` (enum: `purchased`, `dismissed`, `backgrounded`, `terminated`, `navigated_elsewhere`, `error`)
     - `selected_product_id` (nullable)
+
+---
+
+## EPIC 13 – Post-Launch Enhancements
+
+### Story 13.1 – Add iPad & Landscape Layout Support
+
+**Description:**
+Support layout variations for iPad and horizontal orientation.
+
+**Acceptance Criteria:**
+
+- Editor screen adapts to larger layout.
+- Landscape orientation behaves correctly.
+
+---
+
+### Story 13.2 – Implement Saved Style Presets (Premium)
+
+**Description:**
+Allow Vanta+ users to save and apply custom style presets.
+
+**Acceptance Criteria:**
+
+- Long-press saves style config.
+- Presets UI shows list for reuse.
+
+---
+
+### Story 13.3 – Build Multi-Screenshot Collage Tool
+
+**Description:**
+Add functionality to combine multiple screenshots in a layout.
+
+**Acceptance Criteria:**
+
+- User can import 2–4 images.
+- Choose layout (grid, vertical, side-by-side).
+
+---
+
+### Story 13.4 – Shortcuts & Siri Intent Integration
+
+**Description:**
+Enable automation for styling and exporting via Shortcuts app.
+
+**Acceptance Criteria:**
