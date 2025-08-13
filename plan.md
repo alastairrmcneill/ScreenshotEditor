@@ -489,7 +489,7 @@ Link the App Store Connect products to RevenueCat offerings.
 
 ### Story 10.4 - Update Paywall visuals
 
-Update the paywall visuals to have the right placeholder items, such as hero image, headline, bullet points, plans, purchase button, text buttons for documents and cooldown timer exit button. The plans should have 2 options and the user can switch between them with only one selected at once. There should also be a Free Trial Enabled toggle which when it is True it selects the weekly plan buttton and when it is false it selects the yearly plan button. This toggle will be controlled by the plan buttons as well as controlling the plan buttons. It will also control the text on the purchase button between "Try for free" and "Continue". The actual plans and purchasing logic will be implemented in a later story.
+Update the paywall visuals to have the right placeholder items, such as hero image, headline, bullet points, plans, purchase button, text buttons for documents and an exit button in the top right corner. The plans should have 2 options and the user can switch between them with only one selected at once. There should also be a Free Trial Enabled toggle which when it is True it selects the weekly plan buttton and when it is false it selects the yearly plan button. This toggle will be controlled by the plan buttons as well as controlling the plan buttons. It will also control the text on the purchase button between "Try for free" and "Continue". The actual plans and purchasing logic will be implemented in a later story.
 
 **Acceptance Criteria:**
 
@@ -499,7 +499,7 @@ Update the paywall visuals to have the right placeholder items, such as hero ima
 - Payment plan buttons
 - Free trial toggle
 - Purchase button
-- Cooldown timer exit button
+- Exit button
 - Text buttons for documents
 
 ### Story 10.5 – Fetch Products & Offerings in App
