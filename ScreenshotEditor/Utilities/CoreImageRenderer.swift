@@ -60,22 +60,26 @@ class CoreImageRenderer {
         
         // For live preview, also apply background and padding if padding > 0
         if parameters.padding > 0 {
+            // Store the image size BEFORE applying shadow for proper centering
+            let imageSizeForCentering = processedImage.extent.size
+            
             // Apply shadow to the foreground image if enabled (before compositing)
             var foregroundImage = processedImage
             if parameters.shadowEnabled {
                 foregroundImage = applyShadow(to: foregroundImage, parameters: parameters)
             }
             
-            // Calculate canvas size based on processed image size and parameters
-            let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
+            // Calculate canvas size based on processed image size (before shadow) and parameters
+            let canvasSize = calculateCanvasSizeForImageSize(imageSizeForCentering, parameters: parameters)
             
             // Create background
             let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
             
-            // Composite image onto background with padding - center based on actual image size
+            // Composite image onto background with padding - center based on original image size (before shadow)
             processedImage = compositeImageOnBackground(
                 foreground: foregroundImage,
                 background: backgroundImage,
+                originalSize: imageSizeForCentering,
                 parameters: parameters
             )
             
@@ -112,21 +116,25 @@ class CoreImageRenderer {
             processedImage = applyCornerRadius(to: processedImage, radius: parameters.cornerRadius)
         }
         
+        // Store the image size BEFORE applying shadow for proper centering
+        let imageSizeForCentering = processedImage.extent.size
+        
         // Apply shadow to the foreground image if enabled (before compositing)
         if parameters.shadowEnabled {
             processedImage = applyShadow(to: processedImage, parameters: parameters)
         }
         
-        // Calculate canvas size based on processed (cropped) image size and parameters
-        let canvasSize = calculateCanvasSize(for: processedImage, parameters: parameters)
+        // Calculate canvas size based on processed (cropped) image size (before shadow) and parameters
+        let canvasSize = calculateCanvasSizeForImageSize(imageSizeForCentering, parameters: parameters)
         
         // Create background
         let backgroundImage = createBackground(size: canvasSize, parameters: parameters)
         
-        // Composite image onto background with padding - center based on actual image size
+        // Composite image onto background with padding - center based on original image size (before shadow)
         let compositedImage = compositeImageOnBackground(
             foreground: processedImage,
             background: backgroundImage,
+            originalSize: imageSizeForCentering,
             parameters: parameters
         )
         
@@ -238,6 +246,57 @@ class CoreImageRenderer {
                     // Need to expand width to maintain aspect ratio while fitting image
                     canvasWidth = minCanvasHeight * aspectRatio
                     canvasHeight = minCanvasHeight
+                }
+            }
+        }
+        
+        return CGSize(width: canvasWidth, height: canvasHeight)
+    }
+    
+    private func calculateCanvasSizeForImageSize(_ imageSize: CGSize, parameters: ImageEditingParameters) -> CGSize {
+        let padding = parameters.padding * 2 // Padding on all sides
+        
+        // Calculate minimum canvas size to fit the image with padding
+        let minCanvasWidth = imageSize.width + padding
+        let minCanvasHeight = imageSize.height + padding
+        
+        var canvasWidth = minCanvasWidth
+        var canvasHeight = minCanvasHeight
+        
+        // Apply aspect ratio constraints while ensuring the image always fits
+        if let aspectRatio = parameters.aspectRatio.ratio {
+            if aspectRatio == 1.0 {
+                // Square - use the larger dimension to ensure image fits
+                let maxDimension = max(minCanvasWidth, minCanvasHeight)
+                canvasWidth = maxDimension
+                canvasHeight = maxDimension
+            } else if aspectRatio > 1.0 {
+                // Landscape aspect ratio (e.g., 16:9)
+                // Calculate what height would be needed for this width
+                let requiredHeight = minCanvasWidth / aspectRatio
+                
+                if requiredHeight >= minCanvasHeight {
+                    // We can achieve the aspect ratio with minimum dimensions
+                    canvasWidth = minCanvasWidth
+                    canvasHeight = requiredHeight
+                } else {
+                    // Need to expand width to maintain aspect ratio while fitting image
+                    canvasWidth = minCanvasHeight * aspectRatio
+                    canvasHeight = minCanvasHeight
+                }
+            } else {
+                // Portrait aspect ratio (e.g., 9:16)
+                // Calculate what width would be needed for this height
+                let requiredWidth = minCanvasHeight * aspectRatio
+                
+                if requiredWidth >= minCanvasWidth {
+                    // We can achieve the aspect ratio with minimum dimensions
+                    canvasWidth = requiredWidth
+                    canvasHeight = minCanvasHeight
+                } else {
+                    // Need to expand height to maintain aspect ratio while fitting image
+                    canvasWidth = minCanvasWidth
+                    canvasHeight = minCanvasWidth / aspectRatio
                 }
             }
         }

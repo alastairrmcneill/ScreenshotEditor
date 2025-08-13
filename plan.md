@@ -263,7 +263,7 @@ Provide 4 options: 1:1, 9:16, 16:9, Free. Applies only to background area.
 
 ---
 
-## EPIC 6 – Exporting & Share Sheet
+## EPIC 6 – ✅ Done Exporting & Share Sheet
 
 ### Story 6.1 – ✅ Done Add Share Button and UIActivityViewController
 
