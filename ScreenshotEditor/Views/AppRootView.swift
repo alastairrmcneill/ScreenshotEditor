@@ -13,15 +13,15 @@ struct AppRootView: View {
     
     var body: some View {
         Group {
-            if hasCompletedOnboarding {
-                ContentView()
-            } else {
+//            if hasCompletedOnboarding {
+//                ContentView()
+//            } else {
                 OnboardingFlowView {
                     // Called when onboarding is completed
                     withAnimation(.easeInOut(duration: 0.5)) {
                         hasCompletedOnboarding = true
                     }
-                }
+//                }
             }
         }
     }
