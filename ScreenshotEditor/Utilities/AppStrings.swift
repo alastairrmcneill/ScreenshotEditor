@@ -47,6 +47,23 @@ struct AppStrings {
         static let unlimitedExports = "• Unlimited exports"
         static let noWatermark = "• No watermark"
         static let restorePurchases = "Restore Purchases"
+        
+        // New Paywall
+        static let unlimitedAccess = "Unlimited Access"
+        static let identifyUnlimitedFish = "Identify unlimited fish species"
+        static let unlockExpertTips = "Unlock expert bait & catch tips"
+        static let locationInsights = "Get location-based fishing insights"
+        static let cookingTips = "Plus cooking tips & serving ideas"
+        static let yearlyPlan = "Yearly Plan"
+        static let threeDayTrial = "3-Day Trial"
+        static let thenWeekly = "then £4.99 per week"
+        static let save90Percent = "SAVE 90%"
+        static let freeBadge = "FREE"
+        static let freeTrialEnabled = "Free Trial Enabled"
+        static let tryForFree = "Try for Free"
+        static let continueButton = "Continue"
+        static let restore = "Restore"
+        static let termsAndPrivacy = "Terms of Use & Privacy Policy"
     }
     
     // MARK: - Analytics Events

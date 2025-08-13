@@ -65,7 +65,7 @@ struct OnboardingFlowView: View {
                     })
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 case .paywall:
-                    PaywallStep(action: finishOnboarding)
+                    PaywallView(isPresented: .constant(true), onUpgrade: finishOnboarding)
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 }
             }
@@ -428,113 +428,6 @@ private struct PhotoAccessStep: View {
             showSettingsAlert = true
         @unknown default:
             break
-        }
-    }
-}
-
-// MARK: - Paywall Step
-private struct PaywallStep: View {
-    var action: () -> Void
-    
-    var body: some View {
-        ZStack {
-            // Gradient background
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(.systemGroupedBackground),
-                    Color(.systemBackground)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                Spacer(minLength: 60)
-                
-                // Premium icon
-                Image(systemName: "crown.fill")
-                    .font(.system(size: 80))
-                    .foregroundColor(.yellow)
-                    .padding(.bottom, 32)
-                
-                // Headline
-                Text("Unlock Premium")
-                    .font(.system(size: 32, weight: .bold))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .padding(.bottom, 16)
-                
-                // Subheadline
-                Text("Get unlimited exports, remove watermarks, and access all premium features")
-                    .font(.system(size: 18, weight: .regular))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 48)
-                
-                // Premium features list
-                VStack(spacing: 20) {
-                    FeatureHighlight(
-                        icon: "infinity",
-                        title: "Unlimited Exports",
-                        description: "Save as many screenshots as you want"
-                    )
-                    
-                    FeatureHighlight(
-                        icon: "drop.fill",
-                        title: "No Watermarks",
-                        description: "Clean, professional results"
-                    )
-                    
-                    FeatureHighlight(
-                        icon: "star.fill",
-                        title: "Premium Styles",
-                        description: "Access to exclusive backgrounds and effects"
-                    )
-                }
-                .padding(.bottom, 48)
-                
-                Spacer()
-                
-                VStack(spacing: 12) {
-                    // Subscribe Button
-                    Button(action: {
-                        AnalyticsManager.shared.track(AppStrings.Analytics.onboardingPaywallSubscribeTapped)
-                        // TODO: Implement actual subscription logic
-                        action()
-                    }) {
-                        Text("Start Free Trial")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.accentColor)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    .padding(.horizontal, 24)
-                    
-                    // Continue with free version
-                    Button(action: {
-                        AnalyticsManager.shared.track(AppStrings.Analytics.onboardingPaywallContinueFreeTapped)
-                        action()
-                    }) {
-                        Text("Continue with Free Version")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.systemGray5))
-                            .foregroundColor(.accentColor)
-                            .cornerRadius(12)
-                    }
-                    .padding(.horizontal, 24)
-                }
-                .padding(.bottom, 60)
-            }
-        }
-        .onAppear { 
-            print("Onboarding: Step 3 (Paywall) appeared.")
-            AnalyticsManager.shared.track(AppStrings.Analytics.onboardingPaywallViewed)
         }
     }
 }

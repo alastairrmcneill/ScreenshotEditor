@@ -29,7 +29,8 @@ class UserDefaultsManager {
     /// Indicates whether the user has completed the onboarding flow
     var hasCompletedOnboarding: Bool {
         get {
-            return userDefaults.bool(forKey: Keys.onboardingCompleted)
+            // Always return false for testing - forces onboarding on every launch
+            return false // return userDefaults.bool(forKey: Keys.onboardingCompleted)
         }
         set {
             userDefaults.set(newValue, forKey: Keys.onboardingCompleted)
@@ -51,7 +52,7 @@ class UserDefaultsManager {
     /// The number of exports performed by free users
     var freeExportCount: Int {
         get {
-            return userDefaults.integer(forKey: Keys.freeExportCount)
+            return 3 // userDefaults.integer(forKey: Keys.freeExportCount)
         }
         set {
             userDefaults.set(newValue, forKey: Keys.freeExportCount)
@@ -73,7 +74,7 @@ class UserDefaultsManager {
     /// Indicates whether the user has an active subscription
     var isSubscribed: Bool {
         get {
-            return userDefaults.bool(forKey: Keys.isSubscribed)
+            return false //userDefaults.bool(forKey: Keys.isSubscribed)
         }
         set {
             userDefaults.set(newValue, forKey: Keys.isSubscribed)
@@ -97,7 +98,7 @@ class UserDefaultsManager {
         isSubscribed = false
         hasShownReviewPrompt = false
     }
-    
+
     // MARK: - Review Prompt
     
     /// Indicates whether the user has been shown the review prompt

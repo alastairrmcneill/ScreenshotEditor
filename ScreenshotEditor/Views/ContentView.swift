@@ -204,19 +204,18 @@ struct ContentView: View {
                 .transition(.opacity)
             }
             
-            // Paywall Overlay
-            if showingPaywall {
-                PaywallView(isPresented: $showingPaywall) {
-                    // For now, just toggle subscription status for testing
-                    // In a real app, this would trigger StoreKit purchase flow
-                    UserDefaultsManager.shared.setSubscribed(true)
-                    showingPaywall = false
-                }
-            }
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
             Task {
                 await loadSelectedImage(from: newItem)
+            }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView(isPresented: $showingPaywall) {
+                // For now, just toggle subscription status for testing
+                // In a real app, this would trigger StoreKit purchase flow
+                UserDefaultsManager.shared.setSubscribed(true)
+                showingPaywall = false
             }
         }
         .sheet(isPresented: $showingShareSheet) {
