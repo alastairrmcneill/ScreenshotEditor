@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Photos
 
 @main
 struct ScreenshotEditorApp: App {
@@ -25,26 +24,7 @@ struct ScreenshotEditorApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .onAppear {
-                    // Request photos permission on app launch
-                    PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-                        DispatchQueue.main.async {
-                            switch status {
-                            case .authorized:
-                                print("Photos access granted")
-                            case .limited:
-                                print("Limited photos access granted")
-                            case .denied, .restricted:
-                                print("Photos access denied")
-                            case .notDetermined:
-                                print("Photos access not determined")
-                            @unknown default:
-                                print("Unknown photos access status")
-                            }
-                        }
-                    }
-                }
+            AppRootView()
         }
     }
 }

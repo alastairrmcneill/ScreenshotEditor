@@ -314,22 +314,24 @@ Prompt user for a review after their first successful export.
 
 ---
 
-## EPIC 7 – Onboarding & Paywall Flow
+## EPIC 7 – ✅ Done Onboarding & Paywall Flow
 
-### Story 7.1 – Build 4-Slide Onboarding Sequence
+### Story 7.1 – ✅ Done Build 4-Slide Onboarding Sequence
 
 **Description:**
-Present 4 full-screen slides explaining app, demoing features, requesting access, and presenting the paywall.
+Present 4 full-screen slides welcome screen, demoing features, requesting access, and presenting the paywall. A linear progress bar should show progress through the onboarding but shouldn't show on the first page. One the second and third pages it should be showing 33% and 67% respectively. it shouldn't be shown on the paywall. This paywall will be implemented later. The linear progress bar should be consistent between the second and third screens and not transition, only the content of the pages transition. This should be shown on first open and only shown again on open if the user doesn't complete the onboarding. By finishing slide 3 this counts as completing the onboarding.
 
 **Acceptance Criteria:**
 
 - Slides swipe horizontally.
+- Linear progress bar that is consistent across the 2nd and third screens showing 33% and 67% respectively. The
 - No skip allowed.
-- Slide 4 = paywall.
+- Placeholder pages
+- Complete onbaording flow slide 3 to mark it as completed and not show again
 
 ---
 
-### Story 7.2 – Implement Photo Access Request
+### Story 7.2 – ✅ Done Implement Photo Access Request
 
 **Description:**
 On slide 3, request photo library access using Apple’s privacy prompt.
@@ -341,7 +343,7 @@ On slide 3, request photo library access using Apple’s privacy prompt.
 
 ---
 
-### Story 7.3 – Present Paywall Screen
+### Story 7.3 – ✅ Done Present Paywall Screen
 
 **Description:**
 Show paywall with annual preselected and weekly alternative. Terms, Privacy, Restore in footer.
@@ -353,7 +355,7 @@ Show paywall with annual preselected and weekly alternative. Terms, Privacy, Res
 
 ---
 
-### Story 7.4 – Track Paywall Impressions and Conversions
+### Story 7.4 – ✅ Done Track Paywall Impressions and Conversions
 
 **Description:**
 Log paywall views and purchases in Mixpanel.
@@ -550,3 +552,259 @@ Create a notification flow for engagement and reactivation.
 
 - User prompted for permission.
 - Notifications triggered by inactivity or new features.
+
+---
+
+## **EPIC 12 – RevenueCat Integration & Subscription Logic**
+
+### Story 12.1 – Integrate RevenueCat SDK
+
+**Description:**
+
+Add the RevenueCat Swift SDK to the project and initialize it with the project API key.
+
+**Acceptance Criteria:**
+
+- RevenueCat SDK imported via Swift Package Manager.
+- App initializes SDK on launch with the correct API key.
+- Debug logging enabled for development builds.
+
+---
+
+### Story 12.2 – Configure Products in App Store Connect
+
+**Description:**
+
+Create in-app purchase products in App Store Connect for `weekly` and `annual` subscriptions.
+
+**Acceptance Criteria:**
+
+- `com.snapPolish.weekly` and `com.snapPolish.annual` created.
+- Pricing tiers match the spec (£2.99/week, £14.99/year).
+- Review notes in App Store Connect include demo account credentials.
+
+---
+
+### Story 12.3 – Sync Products to RevenueCat Dashboard
+
+**Description:**
+
+Link the App Store Connect products to RevenueCat offerings.
+
+**Acceptance Criteria:**
+
+- One offering (`default`) created.
+- `default` contains both weekly and annual packages.
+- Annual package pre-selected in UI.
+
+---
+
+### Story 12.4 – Fetch Products & Offerings in App
+
+**Description:**
+
+Use RevenueCat API to fetch available offerings for display in the paywall.
+
+**Acceptance Criteria:**
+
+- Paywall dynamically loads prices from RevenueCat.
+- Prices and localized currency symbols match user’s App Store region.
+
+---
+
+### Story 12.5 – Implement Purchase Flow
+
+**Description:**
+
+Call RevenueCat purchase methods from the paywall “Continue” button.
+
+**Acceptance Criteria:**
+
+- Successful purchase unlocks SnapPolish+ instantly.
+- Purchases handled gracefully if interrupted or cancelled.
+- Error handling shows user-friendly messages.
+
+---
+
+### Story 12.6 – Restore Purchases Logic
+
+**Description:**
+
+Allow users to restore existing subscriptions from the paywall footer link.
+
+**Acceptance Criteria:**
+
+- Tapping “Restore” calls RevenueCat restore method.
+- On success, premium features unlock without repurchase.
+- Failure states handled with alerts.
+
+---
+
+### Story 12.7 – RevenueCat Entitlement Check
+
+**Description:**
+
+Control app features based on active entitlements.
+
+**Acceptance Criteria:**
+
+- Free vs premium logic uses `customerInfo.entitlements`.
+- Entitlements refreshed on app launch and after purchase/restore.
+
+---
+
+---
+
+## **EPIC 13 – Subscription Compliance & App Review Readiness**
+
+### Story 13.1 – Add Terms of Use & Privacy Policy Pages
+
+**Description:**
+
+Create hosted URLs for Terms and Privacy Policy, and link them in the paywall and settings.
+
+**Acceptance Criteria:**
+
+- Terms of Use hosted on a public HTTPS URL.
+- Privacy Policy hosted on a public HTTPS URL.
+- Footer links open in in-app Safari view.
+
+---
+
+### Story 13.2 – Update App Store Connect Metadata
+
+**Description:**
+
+Ensure App Store Connect listing contains required subscription information.
+
+**Acceptance Criteria:**
+
+- “In-App Purchases” section populated with both products.
+- “What’s New” and description mention free export limit and premium unlock.
+- Privacy URL and Terms URL fields set.
+
+---
+
+### Story 13.3 – Display Subscription Terms on Paywall
+
+**Description:**
+
+Apple requires clear display of pricing, billing period, auto-renewal terms, and trial details.
+
+**Acceptance Criteria:**
+
+- Below “Continue” button, text shows:
+  - Price and billing frequency.
+  - Auto-renewal until cancelled.
+  - Trial details (3-day trial on weekly plan).
+  - Instructions to cancel via Apple ID settings.
+- Font is legible and WCAG-compliant.
+
+---
+
+### Story 13.4 – Localize Subscription Terms
+
+**Description:**
+
+Localize the subscription terms and pricing for all supported App Store regions.
+
+**Acceptance Criteria:**
+
+- Strings use `NSLocalizedString`.
+- Prices pulled dynamically from RevenueCat (localized).
+
+---
+
+### Story 13.5 – Test Purchase & Restore in Sandbox
+
+**Description:**
+
+Validate the subscription flow with Apple’s sandbox environment.
+
+**Acceptance Criteria:**
+
+- New purchases succeed in sandbox.
+- Restores succeed with an existing subscription.
+- Cancelling subscription in sandbox updates entitlement status.
+
+---
+
+### Story 13.6 – App Review Test Account Setup
+
+**Description:**
+
+Prepare Apple’s reviewer with test account credentials.
+
+**Acceptance Criteria:**
+
+- Demo iCloud account with sample screenshots provided in Review Notes.
+- Clear instructions for triggering paywall and testing purchase/restore.
+
+---
+
+## **EPIC 14 – Analytics for Subscription Funnel & Paywall Events**
+
+### Story 14.1 – Track Paywall Exposure & Attention Events
+
+**Description:**
+
+Fire events when the paywall is shown to the user, including placement and session metadata.
+
+**Acceptance Criteria:**
+
+- Event `paywall_shown` fires when the first frame of the paywall is fully visible.
+- Properties:
+  - `paywall_session_id` (UUID, unique per paywall presentation)
+  - `placement` (enum: `onboarding_gate`, `feature_lock`, `upsell_modal`, `tab_premium`, `exit_intent`, `paywalled_content`)
+  - `entry_point` (string, previous screen or triggering action)
+- Event payload sent to Mixpanel in real time.
+
+---
+
+### Story 14.2 – Track Interest & Optioning Actions
+
+**Description:**
+
+Log when the user shows intent by selecting an option or pressing the CTA.
+
+**Acceptance Criteria:**
+
+- Event `paywall_option_selected` fires when user taps a product/tier option.
+- Event `paywall_cta_tapped` fires when user presses the main CTA.
+- Properties for `paywall_cta_tapped`:
+  - `cta_label` (enum: `start_trial`, `continue`, `subscribe`, `buy_now`)
+  - `product_id` (string for selected product)
+
+---
+
+### Story 14.3 – Track Checkout & Purchase Lifecycle
+
+**Description:**
+
+Log events from store sheet presentation to confirmed purchase or failure.
+
+**Acceptance Criteria:**
+
+- Event `checkout_started` fires when native store sheet or web checkout opens.
+  - Properties: `product_id`, `billing_period`, `price`, `currency`
+  - `intro_offer_applied` (bool), `trial_days` (int)
+- Event `purchase_attempted` fires when user confirms in store.
+- Event `purchase_succeeded` fires after definitive success (post-Receipt validation via RevenueCat if available).
+  - Properties: `is_trial_start` (bool), `trial_days` (int), `intro_offer_applied` (bool)
+- Event `purchase_failed` fires on explicit decline or error.
+
+---
+
+### Story 14.4 – Track Dismissal & Outcome Events
+
+**Description:**
+
+Capture how the paywall session ends, whether purchased or dismissed.
+
+**Acceptance Criteria:**
+
+- Event `paywall_dismissed` fires if user closes paywall without purchase.
+- Event `paywall_outcome` fires exactly once per `paywall_session_id`.
+  - Properties:
+    - `outcome` (enum: `purchased`, `dismissed`, `backgrounded`, `terminated`, `navigated_elsewhere`, `error`)
+    - `selected_product_id` (nullable)

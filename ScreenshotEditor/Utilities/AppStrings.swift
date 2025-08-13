@@ -69,6 +69,18 @@ struct AppStrings {
         static let paywallDismissed = "Paywall Dismissed"
         static let paywallUpgradeClicked = "Paywall Upgrade Clicked"
         static let reviewPromptShown = "Review Prompt Shown"
+        
+        // Onboarding events
+        static let onboardingStarted = "onboarding_started"
+        static let onboardingCompleted = "onboarding_completed"
+        static let onboardingWelcomeViewed = "onboarding_welcome_viewed"
+        static let onboardingFeaturesViewed = "onboarding_features_viewed"
+        static let onboardingPhotoAccessViewed = "onboarding_photo_access_viewed"
+        static let onboardingPhotoPermissionGranted = "onboarding_photo_permission_granted"
+        static let onboardingPhotoPermissionDenied = "onboarding_photo_permission_denied"
+        static let onboardingPaywallViewed = "onboarding_paywall_viewed"
+        static let onboardingPaywallSubscribeTapped = "onboarding_paywall_subscribe_tapped"
+        static let onboardingPaywallContinueFreeTapped = "onboarding_paywall_continue_free_tapped"
     }
     
     // MARK: - Analytics Properties
