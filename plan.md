@@ -367,9 +367,9 @@ Log paywall views and purchases in Mixpanel.
 
 ---
 
-## EPIC 8 – Limits & Freemium Logic
+## EPIC 8 – ✅ Done Limits & Freemium Logic
 
-### Story 8.1 – Implement Export Count Tracking
+### Story 8.1 – ✅ Done Implement Export Count Tracking
 
 **Description:**
 Use UserDefaults to track the number of exports done by free users.
@@ -381,7 +381,7 @@ Use UserDefaults to track the number of exports done by free users.
 
 ---
 
-### Story 8.2 – Add Watermark for Free Users Only
+### Story 8.2 – ✅ Done Add Watermark for Free Users Only
 
 **Description:**
 Watermark is visible in canvas and final export for free users.
@@ -393,21 +393,9 @@ Watermark is visible in canvas and final export for free users.
 
 ---
 
-### Story 8.3 – Disable Save Presets for Free Users
+## EPIC 9 – ✅ DoneAnalytics & Event Tracking
 
-**Description:**
-In free version, UI to save style presets is disabled or hidden.
-
-**Acceptance Criteria:**
-
-- Long-press Save Preset disabled or greyed out.
-- Tooltip or alert prompts upgrade.
-
----
-
-## EPIC 9 – Analytics & Event Tracking
-
-### Story 9.1 – Track Onboarding Step Views
+### Story 9.1 – ✅ DoneTrack Onboarding Step Views
 
 **Description:**
 Log each onboarding slide view in Mixpanel with slide number.
@@ -419,7 +407,7 @@ Log each onboarding slide view in Mixpanel with slide number.
 
 ---
 
-### Story 9.2 – Track Export Parameters
+### Story 9.2 – ✅ DoneTrack Export Parameters
 
 **Description:**
 When user exports, log snapshot of corner radius, padding, shadow, background type.
@@ -431,7 +419,7 @@ When user exports, log snapshot of corner radius, padding, shadow, background ty
 
 ---
 
-### Story 9.3 – Track Share Sheet Opens
+### Story 9.3 – ✅ DoneTrack Share Sheet Opens
 
 **Description:**
 Log when share sheet is presented.

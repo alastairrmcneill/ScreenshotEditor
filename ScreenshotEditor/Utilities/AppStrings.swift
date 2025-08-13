@@ -81,6 +81,9 @@ struct AppStrings {
         static let onboardingPaywallViewed = "onboarding_paywall_viewed"
         static let onboardingPaywallSubscribeTapped = "onboarding_paywall_subscribe_tapped"
         static let onboardingPaywallContinueFreeTapped = "onboarding_paywall_continue_free_tapped"
+        
+        // Share sheet tracking
+        static let shareSheetOpened = "Share Sheet Opened"
     }
     
     // MARK: - Analytics Properties
@@ -92,6 +95,14 @@ struct AppStrings {
         static let exportCount = "export_count"
         static let isSubscribed = "is_subscribed"
         static let exportLimitReason = "export_limit_reason"
+        
+        // Export parameters
+        static let cornerRadius = "corner_radius"
+        static let padding = "padding"
+        static let shadowOpacity = "shadow_opacity"
+        static let shadowBlur = "shadow_blur"
+        static let backgroundType = "background_type"
+        static let aspectRatio = "aspect_ratio"
     }
     
     // MARK: - Debug Messages

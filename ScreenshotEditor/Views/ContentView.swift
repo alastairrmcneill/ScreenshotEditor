@@ -306,7 +306,13 @@ struct ContentView: View {
             
             AnalyticsManager.shared.track(AppStrings.Analytics.exportCompleted, properties: [
                 AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
-                AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed
+                AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed,
+                AppStrings.AnalyticsProperties.cornerRadius: Double(editingViewModel.parameters.cornerRadius),
+                AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
+                AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
+                AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
+                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? "solid" : "gradient",
+                AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue
             ])
             AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
             
@@ -315,6 +321,18 @@ struct ContentView: View {
             
             // End loading state and show share sheet
             isGeneratingShareImage = false
+            
+            // Track share sheet opening with current editing state
+            AnalyticsManager.shared.track(AppStrings.Analytics.shareSheetOpened, properties: [
+                AppStrings.AnalyticsProperties.cornerRadius: Double(editingViewModel.parameters.cornerRadius),
+                AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
+                AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
+                AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
+                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? "solid" : "gradient",
+                AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue,
+                AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed
+            ])
+            
             showingShareSheet = true
         } else {
             // End loading state if generation failed
