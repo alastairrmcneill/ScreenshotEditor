@@ -33,29 +33,41 @@ struct PaywallView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Hero Image
-                    VStack {
-                        // Hero image from assets
-                        Image("PaywallHero")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 200)
-                            .clipped()
+                    // Header with Animated App Icon and Exit Button
+                    HStack {
+                        Spacer()
                         
-                        // Decorative bubbles effect
-                        ZStack {
-                            ForEach(0..<8, id: \.self) { _ in
+                        AnimatedAppIconView()
+                            .frame(width: 200, height: 200)
+                        
+                        Spacer()
+                        
+                        VStack {
+                            if !showCloseButton {
                                 Circle()
-                                    .fill(Color.blue.opacity(0.2))
-                                    .frame(width: CGFloat.random(in: 8...16))
-                                    .offset(
-                                        x: CGFloat.random(in: -100...100),
-                                        y: CGFloat.random(in: -50...50)
-                                    )
+                                    .trim(from: 0.0, to: progress)
+                                    .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                    .foregroundColor(.gray)
+                                    .opacity(0.3 + 0.3 * self.progress)
+                                    .rotationEffect(Angle(degrees: -90))
+                                    .frame(width: 30, height: 30)
+                            } else {
+                                Button(action: {
+                                    dismissPaywall()
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .font(.headline)
+                                        .foregroundColor(.gray)
+                                        .frame(width: 30, height: 30)
+                                        .background(Color.gray.opacity(0.1))
+                                        .clipShape(Circle())
+                                }
                             }
+                            Spacer()
                         }
-                        .frame(height: 100)
+                        .frame(width: 30)
                     }
+                    .padding(.horizontal)
                     
                     // Headline
                     Text(AppStrings.UI.unlimitedAccess)
@@ -203,27 +215,6 @@ struct PaywallView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if !showCloseButton {
-                        Circle()
-                            .trim(from: 0.0, to: progress)
-                            .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                            .foregroundColor(.gray)
-                            .opacity(0.3 + 0.3 * self.progress)
-                            .rotationEffect(Angle(degrees: -90))
-                            .frame(width: 30, height: 30)
-                    } else {
-                        Button(action: {
-                            dismissPaywall()
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.headline)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-            }
         }
         .onAppear {
             AnalyticsManager.shared.track(AppStrings.Analytics.paywallShown, properties: [
@@ -474,6 +465,72 @@ private struct PricingPlanView: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Animated App Icon View
+
+private struct AnimatedAppIconView: View {
+    @State private var isAnimating = false
+    @State private var rotationAngle: Double = 0
+    @State private var yOffset: CGFloat = 0
+    @State private var scale: CGFloat = 1.0
+    
+    var body: some View {
+        Image("AppIconImage")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 200, height: 200)
+            .clipShape(RoundedRectangle(cornerRadius: 44.8)) // iOS app icon corner radius
+            .scaleEffect(scale)
+            .rotationEffect(.degrees(rotationAngle))
+            .offset(y: yOffset)
+            .onAppear {
+                startAnimation()
+            }
+    }
+    
+    private func startAnimation() {
+        // Create a repeating animation sequence
+        withAnimation(.easeInOut(duration: 0.25)) {
+            // Jump up (smaller movement)
+            yOffset = -20
+            scale = 1.05
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            withAnimation(.easeInOut(duration: 0.15)) {
+                // Rotate left (smaller rotation)
+                rotationAngle = -10
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    // Rotate right (smaller rotation)
+                    rotationAngle = 10
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        // Rotate back to center
+                        rotationAngle = 0
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        withAnimation(.easeOut(duration: 0.25)) {
+                            // Land back down
+                            yOffset = 0
+                            scale = 1.0
+                        }
+                        
+                        // Pause and repeat (longer pause)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            startAnimation()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
