@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
     @State private var showingPaywall = false
+    @State private var showingPostOnboardingPaywall = false
     
     var body: some View {
         ZStack {
@@ -221,6 +222,24 @@ struct ContentView: View {
         .sheet(isPresented: $showingShareSheet) {
             if let imageToShare = imageToShare {
                 ShareSheet.forImageSaving(image: imageToShare)
+            }
+        }
+        .sheet(isPresented: $showingPostOnboardingPaywall) {
+            PaywallView(isPresented: $showingPostOnboardingPaywall) {
+                // Handle subscription success
+                UserDefaultsManager.shared.setSubscribed(true)
+                showingPostOnboardingPaywall = false
+            }
+        }
+        .onAppear {
+            // Show post-onboarding paywall on first launch after onboarding completion
+            if UserDefaultsManager.shared.hasCompletedOnboarding && 
+               !UserDefaultsManager.shared.hasShownPostOnboardingPaywall &&
+               !UserDefaultsManager.shared.isSubscribed {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    UserDefaultsManager.shared.markPostOnboardingPaywallShown()
+                    showingPostOnboardingPaywall = true
+                }
             }
         }
         .fullScreenCover(isPresented: $showingCropView) {

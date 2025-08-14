@@ -20,6 +20,7 @@ class UserDefaultsManager {
         static let freeExportCount = "com.screenshoteditor.free_export_count"
         static let isSubscribed = "com.screenshoteditor.is_subscribed"
         static let hasShownReviewPrompt = "com.screenshoteditor.has_shown_review_prompt"
+        static let hasShownPostOnboardingPaywall = "com.screenshoteditor.has_shown_post_onboarding_paywall"
     }
     
     private init() {}
@@ -29,8 +30,7 @@ class UserDefaultsManager {
     /// Indicates whether the user has completed the onboarding flow
     var hasCompletedOnboarding: Bool {
         get {
-            // Always return false for testing - forces onboarding on every launch
-            return false // return userDefaults.bool(forKey: Keys.onboardingCompleted)
+            return userDefaults.bool(forKey: Keys.onboardingCompleted)
         }
         set {
             userDefaults.set(newValue, forKey: Keys.onboardingCompleted)
@@ -97,6 +97,7 @@ class UserDefaultsManager {
         resetFreeExportCount()
         isSubscribed = false
         hasShownReviewPrompt = false
+        hasShownPostOnboardingPaywall = false
     }
 
     // MARK: - Review Prompt
@@ -114,6 +115,23 @@ class UserDefaultsManager {
     /// Marks the review prompt as shown
     func markReviewPromptShown() {
         hasShownReviewPrompt = true
+    }
+    
+    // MARK: - Post-Onboarding Paywall
+    
+    /// Indicates whether the post-onboarding paywall has been shown
+    var hasShownPostOnboardingPaywall: Bool {
+        get {
+            return userDefaults.bool(forKey: Keys.hasShownPostOnboardingPaywall)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.hasShownPostOnboardingPaywall)
+        }
+    }
+    
+    /// Marks the post-onboarding paywall as shown
+    func markPostOnboardingPaywallShown() {
+        hasShownPostOnboardingPaywall = true
     }
 }
 

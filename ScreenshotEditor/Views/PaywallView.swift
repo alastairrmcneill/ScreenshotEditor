@@ -30,192 +30,209 @@ struct PaywallView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Header with Animated App Icon and Exit Button
+        ZStack {
+            Color.clear
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header with Animated App Icon, Title, and Exit Button - Fixed Height
+                ZStack(alignment: .top) {
+                    // Centered Animated App Icon and Title
+                    VStack(spacing: 16) {
+                        AnimatedAppIconView()
+                            .frame(width: 200, height: 200)
+                            .padding(.top, 20)
+                        
+                        // Headline directly under icon
+                        Text(AppStrings.UI.unlimitedAccess)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    // Exit Button in Top-Right Corner
                     HStack {
                         Spacer()
                         
-                        AnimatedAppIconView()
-                            .frame(width: 200, height: 200)
-                        
-                        Spacer()
-                        
-                        VStack {
-                            if !showCloseButton {
-                                Circle()
-                                    .trim(from: 0.0, to: progress)
-                                    .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                        if !showCloseButton {
+                            Circle()
+                                .trim(from: 0.0, to: progress)
+                                .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                .foregroundColor(.gray)
+                                .opacity(0.3 + 0.3 * self.progress)
+                                .rotationEffect(Angle(degrees: -90))
+                                .frame(width: 30, height: 30)
+                        } else {
+                            Button(action: {
+                                dismissPaywall()
+                            }) {
+                                Image(systemName: "xmark")
+                                    .font(.headline)
                                     .foregroundColor(.gray)
-                                    .opacity(0.3 + 0.3 * self.progress)
-                                    .rotationEffect(Angle(degrees: -90))
                                     .frame(width: 30, height: 30)
-                            } else {
-                                Button(action: {
-                                    dismissPaywall()
-                                }) {
-                                    Image(systemName: "xmark")
-                                        .font(.headline)
-                                        .foregroundColor(.gray)
-                                        .frame(width: 30, height: 30)
-                                        .background(Color.gray.opacity(0.1))
-                                        .clipShape(Circle())
-                                }
+                                    .background(Color.gray.opacity(0.1))
+                                    .clipShape(Circle())
                             }
-                            Spacer()
                         }
-                        .frame(width: 30)
                     }
-                    .padding(.horizontal)
-                    
-                    // Headline
-                    Text(AppStrings.UI.unlimitedAccess)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-                    
-                    // Feature List
-                    VStack(alignment: .leading, spacing: 16) {
-                        FeatureRow(icon: "fish.fill", text: AppStrings.UI.identifyUnlimitedFish, color: .blue)
-                        FeatureRow(icon: "fishing.rod", text: AppStrings.UI.unlockExpertTips, color: .blue)
-                        FeatureRow(icon: "location.fill", text: AppStrings.UI.locationInsights, color: .blue)
-                        FeatureRow(icon: "fork.knife", text: AppStrings.UI.cookingTips, color: .blue)
-                    }
-                    .padding(.horizontal)
-                    
+                    .padding(.top, 20)
+                    .padding(.trailing, 20)
+                }
+                .frame(height: 280) // Fixed height for header section
+                
+                // Feature List
+               VStack(alignment: .leading, spacing: 12) {
+                   FeatureRow(icon: "fish.fill", text: AppStrings.UI.identifyUnlimitedFish, color: .blue)
+                   FeatureRow(icon: "fishing.rod", text: AppStrings.UI.unlockExpertTips, color: .blue)
+                   FeatureRow(icon: "location.fill", text: AppStrings.UI.locationInsights, color: .blue)
+                   FeatureRow(icon: "fork.knife", text: AppStrings.UI.cookingTips, color: .blue)
+               }
+               .padding(.horizontal)
+               .padding(.top, 20)
+
+                // Flexible spacer to push bottom content down
+                Spacer()
+                
+                // Bottom section - wrapped to keep content grouped at bottom
+                VStack(spacing: 0) {
                     // Pricing Plans
                     VStack(spacing: 12) {
-                        // Yearly Plan
-                        if let yearlyProduct = subscriptionManager.yearlyProduct {
-                            PricingPlanView(
-                                title: AppStrings.UI.yearlyPlan,
-                                originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
-                                currentPrice: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
-                                badge: calculateYearlySavings(yearlyProduct),
-                                isSelected: selectedPlan == .yearly && !freeTrialEnabled
-                            ) {
-                                selectedPlan = .yearly
-                                freeTrialEnabled = false
-                            }
-                        } else {
-                            // Fallback to loading state while fetching
-                            PricingPlanView(
-                                title: AppStrings.UI.yearlyPlan,
-                                originalPrice: nil,
-                                currentPrice: "Loading pricing...",
-                                badge: "Best Value",
-                                isSelected: selectedPlan == .yearly && !freeTrialEnabled
-                            ) {
-                                selectedPlan = .yearly
-                                freeTrialEnabled = false
-                            }
+                    // Yearly Plan
+                    if let yearlyProduct = subscriptionManager.yearlyProduct {
+                        PricingPlanView(
+                            title: AppStrings.UI.yearlyPlan,
+                            originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
+                            currentPrice: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
+                            badge: calculateYearlySavings(yearlyProduct),
+                            isSelected: selectedPlan == .yearly && !freeTrialEnabled
+                        ) {
+                            selectedPlan = .yearly
+                            freeTrialEnabled = false
                         }
+                    } else {
+                        // Fallback to loading state while fetching
+                        PricingPlanView(
+                            title: AppStrings.UI.yearlyPlan,
+                            originalPrice: nil,
+                            currentPrice: "Loading pricing...",
+                            badge: "Best Value",
+                            isSelected: selectedPlan == .yearly && !freeTrialEnabled
+                        ) {
+                            selectedPlan = .yearly
+                            freeTrialEnabled = false
+                        }
+                    }
+                    
+                    // Weekly Plan with Free Trial
+                    if let weeklyProduct = subscriptionManager.weeklyProduct {
+                        let hasFreeTrial = weeklyProduct.storeProduct.introductoryDiscount != nil
+                        let trialText = hasFreeTrial ? formatTrialPeriod(weeklyProduct.storeProduct.introductoryDiscount!) : nil
                         
-                        // Weekly Plan with Free Trial
-                        if let weeklyProduct = subscriptionManager.weeklyProduct {
-                            let hasFreeTrial = weeklyProduct.storeProduct.introductoryDiscount != nil
-                            let trialText = hasFreeTrial ? formatTrialPeriod(weeklyProduct.storeProduct.introductoryDiscount!) : nil
-                            
-                            PricingPlanView(
-                                title: hasFreeTrial ? (trialText ?? "3-Day Free Trial") : "Weekly Plan",
-                                subtitle: hasFreeTrial ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : "\(weeklyProduct.storeProduct.localizedPriceString) weekly",
-                                badge: hasFreeTrial ? "FREE" : "Weekly",
-                                badgeColor: hasFreeTrial ? .green : .blue,
-                                isSelected: selectedPlan == .weekly || (freeTrialEnabled && hasFreeTrial),
-                                isTrialPlan: hasFreeTrial
-                            ) {
-                                selectedPlan = .weekly
-                                if hasFreeTrial {
-                                    freeTrialEnabled = true
-                                }
-                            }
-                        } else {
-                            // Fallback to loading state while fetching
-                            PricingPlanView(
-                                title: "Free Trial",
-                                subtitle: "Loading pricing...",
-                                badge: "FREE",
-                                badgeColor: .green,
-                                isSelected: selectedPlan == .weekly || freeTrialEnabled,
-                                isTrialPlan: true
-                            ) {
-                                selectedPlan = .weekly
+                        PricingPlanView(
+                            title: hasFreeTrial ? (trialText ?? "3-Day Free Trial") : "Weekly Plan",
+                            subtitle: hasFreeTrial ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : "\(weeklyProduct.storeProduct.localizedPriceString) weekly",
+                            badge: hasFreeTrial ? "FREE" : "Weekly",
+                            badgeColor: hasFreeTrial ? .green : .blue,
+                            isSelected: selectedPlan == .weekly || (freeTrialEnabled && hasFreeTrial),
+                            isTrialPlan: hasFreeTrial
+                        ) {
+                            selectedPlan = .weekly
+                            if hasFreeTrial {
                                 freeTrialEnabled = true
                             }
                         }
+                    } else {
+                        // Fallback to loading state while fetching
+                        PricingPlanView(
+                            title: "Free Trial",
+                            subtitle: "Loading pricing...",
+                            badge: "FREE",
+                            badgeColor: .green,
+                            isSelected: selectedPlan == .weekly || freeTrialEnabled,
+                            isTrialPlan: true
+                        ) {
+                            selectedPlan = .weekly
+                            freeTrialEnabled = true
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                
+                // Free Trial Toggle (only show if weekly product has free trial)
+                if let weeklyProduct = subscriptionManager.weeklyProduct,
+                   weeklyProduct.storeProduct.introductoryDiscount != nil {
+                    HStack {
+                        Text(AppStrings.UI.freeTrialEnabled)
+                            .font(.headline)
+                        Spacer()
+                        Toggle("", isOn: $freeTrialEnabled)
+                            .toggleStyle(SwitchToggleStyle())
                     }
                     .padding(.horizontal)
-                    
-                    // Free Trial Toggle (only show if weekly product has free trial)
-                    if let weeklyProduct = subscriptionManager.weeklyProduct,
-                       weeklyProduct.storeProduct.introductoryDiscount != nil {
-                        HStack {
-                            Text(AppStrings.UI.freeTrialEnabled)
+                    .padding(.top, 12)
+                    .onChange(of: freeTrialEnabled) { enabled in
+                        if enabled {
+                            selectedPlan = .weekly
+                        } else {
+                            selectedPlan = .yearly
+                        }
+                    }
+                }
+                
+                
+                // Purchase Button
+                Button(action: {
+                    handlePurchaseButtonTap()
+                }) {
+                    HStack {
+                        if isPurchasing {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                            Text("Processing...")
                                 .font(.headline)
-                            Spacer()
-                            Toggle("", isOn: $freeTrialEnabled)
-                                .toggleStyle(SwitchToggleStyle())
-                        }
-                        .padding(.horizontal)
-                        .onChange(of: freeTrialEnabled) { enabled in
-                            if enabled {
-                                selectedPlan = .weekly
-                            } else {
-                                selectedPlan = .yearly
-                            }
+                                .fontWeight(.semibold)
+                        } else {
+                            Text(getPurchaseButtonText())
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.headline)
                         }
                     }
-                    
-                    // Purchase Button
-                    Button(action: {
-                        handlePurchaseButtonTap()
-                    }) {
-                        HStack {
-                            if isPurchasing {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                    .scaleEffect(0.8)
-                                Text("Processing...")
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-                            } else {
-                                Text(getPurchaseButtonText())
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-                                
-                                Image(systemName: "chevron.right")
-                                    .font(.headline)
-                            }
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(isPurchasing ? Color.gray : Color.blue)
-                        .cornerRadius(12)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(isPurchasing ? Color.gray : Color.blue)
+                    .cornerRadius(12)
+                }
+                .disabled(isPurchasing)
+                .padding(.horizontal)
+                .padding(.top, 16)
+                
+                // Bottom Links - Right at the bottom of safe area
+                HStack(spacing: 40) {
+                    Button(AppStrings.UI.restore) {
+                        handleRestorePurchases()
                     }
+                    .foregroundColor(.gray)
                     .disabled(isPurchasing)
-                    .padding(.horizontal)
                     
-                    // Bottom Links
-                    HStack(spacing: 40) {
-                        Button(AppStrings.UI.restore) {
-                            handleRestorePurchases()
-                        }
-                        .foregroundColor(.gray)
-                        .disabled(isPurchasing)
-                        
-                        Button(AppStrings.UI.termsAndPrivacy) {
-                            // TODO: Show terms and privacy
-                        }
-                        .foregroundColor(.gray)
+                    Button(AppStrings.UI.termsAndPrivacy) {
+                        // TODO: Show terms and privacy
                     }
-                    .font(.footnote)
-                    .padding(.bottom, 20)
+                    .foregroundColor(.gray)
+                }
+                .font(.footnote)
+//                .padding(.bottom, 20)
+                .padding(.top, 12)
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
             AnalyticsManager.shared.track(AppStrings.Analytics.paywallShown, properties: [
                 AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
@@ -480,7 +497,7 @@ private struct AnimatedAppIconView: View {
         Image("AppIconImage")
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 200, height: 200)
+            .frame(width: 200, height: 200) 
             .clipShape(RoundedRectangle(cornerRadius: 44.8)) // iOS app icon corner radius
             .scaleEffect(scale)
             .rotationEffect(.degrees(rotationAngle))

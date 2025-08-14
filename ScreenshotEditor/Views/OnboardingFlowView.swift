@@ -13,7 +13,6 @@ private enum OnboardingStep: Int, CaseIterable {
     case welcome = 0
     case features
     case photoAccess
-    case paywall
 }
 
 struct OnboardingFlowView: View {
@@ -28,9 +27,8 @@ struct OnboardingFlowView: View {
         if isFinishing { return 1.0 }
         switch currentStep {
         case .welcome: return 0.0
-        case .features: return 0.33
-        case .photoAccess: return 0.67
-        case .paywall: return 1.0
+        case .features: return 0.5
+        case .photoAccess: return 1.0
         }
     }
     
@@ -60,12 +58,8 @@ struct OnboardingFlowView: View {
                 case .photoAccess:
                     PhotoAccessStep(action: { 
                         // Complete onboarding after photo access step
-                        UserDefaultsManager.shared.completeOnboarding()
-                        advance() 
+                        finishOnboarding()
                     })
-                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-                case .paywall:
-                    PaywallView(isPresented: .constant(true), onUpgrade: finishOnboarding)
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 }
             }
@@ -92,6 +86,8 @@ struct OnboardingFlowView: View {
             isFinishing = true
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Mark onboarding as completed
+            UserDefaultsManager.shared.completeOnboarding()
             AnalyticsManager.shared.track(AppStrings.Analytics.onboardingCompleted)
             onComplete()
         }
