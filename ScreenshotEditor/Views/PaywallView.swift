@@ -41,7 +41,7 @@ struct PaywallView: View {
                     // Centered Animated App Icon and Title
                     VStack(spacing: 16) {
                         AnimatedAppIconView()
-                            .frame(width: 200, height: 200)
+                            .frame(width: 150, height: 150)
                             .padding(.top, 20)
                         
                         // Headline directly under icon
@@ -79,7 +79,7 @@ struct PaywallView: View {
                     .padding(.top, 20)
                     .padding(.trailing, 20)
                 }
-                .frame(height: 280) // Fixed height for header section
+                .frame(height: 240) // Fixed height for header section
                 
                 // Feature List
                VStack(alignment: .leading, spacing: 12) {
@@ -361,12 +361,17 @@ struct PaywallView: View {
     
     /// Get the appropriate purchase button text based on selected plan and trial status
     private func getPurchaseButtonText() -> String {
+        // Show "Try for Free" if:
+        // 1. Weekly plan is selected, AND
+        // 2. Weekly product has a free trial available, AND  
+        // 3. Free trial is enabled
         if selectedPlan == .weekly,
            let weeklyProduct = subscriptionManager.weeklyProduct,
            weeklyProduct.storeProduct.introductoryDiscount != nil,
            freeTrialEnabled {
             return AppStrings.UI.tryForFree
         } else {
+            // For all other cases (yearly plan, weekly without trial, or trial disabled)
             return AppStrings.UI.continueButton
         }
     }
