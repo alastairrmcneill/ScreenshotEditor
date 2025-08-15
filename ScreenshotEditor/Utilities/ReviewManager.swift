@@ -27,8 +27,9 @@ class ReviewManager {
         
         // Only show review prompt after first export
         // For free users, this means export count >= 1
-        // For subscribed users, we still want to show it after their first export
-        let hasHadFirstExport = UserDefaultsManager.shared.freeExportCount >= 1 || UserDefaultsManager.shared.isSubscribed
+        // For premium users, we want to show it after their first export (they don't use the export count)
+        let hasPremiumAccess = SubscriptionManager.shared.hasPremiumAccess
+        let hasHadFirstExport = UserDefaultsManager.shared.freeExportCount >= 1 || hasPremiumAccess
         
         guard hasHadFirstExport else {
             print("User hasn't had first export yet")

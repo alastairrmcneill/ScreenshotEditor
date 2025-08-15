@@ -22,11 +22,12 @@ struct ScreenshotEditorApp: App {
         AnalyticsManager.shared.setup()
         
         // Initialize subscription manager (which will configure RevenueCat and sync user IDs)
-        _ = SubscriptionManager.shared
+        let subscriptionManager = SubscriptionManager.shared
         
-        // Check user ID sync after a brief delay to ensure everything is initialized
+        // Check user ID sync and then fetch offerings and check entitlements after a brief delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            SubscriptionManager.shared.checkUserIdSync()
+            subscriptionManager.checkUserIdSync()
+            subscriptionManager.fetchOfferings()
         }
     }
     

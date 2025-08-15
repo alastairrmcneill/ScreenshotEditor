@@ -529,7 +529,7 @@ Call RevenueCat purchase methods from the paywall “Continue” button.
 
 ---
 
-### Story 10.7 – Restore Purchases Logic
+### Story 10.7 – ✅ Done Restore Purchases Logic
 
 **Description:**
 
@@ -543,7 +543,7 @@ Allow users to restore existing subscriptions from the paywall footer link.
 
 ---
 
-### Story 10.8 – RevenueCat Entitlement Check
+### Story 10.8 – ✅ Done RevenueCat Entitlement Check
 
 **Description:**
 
@@ -556,7 +556,7 @@ Control app features based on active entitlements. When the app loads up I want 
 
 ---
 
-### Story 10.9 - Paywall cooldown timer
+### Story 10.9 - ✅ Done Paywall cooldown timer
 
 I don't want it to be a hard paywall, but I do want to break their flow. In the top right hand corner of the paywall there should be an exit button, but this button should have a 2 second cool down timer. When the paywall is displayed I want it to start filling in a circular ring and then when it is completed replace it with a grey cross and when the user taps that button it exits the paywall.
 

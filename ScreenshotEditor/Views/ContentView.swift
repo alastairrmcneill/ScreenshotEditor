@@ -10,6 +10,7 @@ import PhotosUI
 
 struct ContentView: View {
     @StateObject private var editingViewModel = ImageEditingViewModel()
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showingShareSheet = false
     @State private var showingCropView = false
@@ -48,6 +49,40 @@ struct ContentView: View {
                                 .foregroundColor(.secondary)
                         }
                         
+                        // Premium Status Display
+                        VStack(spacing: 8) {
+                            HStack {
+                                Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
+                                    .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
+                                
+                                Text(subscriptionManager.hasPremiumAccess ? "Premium Active" : "Free Plan")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(subscriptionManager.hasPremiumAccess ? .primary : .secondary)
+                            }
+                            
+                            if !subscriptionManager.activeEntitlements.isEmpty {
+                                Text("Entitlements: \(subscriptionManager.activeEntitlements.joined(separator: ", "))")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            
+                            if subscriptionManager.hasPremiumAccess {
+                                Text("Unlimited exports • No watermark")
+                                    .font(.caption2)
+                                    .foregroundColor(.green)
+                            } else {
+                                Text("3 free exports • Watermarked")
+                                    .font(.caption2)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                        
                         // Import Button
                         PhotosPicker(
                             selection: $selectedPhotoItem,
@@ -82,14 +117,20 @@ struct ContentView: View {
                                     .font(.headline)
                                     .fontWeight(.semibold)
                                 
-                                // Debug subscription status indicator
-                                Text(UserDefaultsManager.shared.isSubscribed ? AppStrings.UI.premium : AppStrings.UI.free)
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                    .onTapGesture {
-                                        // Toggle subscription for testing
-                                        UserDefaultsManager.shared.setSubscribed(!UserDefaultsManager.shared.isSubscribed)
-                                    }
+                                // Premium status indicator
+                                HStack(spacing: 4) {
+                                    Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
+                                        .font(.caption2)
+                                        .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
+                                    
+                                    Text(subscriptionManager.hasPremiumAccess ? AppStrings.UI.premium : AppStrings.UI.free)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                .onTapGesture {
+                                    // Debug: Force refresh entitlements
+                                    subscriptionManager.checkSubscriptionStatus()
+                                }
                             }
                             
                             Spacer()
@@ -124,7 +165,7 @@ struct ContentView: View {
                             if let renderedImage = editingViewModel.renderedImage {
                                 ImageRenderer.createImageView(
                                     image: renderedImage,
-                                    showWatermark: !UserDefaultsManager.shared.isSubscribed
+                                    showWatermark: !subscriptionManager.hasPremiumAccess
                                 )
                                 .aspectRatio(contentMode: .fit)
                                 .padding(AppConstants.Layout.standardPadding)
@@ -132,7 +173,7 @@ struct ContentView: View {
                                 // Fallback while rendering
                                 ImageRenderer.createImageView(
                                     image: originalImage,
-                                    showWatermark: !UserDefaultsManager.shared.isSubscribed
+                                    showWatermark: !subscriptionManager.hasPremiumAccess
                                 )
                                 .aspectRatio(contentMode: .fit)
                                 .padding(AppConstants.Layout.standardPadding)
@@ -235,7 +276,7 @@ struct ContentView: View {
             // Show post-onboarding paywall on first launch after onboarding completion
             if UserDefaultsManager.shared.hasCompletedOnboarding && 
                !UserDefaultsManager.shared.hasShownPostOnboardingPaywall &&
-               !UserDefaultsManager.shared.isSubscribed {
+               !subscriptionManager.hasPremiumAccess {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     UserDefaultsManager.shared.markPostOnboardingPaywallShown()
                     showingPostOnboardingPaywall = true
@@ -291,11 +332,11 @@ struct ContentView: View {
         // Track export attempt
         AnalyticsManager.shared.track(AppStrings.Analytics.exportStarted, properties: [
             AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
-            AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed
+            AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess
         ])
         
         // Check export limit for free users
-        if !UserDefaultsManager.shared.isSubscribed && UserDefaultsManager.shared.hasReachedFreeExportLimit {
+        if !subscriptionManager.hasPremiumAccess && UserDefaultsManager.shared.hasReachedFreeExportLimit {
             // Show paywall for free users who have reached the limit
             AnalyticsManager.shared.track(AppStrings.Analytics.exportLimitReached, properties: [
                 AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
@@ -318,13 +359,13 @@ struct ContentView: View {
             imageToShare = finalImage
             
             // Increment export count for free users after successful generation
-            if !UserDefaultsManager.shared.isSubscribed {
+            if !subscriptionManager.hasPremiumAccess {
                 UserDefaultsManager.shared.incrementFreeExportCount()
             }
             
             AnalyticsManager.shared.track(AppStrings.Analytics.exportCompleted, properties: [
                 AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
-                AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed,
+                AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess,
                 AppStrings.AnalyticsProperties.cornerRadius: Double(editingViewModel.parameters.cornerRadius),
                 AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
                 AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
@@ -348,7 +389,7 @@ struct ContentView: View {
                 AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
                 AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? "solid" : "gradient",
                 AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue,
-                AppStrings.AnalyticsProperties.isSubscribed: UserDefaultsManager.shared.isSubscribed
+                AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess
             ])
             
             showingShareSheet = true

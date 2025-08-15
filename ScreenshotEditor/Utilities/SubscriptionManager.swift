@@ -16,6 +16,8 @@ class SubscriptionManager: NSObject, ObservableObject {
     @Published var offerings: Offerings?
     @Published var weeklyProduct: Package?
     @Published var yearlyProduct: Package?
+    @Published var hasPremiumAccess: Bool = false
+    @Published var activeEntitlements: [String] = []
     
     private override init() {
         super.init()
@@ -94,6 +96,9 @@ class SubscriptionManager: NSObject, ObservableObject {
         let wasSubscribed = self.isSubscribed
         self.isSubscribed = !customerInfo.activeSubscriptions.isEmpty
         
+        // Update entitlements as well
+        updateEntitlements(from: customerInfo)
+        
         if wasSubscribed != self.isSubscribed {
             print("🔄 [SubscriptionManager] Subscription status changed after user sync: \(wasSubscribed ? "Active" : "Inactive") → \(self.isSubscribed ? "Active" : "Inactive")")
         } else {
@@ -106,6 +111,8 @@ class SubscriptionManager: NSObject, ObservableObject {
         // Reset subscription status
         DispatchQueue.main.async { [weak self] in
             self?.isSubscribed = false
+            self?.hasPremiumAccess = false
+            self?.activeEntitlements = []
             self?.offerings = nil
             self?.weeklyProduct = nil
             self?.yearlyProduct = nil
@@ -140,7 +147,7 @@ class SubscriptionManager: NSObject, ObservableObject {
     
     // MARK: - Subscription Status
     
-    /// Check current subscription status
+    /// Check current subscription status and entitlements
     func checkSubscriptionStatus() {
         
         Purchases.shared.getCustomerInfo { [weak self] customerInfo, error in
@@ -164,7 +171,10 @@ class SubscriptionManager: NSObject, ObservableObject {
                 print("🎯 [SubscriptionManager] All purchased product IDs: \(customerInfo.allPurchasedProductIdentifiers)")
                 print("🔄 [SubscriptionManager] Non-subscription transactions: \(customerInfo.nonSubscriptionTransactions.count)")
                 
-                // Check if user has any active subscription
+                // Update entitlements and premium access
+                self?.updateEntitlements(from: customerInfo)
+                
+                // Check if user has any active subscription (legacy check)
                 let wasSubscribed = self?.isSubscribed ?? false
                 self?.isSubscribed = !customerInfo.activeSubscriptions.isEmpty
                 let statusChanged = wasSubscribed != (self?.isSubscribed ?? false)
@@ -174,18 +184,67 @@ class SubscriptionManager: NSObject, ObservableObject {
                 } else {
                     print("📊 [SubscriptionManager] Subscription status: \(self?.isSubscribed == true ? "Active" : "Inactive")")
                 }
+            }
+        }
+    }
+    
+    /// Update entitlements state from customer info
+    private func updateEntitlements(from customerInfo: CustomerInfo) {
+        print("\n🎫 [SubscriptionManager] === Current User Entitlements ===")
+        
+        var newActiveEntitlements: [String] = []
+        var hasAnyActiveEntitlement = false
+        
+        // Log all entitlements (both active and inactive)
+        if customerInfo.entitlements.all.isEmpty {
+            print("📋 [SubscriptionManager] No entitlements configured for this user")
+        } else {
+            for (entitlementId, entitlement) in customerInfo.entitlements.all {
+                let status = entitlement.isActive ? "✅ ACTIVE" : "❌ Inactive"
+                print("� [SubscriptionManager] Entitlement '\(entitlementId)': \(status)")
                 
-                // Log specific entitlements
-                for (entitlementId, entitlement) in customerInfo.entitlements.all {
-                    print("🎫 [SubscriptionManager] Entitlement '\(entitlementId)': \(entitlement.isActive ? "✅ Active" : "❌ Inactive")")
-                    if entitlement.isActive {
-                        print("   - Product ID: \(entitlement.productIdentifier)")
-                        print("   - Will renew: \(entitlement.willRenew)")
-                        print("   - Expires: \(entitlement.expirationDate?.description ?? "Never")")
+                if entitlement.isActive {
+                    newActiveEntitlements.append(entitlementId)
+                    hasAnyActiveEntitlement = true
+                    
+                    print("   - Product ID: \(entitlement.productIdentifier)")
+                    print("   - Will renew: \(entitlement.willRenew)")
+                    print("   - Expires: \(entitlement.expirationDate?.description ?? "Never")")
+                    
+                    if let originalPurchaseDate = entitlement.originalPurchaseDate {
+                        print("   - Original purchase: \(originalPurchaseDate)")
+                    }
+                    
+                    if let latestPurchaseDate = entitlement.latestPurchaseDate {
+                        print("   - Latest purchase: \(latestPurchaseDate)")
                     }
                 }
             }
         }
+        
+        // Update state
+        let previousPremiumAccess = self.hasPremiumAccess
+        let previousActiveEntitlements = self.activeEntitlements
+        
+        self.activeEntitlements = newActiveEntitlements
+        self.hasPremiumAccess = hasAnyActiveEntitlement
+        
+        // Log changes
+        if previousPremiumAccess != self.hasPremiumAccess {
+            print("🔄 [SubscriptionManager] Premium access CHANGED: \(previousPremiumAccess ? "Yes" : "No") → \(self.hasPremiumAccess ? "Yes" : "No")")
+        } else {
+            print("📊 [SubscriptionManager] Premium access: \(self.hasPremiumAccess ? "Yes" : "No")")
+        }
+        
+        if previousActiveEntitlements != self.activeEntitlements {
+            print("🔄 [SubscriptionManager] Active entitlements CHANGED:")
+            print("   Previous: \(previousActiveEntitlements)")
+            print("   Current: \(self.activeEntitlements)")
+        } else {
+            print("📊 [SubscriptionManager] Active entitlements unchanged: \(self.activeEntitlements)")
+        }
+        
+        print("===============================================\n")
     }
     
     // MARK: - Fetch Offerings
@@ -344,9 +403,12 @@ class SubscriptionManager: NSObject, ObservableObject {
                     print("   📅 Purchase Date: \(transaction.purchaseDate)")
                 }
                 
-                // Update subscription status
+                // Update subscription status and entitlements
                 let previousStatus = self?.isSubscribed ?? false
                 self?.isSubscribed = !customerInfo.activeSubscriptions.isEmpty
+                
+                // Update entitlements
+                self?.updateEntitlements(from: customerInfo)
                 
                 print("🔄 [SubscriptionManager] Purchase successful!")
                 print("📊 [SubscriptionManager] Subscription status: \(previousStatus ? "Active" : "Inactive") → \(self?.isSubscribed == true ? "Active" : "Inactive")")
@@ -382,9 +444,12 @@ class SubscriptionManager: NSObject, ObservableObject {
                 print("   🛍️ All purchased products: \(customerInfo.allPurchasedProductIdentifiers)")
                 print("   🔄 Non-subscription transactions: \(customerInfo.nonSubscriptionTransactions.count)")
                 
-                // Update subscription status
+                // Update subscription status and entitlements
                 let previousStatus = self?.isSubscribed ?? false
                 self?.isSubscribed = !customerInfo.activeSubscriptions.isEmpty
+                
+                // Update entitlements
+                self?.updateEntitlements(from: customerInfo)
                 
                 let statusChanged = previousStatus != (self?.isSubscribed ?? false)
                 if statusChanged {
@@ -416,6 +481,9 @@ extension SubscriptionManager: PurchasesDelegate {
         DispatchQueue.main.async { [weak self] in
             let previousStatus = self?.isSubscribed ?? false
             self?.isSubscribed = !customerInfo.activeSubscriptions.isEmpty
+            
+            // Update entitlements from the updated customer info
+            self?.updateEntitlements(from: customerInfo)
             
             let statusChanged = previousStatus != (self?.isSubscribed ?? false)
             if statusChanged {

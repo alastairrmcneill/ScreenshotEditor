@@ -103,11 +103,11 @@ class ImageEditingViewModel: ObservableObject {
     func generateFinalImage() -> UIImage? {
         guard let originalImage = originalImage else { return nil }
         
-        let isSubscribed = UserDefaultsManager.shared.isSubscribed
+        let hasPremiumAccess = SubscriptionManager.shared.hasPremiumAccess
         return imageRenderer.renderFinalImage(
             from: originalImage,
             parameters: parameters,
-            includeWatermark: !isSubscribed
+            includeWatermark: !hasPremiumAccess
         )
     }
     

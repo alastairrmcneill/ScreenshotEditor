@@ -20,14 +20,14 @@ class ImageRenderer {
     /// - Parameter sourceImage: The original image to render
     /// - Returns: The final rendered image with watermark if applicable
     func renderFinalImage(from sourceImage: UIImage) -> UIImage {
-        let isSubscribed = UserDefaultsManager.shared.isSubscribed
+        let hasPremiumAccess = SubscriptionManager.shared.hasPremiumAccess
         let parameters = ImageEditingParameters.defaultParameters
         
         // Use the new Core Image renderer
         return CoreImageRenderer.shared.renderFinalImage(
             from: sourceImage,
             parameters: parameters,
-            includeWatermark: !isSubscribed
+            includeWatermark: !hasPremiumAccess
         ) ?? sourceImage
     }
     
