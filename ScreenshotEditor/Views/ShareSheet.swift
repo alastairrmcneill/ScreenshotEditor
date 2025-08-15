@@ -12,14 +12,23 @@ import UIKit
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     let excludedActivityTypes: [UIActivity.ActivityType]?
+    let onCompletion: ((UIActivity.ActivityType?, Bool) -> Void)?
     
-    init(items: [Any], excludedActivityTypes: [UIActivity.ActivityType]? = nil) {
+    init(
+        items: [Any], 
+        excludedActivityTypes: [UIActivity.ActivityType]? = nil,
+        onCompletion: ((UIActivity.ActivityType?, Bool) -> Void)? = nil
+    ) {
         self.items = items
         self.excludedActivityTypes = excludedActivityTypes
+        self.onCompletion = onCompletion
     }
     
     /// Creates a ShareSheet optimized for saving images to Photos
-    static func forImageSaving(image: UIImage) -> ShareSheet {
+    static func forImageSaving(
+        image: UIImage, 
+        onCompletion: ((UIActivity.ActivityType?, Bool) -> Void)? = nil
+    ) -> ShareSheet {
         // Exclude less relevant activities to make "Save to Photos" more prominent
         let excludedTypes: [UIActivity.ActivityType] = [
             .assignToContact,
@@ -33,7 +42,11 @@ struct ShareSheet: UIViewControllerRepresentable {
             .markupAsPDF
         ]
         
-        return ShareSheet(items: [image], excludedActivityTypes: excludedTypes)
+        return ShareSheet(
+            items: [image], 
+            excludedActivityTypes: excludedTypes,
+            onCompletion: onCompletion
+        )
     }
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
@@ -42,6 +55,11 @@ struct ShareSheet: UIViewControllerRepresentable {
             applicationActivities: nil
         )
         activityViewController.excludedActivityTypes = excludedActivityTypes
+        
+        // Set completion handler
+        activityViewController.completionWithItemsHandler = { activityType, completed, returnedItems, error in
+            onCompletion?(activityType, completed)
+        }
         
         return activityViewController
     }

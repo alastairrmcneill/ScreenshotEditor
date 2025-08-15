@@ -15,6 +15,7 @@ struct AppStrings {
         static let importPhoto = "Import Photo"
         static let back = "Back"
         static let share = "Share"
+        static let saveToPhotos = "Save to Photos"
         static let crop = "Crop"
         static let style = "Style"
         static let background = "Background"
@@ -82,6 +83,11 @@ struct AppStrings {
         static let unlimitedExportsNowatermark = "Unlimited exports • No watermark"
         static let freeExportsWatermarked = "3 free exports • Watermarked"
         static let entitlements = "Entitlements:"
+        
+        // Save notifications
+        static let imageSavedToPhotos = "Image saved to Photos successfully!"
+        static let imageSaveFailedPermissions = "Failed to save image. Please check your permissions."
+        static let imageSaveFailed = "Failed to save image to Photos."
     }
     
     // MARK: - Analytics Events
@@ -89,6 +95,7 @@ struct AppStrings {
         static let importPhotoButtonTapped = "Import Photo Button Tapped"
         static let editorBackButtonTapped = "Editor Back Button Tapped"
         static let editorShareButtonTapped = "Editor Share Button Tapped"
+        static let editorSaveToPhotosButtonTapped = "Editor Save To Photos Button Tapped"
         static let cropButtonTapped = "Crop Button Tapped"
         static let styleButtonTapped = "Style Button Tapped"
         static let backgroundButtonTapped = "Background Button Tapped"

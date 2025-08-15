@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var showingBackgroundPanel = false
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
+    @State private var isSavingToPhotos = false
     @State private var showingPaywall = false
     @State private var showingPostOnboardingPaywall = false
     
@@ -135,23 +136,55 @@ struct ContentView: View {
                             
                             Spacer()
                             
-                            Button(action: {
-                                Task {
-                                    await shareImage()
-                                }
-                            }) {
-                                HStack {
-                                    if isGeneratingShareImage {
-                                        ProgressView()
-                                            .scaleEffect(AppConstants.Layout.emptyStateProgressScale)
-                                            .foregroundColor(.accentColor)
-                                    } else {
-                                        Text(AppStrings.UI.share)
-                                            .foregroundColor(.accentColor)
+                            HStack(spacing: 12) {
+                                // Save to Photos button
+                                Button(action: {
+                                    Task {
+                                        await saveToPhotos()
                                     }
+                                }) {
+                                    HStack {
+                                        if isSavingToPhotos {
+                                            ProgressView()
+                                                .scaleEffect(AppConstants.Layout.emptyStateProgressScale)
+                                                .foregroundColor(.white)
+                                        } else {
+                                            Text(AppStrings.UI.saveToPhotos)
+                                                .foregroundColor(.white)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(Color.accentColor)
+                                    .cornerRadius(8)
                                 }
+                                .disabled(isSavingToPhotos || isGeneratingShareImage)
+                                
+                                // Share button
+                                Button(action: {
+                                    Task {
+                                        await shareImage()
+                                    }
+                                }) {
+                                    HStack {
+                                        if isGeneratingShareImage {
+                                            ProgressView()
+                                                .scaleEffect(AppConstants.Layout.emptyStateProgressScale)
+                                                .foregroundColor(.accentColor)
+                                        } else {
+                                            Text(AppStrings.UI.share)
+                                                .foregroundColor(.accentColor)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.accentColor, lineWidth: 1)
+                                    )
+                                }
+                                .disabled(isGeneratingShareImage || isSavingToPhotos)
                             }
-                            .disabled(isGeneratingShareImage)
                         }
                         .padding(.horizontal, AppConstants.Layout.largePadding)
                         .padding(.vertical, AppConstants.Layout.standardPadding)
@@ -262,7 +295,14 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingShareSheet) {
             if let imageToShare = imageToShare {
-                ShareSheet.forImageSaving(image: imageToShare)
+                ShareSheet.forImageSaving(image: imageToShare) { activityType, completed in
+                    if completed {
+                        // Show success snackbar for save to photos
+                        if activityType == .saveToCameraRoll {
+                            SnackbarManager.shared.showSuccess(AppStrings.UI.imageSavedToPhotos)
+                        }
+                    }
+                }
             }
         }
         .sheet(isPresented: $showingPostOnboardingPaywall) {
@@ -294,6 +334,7 @@ struct ContentView: View {
                 )
             }
         }
+        .withSnackbar()
     }
     
     /// Loads the selected image asynchronously using the modern PhotosPicker API
@@ -397,6 +438,82 @@ struct ContentView: View {
             // End loading state if generation failed
             isGeneratingShareImage = false
         }
+    }
+    
+    /// Saves the image directly to Photos
+    @MainActor
+    private func saveToPhotos() async {
+        // Track save button tap
+        AnalyticsManager.shared.track(AppStrings.Analytics.editorSaveToPhotosButtonTapped)
+        
+        // Check export limit for free users
+        if !subscriptionManager.hasPremiumAccess && UserDefaultsManager.shared.hasReachedFreeExportLimit {
+            // Show paywall for free users who have reached the limit
+            AnalyticsManager.shared.track(AppStrings.Analytics.exportLimitReached, properties: [
+                AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
+                AppStrings.AnalyticsProperties.exportLimitReason: "free_limit_reached"
+            ])
+            showingPaywall = true
+            return
+        }
+        
+        // Start loading state
+        isSavingToPhotos = true
+        
+        // Generate image on background thread
+        let finalImage = await Task.detached { [editingViewModel] in
+            return editingViewModel.generateFinalImage()
+        }.value
+        
+        // Update UI on main thread
+        if let finalImage = finalImage {
+            do {
+                // Save directly to Photos
+                try await PhotosLibraryManager.shared.saveImageToPhotos(finalImage)
+                
+                // Increment export count for free users after successful save
+                if !subscriptionManager.hasPremiumAccess {
+                    UserDefaultsManager.shared.incrementFreeExportCount()
+                }
+                
+                // Track successful save
+                AnalyticsManager.shared.track(AppStrings.Analytics.exportCompleted, properties: [
+                    AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
+                    AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess,
+                    AppStrings.AnalyticsProperties.cornerRadius: Double(editingViewModel.parameters.cornerRadius),
+                    AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
+                    AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
+                    AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
+                    AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? AppStrings.AnalyticsProperties.solid : AppStrings.AnalyticsProperties.gradient,
+                    AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue
+                ])
+                
+                // Request review after first successful export
+                ReviewManager.shared.requestExportReview()
+                
+                // Show success snackbar
+                SnackbarManager.shared.showSuccess(AppStrings.UI.imageSavedToPhotos)
+                
+            } catch {
+                // Show error snackbar
+                if let photosError = error as? PhotosError {
+                    switch photosError {
+                    case .accessDenied:
+                        SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailedPermissions)
+                    case .saveFailed:
+                        SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailed)
+                    }
+                } else {
+                    SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailed)
+                }
+            }
+        } else {
+            // Show error for image generation failure
+            SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailed)
+        }
+        
+        // End loading state
+        isSavingToPhotos = false
     }
 }
 
