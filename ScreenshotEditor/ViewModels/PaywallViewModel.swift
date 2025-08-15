@@ -27,6 +27,12 @@ class PaywallViewModel: ObservableObject {
     private var timer: Timer?
     private let allowCloseAfter: CGFloat = 3.0 // time in seconds until close is allowed
     
+    // EPIC 12 - Paywall Analytics Properties
+    private var paywallSessionId: String = UUID().uuidString
+    private var placement: String = AppStrings.AnalyticsProperties.featureLock
+    private var entryPoint: String = "unknown"
+    private var selectedProductId: String?
+    
     // MARK: - Types
     enum PricingPlan {
         case yearly
@@ -47,6 +53,15 @@ class PaywallViewModel: ObservableObject {
         // ViewModel is ready for use immediately
     }
     
+    // MARK: - Configuration Methods
+    
+    /// Configure paywall analytics context
+    func configurePaywall(placement: String, entryPoint: String) {
+        self.paywallSessionId = UUID().uuidString
+        self.placement = placement
+        self.entryPoint = entryPoint
+    }
+    
     // MARK: - Public Methods
     
     /// Called when paywall appears
@@ -62,13 +77,42 @@ class PaywallViewModel: ObservableObject {
         }
     }
     
+    /// Called when user selects a pricing plan
+    func selectPlan(_ plan: PricingPlan) {
+        selectedPlan = plan
+        
+        // Track option selection
+        let productId = plan == .weekly ? weeklyProduct?.identifier : yearlyProduct?.identifier
+        selectedProductId = productId
+        
+        AnalyticsManager.shared.track(AppStrings.Analytics.paywallOptionSelected, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId,
+            AppStrings.AnalyticsProperties.productId: productId ?? "unknown",
+            AppStrings.AnalyticsProperties.placement: placement
+        ])
+    }
+    
     /// Called when paywall is dismissed
     func dismissPaywall() {
-        AnalyticsManager.shared.track(AppStrings.Analytics.paywallDismissed)
+        AnalyticsManager.shared.track(AppStrings.Analytics.paywallDismissed, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId
+        ])
+        
+        // Track paywall outcome
+        trackPaywallOutcome(outcome: AppStrings.AnalyticsProperties.dismissed)
     }
     
     /// Handles upgrade button tap
     func handleUpgrade(onUpgrade: @escaping () -> Void) {
+        let ctaLabel = shouldShowTryForFree() ? AppStrings.AnalyticsProperties.startTrial : AppStrings.AnalyticsProperties.continueLabel
+        
+        // Track CTA tap
+        AnalyticsManager.shared.track(AppStrings.Analytics.paywallCtaTapped, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId,
+            AppStrings.AnalyticsProperties.ctaLabel: ctaLabel,
+            AppStrings.AnalyticsProperties.productId: selectedProductId ?? "unknown"
+        ])
+        
         AnalyticsManager.shared.track(AppStrings.Analytics.paywallUpgradeClicked)
         
         let selectedPackage: Package?
@@ -83,8 +127,12 @@ class PaywallViewModel: ObservableObject {
             return
         }
         
+        // Track checkout started
+        trackCheckoutStarted(package: package)
+        
         purchasePackage(package) { [weak self] success in
             if success {
+                self?.trackPaywallOutcome(outcome: AppStrings.AnalyticsProperties.purchased)
                 onUpgrade()
             }
         }
@@ -157,25 +205,104 @@ class PaywallViewModel: ObservableObject {
     
     private func trackPaywallShown() {
         AnalyticsManager.shared.track(AppStrings.Analytics.paywallShown, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId,
+            AppStrings.AnalyticsProperties.placement: placement,
+            AppStrings.AnalyticsProperties.entryPoint: entryPoint,
             AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
             AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess
         ])
     }
     
+    private func trackCheckoutStarted(package: Package) {
+        let introDiscount = package.storeProduct.introductoryDiscount
+        let hasIntroOffer = introDiscount != nil
+        let trialDays = introDiscount?.subscriptionPeriod.unit == .day ? introDiscount?.subscriptionPeriod.value ?? 0 : 0
+        
+        AnalyticsManager.shared.track(AppStrings.Analytics.checkoutStarted, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId,
+            AppStrings.AnalyticsProperties.productId: package.identifier,
+            AppStrings.AnalyticsProperties.billingPeriod: getBillingPeriod(package: package),
+            AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString,
+            AppStrings.AnalyticsProperties.currency: getCurrencyCode(from: package.storeProduct.localizedPriceString),
+            AppStrings.AnalyticsProperties.introOfferApplied: hasIntroOffer,
+            AppStrings.AnalyticsProperties.trialDays: trialDays
+        ])
+    }
+    
+    private func trackPaywallOutcome(outcome: String) {
+        AnalyticsManager.shared.track(AppStrings.Analytics.paywallOutcome, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId,
+            AppStrings.AnalyticsProperties.outcome: outcome,
+            AppStrings.AnalyticsProperties.selectedProductId: selectedProductId
+        ])
+    }
+    
+    private func getBillingPeriod(package: Package) -> String {
+        let period = package.storeProduct.subscriptionPeriod
+        switch period?.unit {
+        case .day:
+            return "\(period?.value ?? 1)_day"
+        case .week:
+            return "\(period?.value ?? 1)_week"
+        case .month:
+            return "\(period?.value ?? 1)_month"
+        case .year:
+            return "\(period?.value ?? 1)_year"
+        default:
+            return "unknown"
+        }
+    }
+    
+    private func getCurrencyCode(from localizedPriceString: String) -> String {
+        // Try to extract currency from the localized price string
+        // This is a simple implementation that looks for common currency symbols/codes
+        if localizedPriceString.contains("$") {
+            return "USD"
+        } else if localizedPriceString.contains("€") {
+            return "EUR"
+        } else if localizedPriceString.contains("£") {
+            return "GBP"
+        } else if localizedPriceString.contains("¥") {
+            return "JPY"
+        } else {
+            // Default to USD if we can't determine the currency
+            return "USD"
+        }
+    }
+    
     private func purchasePackage(_ package: Package, completion: @escaping (Bool) -> Void) {
         isPurchasing = true
+        
+        // Track purchase attempt
+        AnalyticsManager.shared.track(AppStrings.Analytics.purchaseAttempted, properties: [
+            AppStrings.AnalyticsProperties.paywallSessionId: paywallSessionId,
+            AppStrings.AnalyticsProperties.productId: package.identifier,
+            AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString
+        ])
         
         subscriptionManager.purchase(package: package) { [weak self] success, error in
             DispatchQueue.main.async {
                 self?.isPurchasing = false
                 
                 if success {
+                    let introDiscount = package.storeProduct.introductoryDiscount
+                    let hasIntroOffer = introDiscount != nil
+                    let isTrialStart = hasIntroOffer && introDiscount?.type == .introductory
+                    let trialDays = introDiscount?.subscriptionPeriod.unit == .day ? introDiscount?.subscriptionPeriod.value ?? 0 : 0
+                    
                     AnalyticsManager.shared.track(AppStrings.Analytics.purchaseSuccessful, properties: [
-                        AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString
+                        AppStrings.AnalyticsProperties.paywallSessionId: self?.paywallSessionId ?? "",
+                        AppStrings.AnalyticsProperties.productId: package.identifier,
+                        AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString,
+                        AppStrings.AnalyticsProperties.isTrialStart: isTrialStart,
+                        AppStrings.AnalyticsProperties.trialDays: trialDays,
+                        AppStrings.AnalyticsProperties.introOfferApplied: hasIntroOffer
                     ])
                     completion(true)
                 } else if let error = error {
                     AnalyticsManager.shared.track(AppStrings.Analytics.purchaseFailed, properties: [
+                        AppStrings.AnalyticsProperties.paywallSessionId: self?.paywallSessionId ?? "",
+                        AppStrings.AnalyticsProperties.productId: package.identifier,
                         AppStrings.AnalyticsProperties.error: error.localizedDescription,
                         AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString
                     ])
@@ -184,6 +311,8 @@ class PaywallViewModel: ObservableObject {
                 } else {
                     print(AppStrings.UI.purchaseCancelled)
                     AnalyticsManager.shared.track(AppStrings.Analytics.purchaseCancelled, properties: [
+                        AppStrings.AnalyticsProperties.paywallSessionId: self?.paywallSessionId ?? "",
+                        AppStrings.AnalyticsProperties.productId: package.identifier,
                         AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString
                     ])
                     completion(false)

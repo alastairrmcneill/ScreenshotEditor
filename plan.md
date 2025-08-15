@@ -611,49 +611,9 @@ Apple requires clear display of pricing, billing period, auto-renewal terms, and
 
 ---
 
-### Story 11.4 – Localize Subscription Terms
+## **EPIC 12 – ✅ Done Analytics for Subscription Funnel & Paywall Events**
 
-**Description:**
-
-Localize the subscription terms and pricing for all supported App Store regions.
-
-**Acceptance Criteria:**
-
-- Strings use `NSLocalizedString`.
-- Prices pulled dynamically from RevenueCat (localized).
-
----
-
-### Story 11.5 – Test Purchase & Restore in Sandbox
-
-**Description:**
-
-Validate the subscription flow with Apple’s sandbox environment.
-
-**Acceptance Criteria:**
-
-- New purchases succeed in sandbox.
-- Restores succeed with an existing subscription.
-- Cancelling subscription in sandbox updates entitlement status.
-
----
-
-### Story 11.6 – App Review Test Account Setup
-
-**Description:**
-
-Prepare Apple’s reviewer with test account credentials.
-
-**Acceptance Criteria:**
-
-- Demo iCloud account with sample screenshots provided in Review Notes.
-- Clear instructions for triggering paywall and testing purchase/restore.
-
----
-
-## **EPIC 12 – Analytics for Subscription Funnel & Paywall Events**
-
-### Story 12.1 – Track Paywall Exposure & Attention Events
+### Story 12.1 – ✅ Done Track Paywall Exposure & Attention Events
 
 **Description:**
 
@@ -670,7 +630,7 @@ Fire events when the paywall is shown to the user, including placement and sessi
 
 ---
 
-### Story 12.2 – Track Interest & Optioning Actions
+### Story 12.2 – ✅ Done Track Interest & Optioning Actions
 
 **Description:**
 
@@ -686,7 +646,7 @@ Log when the user shows intent by selecting an option or pressing the CTA.
 
 ---
 
-### Story 12.3 – Track Checkout & Purchase Lifecycle
+### Story 12.3 – ✅ Done Track Checkout & Purchase Lifecycle
 
 **Description:**
 
@@ -704,7 +664,7 @@ Log events from store sheet presentation to confirmed purchase or failure.
 
 ---
 
-### Story 12.4 – Track Dismissal & Outcome Events
+### Story 12.4 – ✅ Done Track Dismissal & Outcome Events
 
 **Description:**
 

@@ -14,11 +14,10 @@ struct PaywallView: View {
     let onUpgrade: () -> Void
     
     @StateObject private var subscriptionManager = SubscriptionManager.shared
-    @State private var selectedPlan: PricingPlan = .weekly
-    @State private var freeTrialEnabled: Bool = true
+    @StateObject private var viewModel = PaywallViewModel()
+    
     @State private var cooldownTimeRemaining: Int = 3
     @State private var timer: Timer?
-    @State private var isPurchasing: Bool = false
     @State private var showCloseButton: Bool = false
     @State private var progress: CGFloat = 0.0
     @State private var showErrorAlert: Bool = false
@@ -26,9 +25,15 @@ struct PaywallView: View {
     
     private let allowCloseAfter: CGFloat = 3.0 // time in seconds until close is allowed
     
-    enum PricingPlan {
-        case yearly
-        case weekly
+    // Analytics configuration
+    let placement: String
+    let entryPoint: String
+    
+    init(isPresented: Binding<Bool>, placement: String = AppStrings.AnalyticsProperties.featureLock, entryPoint: String = "unknown", onUpgrade: @escaping () -> Void) {
+        self._isPresented = isPresented
+        self.onUpgrade = onUpgrade
+        self.placement = placement
+        self.entryPoint = entryPoint
     }
     
     var body: some View {
@@ -107,10 +112,10 @@ struct PaywallView: View {
                             originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
                             currentPrice: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
                             badge: calculateYearlySavings(yearlyProduct),
-                            isSelected: selectedPlan == .yearly && !freeTrialEnabled
+                            isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
-                            selectedPlan = .yearly
-                            freeTrialEnabled = false
+                            viewModel.selectPlan(.yearly)
+                            viewModel.freeTrialEnabled = false
                         }
                     } else {
                         // Fallback to loading state while fetching
@@ -119,10 +124,10 @@ struct PaywallView: View {
                             originalPrice: nil,
                             currentPrice: AppStrings.UI.loadingPricing,
                             badge: AppStrings.UI.bestValue,
-                            isSelected: selectedPlan == .yearly && !freeTrialEnabled
+                            isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
-                            selectedPlan = .yearly
-                            freeTrialEnabled = false
+                            viewModel.selectPlan(.yearly)
+                            viewModel.freeTrialEnabled = false
                         }
                     }
                     
@@ -136,12 +141,12 @@ struct PaywallView: View {
                             subtitle: hasFreeTrial ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : "\(weeklyProduct.storeProduct.localizedPriceString) weekly",
                             badge: hasFreeTrial ? AppStrings.UI.freeBadge : AppStrings.UI.weekly,
                             badgeColor: hasFreeTrial ? .green : .blue,
-                            isSelected: selectedPlan == .weekly || (freeTrialEnabled && hasFreeTrial),
+                            isSelected: viewModel.selectedPlan == .weekly || (viewModel.freeTrialEnabled && hasFreeTrial),
                             isTrialPlan: hasFreeTrial
                         ) {
-                            selectedPlan = .weekly
+                            viewModel.selectPlan(.weekly)
                             if hasFreeTrial {
-                                freeTrialEnabled = true
+                                viewModel.freeTrialEnabled = true
                             }
                         }
                     } else {
@@ -151,11 +156,11 @@ struct PaywallView: View {
                             subtitle: AppStrings.UI.loadingPricing,
                             badge: AppStrings.UI.freeBadge,
                             badgeColor: .green,
-                            isSelected: selectedPlan == .weekly || freeTrialEnabled,
+                            isSelected: viewModel.selectedPlan == .weekly || viewModel.freeTrialEnabled,
                             isTrialPlan: true
                         ) {
-                            selectedPlan = .weekly
-                            freeTrialEnabled = true
+                            viewModel.selectPlan(.weekly)
+                            viewModel.freeTrialEnabled = true
                         }
                     }
                 }
@@ -168,16 +173,16 @@ struct PaywallView: View {
                         Text(AppStrings.UI.freeTrialEnabled)
                             .font(.headline)
                         Spacer()
-                        Toggle("", isOn: $freeTrialEnabled)
+                        Toggle("", isOn: $viewModel.freeTrialEnabled)
                             .toggleStyle(SwitchToggleStyle())
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)
-                    .onChange(of: freeTrialEnabled) { enabled in
+                    .onChange(of: viewModel.freeTrialEnabled) { enabled in
                         if enabled {
-                            selectedPlan = .weekly
+                            viewModel.selectPlan(.weekly)
                         } else {
-                            selectedPlan = .yearly
+                            viewModel.selectPlan(.yearly)
                         }
                     }
                 }
@@ -185,10 +190,12 @@ struct PaywallView: View {
                 
                 // Purchase Button
                 Button(action: {
-                    handlePurchaseButtonTap()
+                    viewModel.handleUpgrade {
+                        onUpgrade()
+                    }
                 }) {
                     HStack {
-                        if isPurchasing {
+                        if viewModel.isPurchasing {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                 .scaleEffect(0.8)
@@ -196,7 +203,7 @@ struct PaywallView: View {
                                 .font(.headline)
                                 .fontWeight(.semibold)
                         } else {
-                            Text(getPurchaseButtonText())
+                            Text(viewModel.getButtonText())
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             
@@ -207,20 +214,22 @@ struct PaywallView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(isPurchasing ? Color.gray : Color.blue)
+                    .background(viewModel.isPurchasing ? Color.gray : Color.blue)
                     .cornerRadius(12)
                 }
-                .disabled(isPurchasing)
+                .disabled(viewModel.isPurchasing)
                 .padding(.horizontal)
                 .padding(.top, 16)
                 
                 // Bottom Links - Right at the bottom of safe area
                 HStack(spacing: 40) {
                     Button(AppStrings.UI.restore) {
-                        handleRestorePurchases()
+                        viewModel.handleRestorePurchases {
+                            onUpgrade()
+                        }
                     }
                     .foregroundColor(.gray)
-                    .disabled(isPurchasing)
+                    .disabled(viewModel.isPurchasing)
                     
                     Button(AppStrings.UI.termsAndPrivacy) {
                         // TODO: Show terms and privacy
@@ -236,10 +245,9 @@ struct PaywallView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
-            AnalyticsManager.shared.track(AppStrings.Analytics.paywallShown, properties: [
-                AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
-                AppStrings.AnalyticsProperties.exportLimitReason: "free_limit_reached"
-            ])
+            // Configure viewModel with analytics context
+            viewModel.configurePaywall(placement: placement, entryPoint: entryPoint)
+            viewModel.onAppear()
             
             // Fetch offerings when paywall appears
             subscriptionManager.fetchOfferings()
@@ -260,108 +268,25 @@ struct PaywallView: View {
             // Update free trial state when weekly product loads
             if let weeklyProduct = weeklyProduct,
                weeklyProduct.storeProduct.introductoryDiscount != nil {
-                freeTrialEnabled = true
-                selectedPlan = .weekly
+                viewModel.freeTrialEnabled = true
+                viewModel.selectedPlan = .weekly
             }
         }
         .onDisappear {
             // Clean up if needed
         }
-        .alert(AppStrings.UI.purchaseError, isPresented: $showErrorAlert) {
+        .alert(AppStrings.UI.purchaseError, isPresented: $viewModel.showErrorAlert) {
             Button(AppStrings.UI.ok) {
-                showErrorAlert = false
+                viewModel.showErrorAlert = false
             }
         } message: {
-            Text(errorMessage)
+            Text(viewModel.errorMessage)
         }
     }
     
     private func dismissPaywall() {
-        AnalyticsManager.shared.track(AppStrings.Analytics.paywallDismissed)
+        viewModel.dismissPaywall()
         isPresented = false
-    }
-    
-    // MARK: - Purchase Handling
-    
-    private func handlePurchaseButtonTap() {
-        AnalyticsManager.shared.track(AppStrings.Analytics.paywallUpgradeClicked)
-        
-        guard !isPurchasing else { return }
-        
-        let selectedPackage: Package?
-        if selectedPlan == .yearly {
-            selectedPackage = subscriptionManager.yearlyProduct
-        } else {
-            selectedPackage = subscriptionManager.weeklyProduct
-        }
-        
-        guard let package = selectedPackage else {
-            showError("The selected plan is currently unavailable. Please try again later.")
-            return
-        }
-        
-        isPurchasing = true
-        
-        subscriptionManager.purchase(package: package) { success, error in
-            DispatchQueue.main.async {
-                isPurchasing = false
-                
-                if success {
-                    print("Purchase successful!")
-                    AnalyticsManager.shared.track(AppStrings.Analytics.purchaseSuccessful, properties: [
-                        "product_id": package.storeProduct.productIdentifier,
-                        AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString
-                    ])
-                    onUpgrade()
-                    isPresented = false
-                } else if let error = error {
-                    print("Purchase failed: \(error.localizedDescription)")
-                    AnalyticsManager.shared.track(AppStrings.Analytics.purchaseFailed, properties: [
-                        "error": error.localizedDescription,
-                        "product_id": package.storeProduct.productIdentifier
-                    ])
-                    showError(getUserFriendlyError(error))
-                } else {
-                    // Purchase was cancelled by user - don't show an error
-                    print(AppStrings.UI.purchaseCancelled)
-                    AnalyticsManager.shared.track(AppStrings.Analytics.purchaseCancelled, properties: [
-                        "product_id": package.storeProduct.productIdentifier
-                    ])
-                }
-            }
-        }
-    }
-    
-    private func handleRestorePurchases() {
-        guard !isPurchasing else { return }
-        
-        isPurchasing = true
-        
-        subscriptionManager.restorePurchases { success, error in
-            DispatchQueue.main.async {
-                isPurchasing = false
-                
-                if success {
-                    print("Restore successful!")
-                    AnalyticsManager.shared.track(AppStrings.Analytics.restoreSuccessful)
-                    
-                    if subscriptionManager.isSubscribed {
-                        // User has active subscription after restore
-                        onUpgrade()
-                        isPresented = false
-                    } else {
-                        // No active subscriptions found
-                        showError("No active subscriptions found to restore. If you believe this is an error, please contact support.")
-                    }
-                } else if let error = error {
-                    print("Restore failed: \(error.localizedDescription)")
-                    AnalyticsManager.shared.track(AppStrings.Analytics.restoreFailed, properties: [
-                        "error": error.localizedDescription
-                    ])
-                    showError(getUserFriendlyError(error))
-                }
-            }
-        }
     }
     
     // MARK: - Price Calculation Helpers
@@ -393,23 +318,6 @@ struct PaywallView: View {
         return "Save \(roundedSavings)%"
     }
     
-    /// Get the appropriate purchase button text based on selected plan and trial status
-    private func getPurchaseButtonText() -> String {
-        // Show "Try for Free" if:
-        // 1. Weekly plan is selected, AND
-        // 2. Weekly product has a free trial available, AND  
-        // 3. Free trial is enabled
-        if selectedPlan == .weekly,
-           let weeklyProduct = subscriptionManager.weeklyProduct,
-           weeklyProduct.storeProduct.introductoryDiscount != nil,
-           freeTrialEnabled {
-            return AppStrings.UI.tryForFree
-        } else {
-            // For all other cases (yearly plan, weekly without trial, or trial disabled)
-            return AppStrings.UI.continueButton
-        }
-    }
-    
     /// Format the trial period from IntroductoryDiscount
     private func formatTrialPeriod(_ introDiscount: StoreProductDiscount) -> String? {
         let period = introDiscount.subscriptionPeriod
@@ -429,45 +337,6 @@ struct PaywallView: View {
         }
     }
     
-    // MARK: - Error Handling
-    
-    /// Show error alert to user
-    private func showError(_ message: String) {
-        errorMessage = message
-        showErrorAlert = true
-    }
-    
-    /// Convert RevenueCat errors to user-friendly messages
-    private func getUserFriendlyError(_ error: Error) -> String {
-        // Check if it's a RevenueCat error
-        if let rcError = error as? RevenueCat.ErrorCode {
-            switch rcError {
-            case .networkError:
-                return "Please check your internet connection and try again."
-            case .purchaseNotAllowedError:
-                return "Purchases are not allowed on this device. Please check your device settings."
-            case .purchaseInvalidError:
-                return "This purchase is no longer available. Please try selecting a different plan."
-            case .productNotAvailableForPurchaseError:
-                return "This subscription is currently unavailable. Please try again later."
-            case .purchaseCancelledError:
-                return "Purchase was cancelled."
-            case .storeProblemError:
-                return "There was a problem with the App Store. Please try again later."
-            case .paymentPendingError:
-                return "Your payment is pending approval. Please wait for confirmation."
-            case .receiptAlreadyInUseError:
-                return "This purchase has already been made on another account."
-            case .missingReceiptFileError:
-                return "Purchase receipt not found. Please try again."
-            default:
-                return "An unexpected error occurred. Please try again."
-            }
-        }
-        
-        // For other errors, return a generic message
-        return "An error occurred. Please try again."
-    }
 }
 
 // MARK: - Supporting Views
@@ -631,7 +500,11 @@ private struct AnimatedAppIconView: View {
 }
 
 #Preview {
-    PaywallView(isPresented: .constant(true)) {
+    PaywallView(
+        isPresented: .constant(true),
+        placement: AppStrings.AnalyticsProperties.featureLock,
+        entryPoint: "preview"
+    ) {
         print(AppStrings.UI.upgradeTapped)
     }
 }

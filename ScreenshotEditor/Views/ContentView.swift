@@ -286,7 +286,11 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingPaywall) {
-            PaywallView(isPresented: $showingPaywall) {
+            PaywallView(
+                isPresented: $showingPaywall,
+                placement: AppStrings.AnalyticsProperties.featureLock,
+                entryPoint: "export_limit_reached"
+            ) {
                 // For now, just toggle subscription status for testing
                 // In a real app, this would trigger StoreKit purchase flow
                 UserDefaultsManager.shared.setSubscribed(true)
@@ -306,7 +310,11 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingPostOnboardingPaywall) {
-            PaywallView(isPresented: $showingPostOnboardingPaywall) {
+            PaywallView(
+                isPresented: $showingPostOnboardingPaywall,
+                placement: AppStrings.AnalyticsProperties.onboardingGate,
+                entryPoint: "post_onboarding"
+            ) {
                 // Handle subscription success
                 UserDefaultsManager.shared.setSubscribed(true)
                 showingPostOnboardingPaywall = false

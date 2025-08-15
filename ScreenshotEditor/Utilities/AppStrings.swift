@@ -133,6 +133,13 @@ struct AppStrings {
         static let purchaseCancelled = "purchase_cancelled"
         static let restoreSuccessful = "restore_successful"
         static let restoreFailed = "restore_failed"
+        
+        // EPIC 12 - Subscription Funnel & Paywall Events
+        static let paywallOptionSelected = "paywall_option_selected"
+        static let paywallCtaTapped = "paywall_cta_tapped"
+        static let checkoutStarted = "checkout_started"
+        static let purchaseAttempted = "purchase_attempted"
+        static let paywallOutcome = "paywall_outcome"
     }
     
     // MARK: - Analytics Properties
@@ -159,6 +166,42 @@ struct AppStrings {
         
         // Additional analytics properties
         static let price = "price"
+        
+        // EPIC 12 - Subscription Funnel & Paywall Properties
+        static let paywallSessionId = "paywall_session_id"
+        static let placement = "placement"
+        static let entryPoint = "entry_point"
+        static let ctaLabel = "cta_label"
+        static let productId = "product_id"
+        static let billingPeriod = "billing_period"
+        static let currency = "currency"
+        static let introOfferApplied = "intro_offer_applied"
+        static let trialDays = "trial_days"
+        static let isTrialStart = "is_trial_start"
+        static let outcome = "outcome"
+        static let selectedProductId = "selected_product_id"
+        
+        // Placement enum values
+        static let onboardingGate = "onboarding_gate"
+        static let featureLock = "feature_lock"
+        static let upsellModal = "upsell_modal"
+        static let tabPremium = "tab_premium"
+        static let exitIntent = "exit_intent"
+        static let paywalledContent = "paywalled_content"
+        
+        // CTA Label enum values
+        static let startTrial = "start_trial"
+        static let continueLabel = "continue"
+        static let subscribe = "subscribe"
+        static let buyNow = "buy_now"
+        
+        // Outcome enum values
+        static let purchased = "purchased"
+        static let dismissed = "dismissed"
+        static let backgrounded = "backgrounded"
+        static let terminated = "terminated"
+        static let navigatedElsewhere = "navigated_elsewhere"
+        static let analyticsError = "error"
     }
     
     // MARK: - System Images
