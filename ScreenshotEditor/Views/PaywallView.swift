@@ -15,6 +15,7 @@ struct PaywallView: View {
     
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @StateObject private var viewModel = PaywallViewModel()
+    @Environment(\.openURL) private var openURL
     
     @State private var cooldownTimeRemaining: Int = 3
     @State private var timer: Timer?
@@ -231,13 +232,21 @@ struct PaywallView: View {
                     .foregroundColor(.gray)
                     .disabled(viewModel.isPurchasing)
                     
-                    Button(AppStrings.UI.termsAndPrivacy) {
-                        // TODO: Show terms and privacy
+                    Button(AppStrings.UI.terms) {
+                        if let url = URL(string: "https://vanta-app.carrd.co/#terms") {
+                            openURL(url)
+                        }
+                    }
+                    .foregroundColor(.gray)
+                    
+                    Button(AppStrings.UI.privacy) {
+                        if let url = URL(string: "https://vanta-app.carrd.co/#privacy") {
+                            openURL(url)
+                        }
                     }
                     .foregroundColor(.gray)
                 }
                 .font(.footnote)
-//                .padding(.bottom, 20)
                 .padding(.top, 12)
                 }
             }
@@ -445,8 +454,8 @@ private struct AnimatedAppIconView: View {
         Image(AppStrings.AssetImages.appIconImage)
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 200, height: 200) 
-            .clipShape(RoundedRectangle(cornerRadius: 44.8)) // iOS app icon corner radius
+            .frame(width: 130, height: 130)
+            .clipShape(RoundedRectangle(cornerRadius: 35)) // iOS app icon corner radius
             .scaleEffect(scale)
             .rotationEffect(.degrees(rotationAngle))
             .offset(y: yOffset)

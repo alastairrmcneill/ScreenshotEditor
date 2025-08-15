@@ -564,9 +564,9 @@ I don't want it to be a hard paywall, but I do want to break their flow. In the 
 
 - Exit button with 2 second cooldown
 
-## **EPIC 11 – Subscription Compliance & App Review Readiness**
+## **EPIC 11 – ✅ Done Subscription Compliance & App Review Readiness**
 
-### Story 11.1 – Add Terms of Use & Privacy Policy Pages
+### Story 11.1 – ✅ Done Add Terms of Use & Privacy Policy Pages
 
 **Description:**
 
@@ -574,27 +574,13 @@ Create hosted URLs for Terms and Privacy Policy, and link them in the paywall an
 
 **Acceptance Criteria:**
 
-- Terms of Use hosted on a public HTTPS URL.
-- Privacy Policy hosted on a public HTTPS URL.
+- Terms of Use hosted here: https://vanta-app.carrd.co/#terms
+- Privacy Policy hosted here: https://vanta-app.carrd.co/#privacy
 - Footer links open in in-app Safari view.
 
 ---
 
-### Story 11.2 – Update App Store Connect Metadata
-
-**Description:**
-
-Ensure App Store Connect listing contains required subscription information.
-
-**Acceptance Criteria:**
-
-- “In-App Purchases” section populated with both products.
-- “What’s New” and description mention free export limit and premium unlock.
-- Privacy URL and Terms URL fields set.
-
----
-
-### Story 11.3 – Display Subscription Terms on Paywall
+### Story 11.2 – ✅ Done Display Subscription Terms on Paywall
 
 **Description:**
 
