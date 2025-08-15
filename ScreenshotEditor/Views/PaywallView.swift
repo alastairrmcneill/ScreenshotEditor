@@ -69,7 +69,7 @@ struct PaywallView: View {
                             Button(action: {
                                 dismissPaywall()
                             }) {
-                                Image(systemName: "xmark")
+                                Image(systemName: AppStrings.SystemImages.xmark)
                                     .font(.headline)
                                     .foregroundColor(.gray)
                                     .frame(width: 30, height: 30)
@@ -85,10 +85,10 @@ struct PaywallView: View {
                 
                 // Feature List
                VStack(alignment: .leading, spacing: 12) {
-                   FeatureRow(icon: "fish.fill", text: AppStrings.UI.identifyUnlimitedFish, color: .blue)
-                   FeatureRow(icon: "fishing.rod", text: AppStrings.UI.unlockExpertTips, color: .blue)
-                   FeatureRow(icon: "location.fill", text: AppStrings.UI.locationInsights, color: .blue)
-                   FeatureRow(icon: "fork.knife", text: AppStrings.UI.cookingTips, color: .blue)
+                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature, color: .blue)
+                   FeatureRow(icon: "wand.and.stars", text: AppStrings.UI.premiumEditingFeature, color: .blue)
+                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature, color: .blue)
+                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature, color: .blue)
                }
                .padding(.horizontal)
                .padding(.top, 20)
@@ -117,8 +117,8 @@ struct PaywallView: View {
                         PricingPlanView(
                             title: AppStrings.UI.yearlyPlan,
                             originalPrice: nil,
-                            currentPrice: "Loading pricing...",
-                            badge: "Best Value",
+                            currentPrice: AppStrings.UI.loadingPricing,
+                            badge: AppStrings.UI.bestValue,
                             isSelected: selectedPlan == .yearly && !freeTrialEnabled
                         ) {
                             selectedPlan = .yearly
@@ -132,9 +132,9 @@ struct PaywallView: View {
                         let trialText = hasFreeTrial ? formatTrialPeriod(weeklyProduct.storeProduct.introductoryDiscount!) : nil
                         
                         PricingPlanView(
-                            title: hasFreeTrial ? (trialText ?? "3-Day Free Trial") : "Weekly Plan",
+                            title: hasFreeTrial ? (trialText ?? AppStrings.UI.threeDayFreeTrial) : AppStrings.UI.weeklyPlan,
                             subtitle: hasFreeTrial ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : "\(weeklyProduct.storeProduct.localizedPriceString) weekly",
-                            badge: hasFreeTrial ? "FREE" : "Weekly",
+                            badge: hasFreeTrial ? AppStrings.UI.freeBadge : AppStrings.UI.weekly,
                             badgeColor: hasFreeTrial ? .green : .blue,
                             isSelected: selectedPlan == .weekly || (freeTrialEnabled && hasFreeTrial),
                             isTrialPlan: hasFreeTrial
@@ -147,9 +147,9 @@ struct PaywallView: View {
                     } else {
                         // Fallback to loading state while fetching
                         PricingPlanView(
-                            title: "Free Trial",
-                            subtitle: "Loading pricing...",
-                            badge: "FREE",
+                            title: AppStrings.UI.freeTrial,
+                            subtitle: AppStrings.UI.loadingPricing,
+                            badge: AppStrings.UI.freeBadge,
                             badgeColor: .green,
                             isSelected: selectedPlan == .weekly || freeTrialEnabled,
                             isTrialPlan: true
@@ -192,7 +192,7 @@ struct PaywallView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                 .scaleEffect(0.8)
-                            Text("Processing...")
+                            Text(AppStrings.UI.processing)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                         } else {
@@ -267,8 +267,8 @@ struct PaywallView: View {
         .onDisappear {
             // Clean up if needed
         }
-        .alert("Purchase Error", isPresented: $showErrorAlert) {
-            Button("OK") {
+        .alert(AppStrings.UI.purchaseError, isPresented: $showErrorAlert) {
+            Button(AppStrings.UI.ok) {
                 showErrorAlert = false
             }
         } message: {
@@ -308,23 +308,23 @@ struct PaywallView: View {
                 
                 if success {
                     print("Purchase successful!")
-                    AnalyticsManager.shared.track("purchase_successful", properties: [
+                    AnalyticsManager.shared.track(AppStrings.Analytics.purchaseSuccessful, properties: [
                         "product_id": package.storeProduct.productIdentifier,
-                        "price": package.storeProduct.localizedPriceString
+                        AppStrings.AnalyticsProperties.price: package.storeProduct.localizedPriceString
                     ])
                     onUpgrade()
                     isPresented = false
                 } else if let error = error {
                     print("Purchase failed: \(error.localizedDescription)")
-                    AnalyticsManager.shared.track("purchase_failed", properties: [
+                    AnalyticsManager.shared.track(AppStrings.Analytics.purchaseFailed, properties: [
                         "error": error.localizedDescription,
                         "product_id": package.storeProduct.productIdentifier
                     ])
                     showError(getUserFriendlyError(error))
                 } else {
                     // Purchase was cancelled by user - don't show an error
-                    print("Purchase cancelled by user")
-                    AnalyticsManager.shared.track("purchase_cancelled", properties: [
+                    print(AppStrings.UI.purchaseCancelled)
+                    AnalyticsManager.shared.track(AppStrings.Analytics.purchaseCancelled, properties: [
                         "product_id": package.storeProduct.productIdentifier
                     ])
                 }
@@ -343,7 +343,7 @@ struct PaywallView: View {
                 
                 if success {
                     print("Restore successful!")
-                    AnalyticsManager.shared.track("restore_successful")
+                    AnalyticsManager.shared.track(AppStrings.Analytics.restoreSuccessful)
                     
                     if subscriptionManager.isSubscribed {
                         // User has active subscription after restore
@@ -355,7 +355,7 @@ struct PaywallView: View {
                     }
                 } else if let error = error {
                     print("Restore failed: \(error.localizedDescription)")
-                    AnalyticsManager.shared.track("restore_failed", properties: [
+                    AnalyticsManager.shared.track(AppStrings.Analytics.restoreFailed, properties: [
                         "error": error.localizedDescription
                     ])
                     showError(getUserFriendlyError(error))
@@ -425,7 +425,7 @@ struct PaywallView: View {
         case .year:
             return "\(numberOfUnits)-Year Free Trial"
         @unknown default:
-            return "Free Trial"
+            return AppStrings.UI.freeTrial
         }
     }
     
@@ -547,7 +547,7 @@ private struct PricingPlanView: View {
                         .cornerRadius(6)
                     
                     // Radio button
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    Image(systemName: isSelected ? AppStrings.SystemImages.checkmarkCircleFill : AppStrings.SystemImages.circle)
                         .font(.title2)
                         .foregroundColor(isSelected ? .blue : .gray)
                 }
@@ -573,7 +573,7 @@ private struct AnimatedAppIconView: View {
     @State private var scale: CGFloat = 1.0
     
     var body: some View {
-        Image("AppIconImage")
+        Image(AppStrings.AssetImages.appIconImage)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 200, height: 200) 
@@ -632,6 +632,6 @@ private struct AnimatedAppIconView: View {
 
 #Preview {
     PaywallView(isPresented: .constant(true)) {
-        print("Upgrade tapped")
+        print(AppStrings.UI.upgradeTapped)
     }
 }

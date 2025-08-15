@@ -443,7 +443,7 @@ Log when share sheet is presented.
 
 ---
 
-## **EPIC 10 – RevenueCat Integration & Subscription Logic**
+## **EPIC 10 – ✅ Done RevenueCat Integration & Subscription Logic**
 
 ### Story 10.1 – ✅ Done Integrate RevenueCat SDK
 

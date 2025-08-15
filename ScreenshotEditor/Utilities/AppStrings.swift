@@ -50,20 +50,38 @@ struct AppStrings {
         
         // New Paywall
         static let unlimitedAccess = "Unlimited Access"
-        static let identifyUnlimitedFish = "Identify unlimited fish species"
-        static let unlockExpertTips = "Unlock expert bait & catch tips"
-        static let locationInsights = "Get location-based fishing insights"
-        static let cookingTips = "Plus cooking tips & serving ideas"
+        static let unlimitedExportsFeature = "Unlimited exports"
+        static let noWatermarkFeature = "No watermark"
+        static let premiumEditingFeature = "Premium editing tools"
+        static let highQualityExportsFeature = "High-quality exports"
         static let yearlyPlan = "Yearly Plan"
+        static let weeklyPlan = "Weekly Plan"
         static let threeDayTrial = "3-Day Trial"
+        static let threeDayFreeTrial = "3-Day Free Trial"
+        static let freeTrial = "Free Trial"
         static let thenWeekly = "then £4.99 per week"
         static let save90Percent = "SAVE 90%"
+        static let bestValue = "Best Value"
+        static let weekly = "Weekly"
         static let freeBadge = "FREE"
         static let freeTrialEnabled = "Free Trial Enabled"
         static let tryForFree = "Try for Free"
         static let continueButton = "Continue"
         static let restore = "Restore"
         static let termsAndPrivacy = "Terms of Use & Privacy Policy"
+        static let loadingPricing = "Loading pricing..."
+        static let purchaseError = "Purchase Error"
+        static let ok = "OK"
+        static let purchaseCancelled = "Purchase cancelled by user"
+        static let upgradeTapped = "Upgrade tapped"
+        static let processing = "Processing..."
+        
+        // Premium status
+        static let premiumActive = "Premium Active"
+        static let freePlan = "Free Plan"
+        static let unlimitedExportsNowatermark = "Unlimited exports • No watermark"
+        static let freeExportsWatermarked = "3 free exports • Watermarked"
+        static let entitlements = "Entitlements:"
     }
     
     // MARK: - Analytics Events
@@ -101,6 +119,13 @@ struct AppStrings {
         
         // Share sheet tracking
         static let shareSheetOpened = "Share Sheet Opened"
+        
+        // Purchase events
+        static let purchaseSuccessful = "purchase_successful"
+        static let purchaseFailed = "purchase_failed"
+        static let purchaseCancelled = "purchase_cancelled"
+        static let restoreSuccessful = "restore_successful"
+        static let restoreFailed = "restore_failed"
     }
     
     // MARK: - Analytics Properties
@@ -120,6 +145,32 @@ struct AppStrings {
         static let shadowBlur = "shadow_blur"
         static let backgroundType = "background_type"
         static let aspectRatio = "aspect_ratio"
+        
+        // Background type values
+        static let solid = "solid"
+        static let gradient = "gradient"
+        
+        // Additional analytics properties
+        static let price = "price"
+    }
+    
+    // MARK: - System Images
+    struct SystemImages {
+        static let xmark = "xmark"
+        static let crown = "crown"
+        static let crownFill = "crown.fill"
+        static let checkmarkCircleFill = "checkmark.circle.fill"
+        static let circle = "circle"
+    }
+    
+    // MARK: - Asset Images
+    struct AssetImages {
+        static let appIconImage = "AppIconImage"
+    }
+    
+    // MARK: - Accessibility Labels
+    struct Accessibility {
+        static let backgroundTypePicker = "Background Type"
     }
     
     // MARK: - Debug Messages

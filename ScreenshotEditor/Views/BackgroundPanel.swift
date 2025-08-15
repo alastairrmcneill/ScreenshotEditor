@@ -87,7 +87,7 @@ struct BackgroundPanel: View {
                             }
                             
                             // Segmented Control
-                            Picker("Background Type", selection: Binding(
+                            Picker(AppStrings.Accessibility.backgroundTypePicker, selection: Binding(
                                 get: { editingViewModel.parameters.backgroundType },
                                 set: { newType in
                                     editingViewModel.updateBackgroundType(newType)

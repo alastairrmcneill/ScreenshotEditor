@@ -52,28 +52,28 @@ struct ContentView: View {
                         // Premium Status Display
                         VStack(spacing: 8) {
                             HStack {
-                                Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
+                                Image(systemName: subscriptionManager.hasPremiumAccess ? AppStrings.SystemImages.crownFill : AppStrings.SystemImages.crown)
                                     .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
                                 
-                                Text(subscriptionManager.hasPremiumAccess ? "Premium Active" : "Free Plan")
+                                Text(subscriptionManager.hasPremiumAccess ? AppStrings.UI.premiumActive : AppStrings.UI.freePlan)
                                     .font(.caption)
                                     .fontWeight(.medium)
                                     .foregroundColor(subscriptionManager.hasPremiumAccess ? .primary : .secondary)
                             }
                             
                             if !subscriptionManager.activeEntitlements.isEmpty {
-                                Text("Entitlements: \(subscriptionManager.activeEntitlements.joined(separator: ", "))")
+                                Text("\(AppStrings.UI.entitlements) \(subscriptionManager.activeEntitlements.joined(separator: ", "))")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.center)
                             }
                             
                             if subscriptionManager.hasPremiumAccess {
-                                Text("Unlimited exports • No watermark")
+                                Text(AppStrings.UI.unlimitedExportsNowatermark)
                                     .font(.caption2)
                                     .foregroundColor(.green)
                             } else {
-                                Text("3 free exports • Watermarked")
+                                Text(AppStrings.UI.freeExportsWatermarked)
                                     .font(.caption2)
                                     .foregroundColor(.orange)
                             }
@@ -119,7 +119,7 @@ struct ContentView: View {
                                 
                                 // Premium status indicator
                                 HStack(spacing: 4) {
-                                    Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
+                                    Image(systemName: subscriptionManager.hasPremiumAccess ? AppStrings.SystemImages.crownFill : AppStrings.SystemImages.crown)
                                         .font(.caption2)
                                         .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
                                     
@@ -370,7 +370,7 @@ struct ContentView: View {
                 AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
                 AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
                 AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
-                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? "solid" : "gradient",
+                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? AppStrings.AnalyticsProperties.solid : AppStrings.AnalyticsProperties.gradient,
                 AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue
             ])
             AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
@@ -387,7 +387,7 @@ struct ContentView: View {
                 AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
                 AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
                 AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
-                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? "solid" : "gradient",
+                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? AppStrings.AnalyticsProperties.solid : AppStrings.AnalyticsProperties.gradient,
                 AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue,
                 AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess
             ])
