@@ -21,6 +21,8 @@ struct PaywallView: View {
     @State private var isPurchasing: Bool = false
     @State private var showCloseButton: Bool = false
     @State private var progress: CGFloat = 0.0
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
     
     private let allowCloseAfter: CGFloat = 3.0 // time in seconds until close is allowed
     
@@ -265,6 +267,13 @@ struct PaywallView: View {
         .onDisappear {
             // Clean up if needed
         }
+        .alert("Purchase Error", isPresented: $showErrorAlert) {
+            Button("OK") {
+                showErrorAlert = false
+            }
+        } message: {
+            Text(errorMessage)
+        }
     }
     
     private func dismissPaywall() {
@@ -287,24 +296,38 @@ struct PaywallView: View {
         }
         
         guard let package = selectedPackage else {
-            print("No package available for selected plan")
-            // Fallback to callback for now
-            onUpgrade()
+            showError("The selected plan is currently unavailable. Please try again later.")
             return
         }
         
         isPurchasing = true
         
         subscriptionManager.purchase(package: package) { success, error in
-            isPurchasing = false
-            
-            if success {
-                print("Purchase successful!")
-                onUpgrade()
-                isPresented = false
-            } else if let error = error {
-                print("Purchase failed: \(error.localizedDescription)")
-                // TODO: Show error alert to user
+            DispatchQueue.main.async {
+                isPurchasing = false
+                
+                if success {
+                    print("Purchase successful!")
+                    AnalyticsManager.shared.track("purchase_successful", properties: [
+                        "product_id": package.storeProduct.productIdentifier,
+                        "price": package.storeProduct.localizedPriceString
+                    ])
+                    onUpgrade()
+                    isPresented = false
+                } else if let error = error {
+                    print("Purchase failed: \(error.localizedDescription)")
+                    AnalyticsManager.shared.track("purchase_failed", properties: [
+                        "error": error.localizedDescription,
+                        "product_id": package.storeProduct.productIdentifier
+                    ])
+                    showError(getUserFriendlyError(error))
+                } else {
+                    // Purchase was cancelled by user - don't show an error
+                    print("Purchase cancelled by user")
+                    AnalyticsManager.shared.track("purchase_cancelled", properties: [
+                        "product_id": package.storeProduct.productIdentifier
+                    ])
+                }
             }
         }
     }
@@ -315,17 +338,28 @@ struct PaywallView: View {
         isPurchasing = true
         
         subscriptionManager.restorePurchases { success, error in
-            isPurchasing = false
-            
-            if success {
-                print("Restore successful!")
-                if subscriptionManager.isSubscribed {
-                    onUpgrade()
-                    isPresented = false
+            DispatchQueue.main.async {
+                isPurchasing = false
+                
+                if success {
+                    print("Restore successful!")
+                    AnalyticsManager.shared.track("restore_successful")
+                    
+                    if subscriptionManager.isSubscribed {
+                        // User has active subscription after restore
+                        onUpgrade()
+                        isPresented = false
+                    } else {
+                        // No active subscriptions found
+                        showError("No active subscriptions found to restore. If you believe this is an error, please contact support.")
+                    }
+                } else if let error = error {
+                    print("Restore failed: \(error.localizedDescription)")
+                    AnalyticsManager.shared.track("restore_failed", properties: [
+                        "error": error.localizedDescription
+                    ])
+                    showError(getUserFriendlyError(error))
                 }
-            } else if let error = error {
-                print("Restore failed: \(error.localizedDescription)")
-                // TODO: Show error alert to user
             }
         }
     }
@@ -393,6 +427,46 @@ struct PaywallView: View {
         @unknown default:
             return "Free Trial"
         }
+    }
+    
+    // MARK: - Error Handling
+    
+    /// Show error alert to user
+    private func showError(_ message: String) {
+        errorMessage = message
+        showErrorAlert = true
+    }
+    
+    /// Convert RevenueCat errors to user-friendly messages
+    private func getUserFriendlyError(_ error: Error) -> String {
+        // Check if it's a RevenueCat error
+        if let rcError = error as? RevenueCat.ErrorCode {
+            switch rcError {
+            case .networkError:
+                return "Please check your internet connection and try again."
+            case .purchaseNotAllowedError:
+                return "Purchases are not allowed on this device. Please check your device settings."
+            case .purchaseInvalidError:
+                return "This purchase is no longer available. Please try selecting a different plan."
+            case .productNotAvailableForPurchaseError:
+                return "This subscription is currently unavailable. Please try again later."
+            case .purchaseCancelledError:
+                return "Purchase was cancelled."
+            case .storeProblemError:
+                return "There was a problem with the App Store. Please try again later."
+            case .paymentPendingError:
+                return "Your payment is pending approval. Please wait for confirmation."
+            case .receiptAlreadyInUseError:
+                return "This purchase has already been made on another account."
+            case .missingReceiptFileError:
+                return "Purchase receipt not found. Please try again."
+            default:
+                return "An unexpected error occurred. Please try again."
+            }
+        }
+        
+        // For other errors, return a generic message
+        return "An error occurred. Please try again."
     }
 }
 

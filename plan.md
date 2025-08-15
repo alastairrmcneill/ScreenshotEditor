@@ -515,7 +515,7 @@ Use RevenueCat API to fetch available offerings for display in the paywall payme
 
 ---
 
-### Story 10.6 – Implement Purchase Flow
+### Story 10.6 – ✅ Done Implement Purchase Flow
 
 **Description:**
 
