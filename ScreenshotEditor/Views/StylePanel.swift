@@ -12,9 +12,9 @@ struct StylePanel: View {
     @Binding var isPresented: Bool
     
     // Local state for slider values during dragging
-    @State private var tempCornerRadius: CGFloat = 0
-    @State private var tempPadding: CGFloat = 24
-    @State private var tempShadowBlur: CGFloat = 0
+    @State private var tempCornerRadius: CGFloat = 50
+    @State private var tempPadding: CGFloat = 140
+    @State private var tempShadowBlur: CGFloat = 13
     @State private var isDraggingCornerRadius = false
     @State private var isDraggingPadding = false
     @State private var isDraggingShadowBlur = false
@@ -86,7 +86,7 @@ struct StylePanel: View {
                                             }
                                         }
                                     ),
-                                    in: 0...AppConstants.StylePanel.maxCornerRadius,
+                                    in: AppConstants.StylePanel.minCornerRadius...AppConstants.StylePanel.maxCornerRadius,
                                     step: 1,
                                     onEditingChanged: { editing in
                                         if !editing && isDraggingCornerRadius {
@@ -124,7 +124,7 @@ struct StylePanel: View {
                                             }
                                         }
                                     ),
-                                    in: 0...AppConstants.StylePanel.maxPadding,
+                                    in: AppConstants.StylePanel.minPadding...AppConstants.StylePanel.maxPadding,
                                     step: 1,
                                     onEditingChanged: { editing in
                                         if !editing && isDraggingPadding {
@@ -162,7 +162,7 @@ struct StylePanel: View {
                                             }
                                         }
                                     ),
-                                    in: 0...AppConstants.StylePanel.maxShadowBlur,
+                                    in: AppConstants.StylePanel.minShadowBlur...AppConstants.StylePanel.maxShadowBlur,
                                     step: 1,
                                     onEditingChanged: { editing in
                                         if !editing && isDraggingShadowBlur {

@@ -43,7 +43,7 @@ struct AppConstants {
     
     // MARK: - Shadow Constants
     struct Shadow {
-        static let defaultOpacity: CGFloat = 0.1
+        static let defaultOpacity: CGFloat = 0.2
         static let defaultRadius: CGFloat = 10
         static let defaultOffsetX: CGFloat = 0
         static let defaultOffsetY: CGFloat = 5
@@ -51,8 +51,11 @@ struct AppConstants {
     
     // MARK: - Style Panel Constants
     struct StylePanel {
+        static let minCornerRadius: CGFloat = 0
         static let maxCornerRadius: CGFloat = 200
-        static let maxPadding: CGFloat = 200
+        static let minPadding: CGFloat = 50
+        static let maxPadding: CGFloat = 400
+        static let minShadowBlur: CGFloat = 0
         static let maxShadowBlur: CGFloat = 50
         static let backgroundOpacity: CGFloat = 0.3
         static let handleIndicatorWidth: CGFloat = 36
