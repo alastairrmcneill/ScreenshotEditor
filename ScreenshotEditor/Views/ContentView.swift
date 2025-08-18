@@ -106,6 +106,7 @@ struct ContentView: View {
                         // Navigation Bar Area
                         HStack {
                             Button(AppStrings.UI.back) {
+                                editingViewModel.resetParameters()
                                 editingViewModel.setOriginalImage(nil)
                                 AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
                             }

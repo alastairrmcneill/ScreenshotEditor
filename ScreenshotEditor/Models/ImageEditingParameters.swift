@@ -15,13 +15,13 @@ struct ImageEditingParameters {
     var cropRect: CGRect = CGRect(x: 0, y: 0, width: 1, height: 1) // Normalized coordinates (0-1)
     
     // MARK: - Style Parameters
-    var cornerRadius: CGFloat = 0
-    var padding: CGFloat = 24
+    var cornerRadius: CGFloat = 50
+    var padding: CGFloat = 140
     
     // MARK: - Shadow Parameters
-    var shadowEnabled: Bool = false
+    var shadowEnabled: Bool = true
     var shadowOffset: CGFloat = 0
-    var shadowBlur: CGFloat = 0
+    var shadowBlur: CGFloat = 13
     var shadowOpacity: CGFloat = 0.3
     
     // MARK: - Background Parameters
