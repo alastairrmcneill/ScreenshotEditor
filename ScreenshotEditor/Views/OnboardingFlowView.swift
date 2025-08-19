@@ -104,7 +104,7 @@ private struct LinearProgressBar: View {
                 Capsule()
                     .fill(Color.gray.opacity(0.2))
                 Capsule()
-                    .fill(Color.accentColor)
+                    .fill(Color.customAccent)
                     .frame(width: geometry.size.width * CGFloat(progress))
                     .animation(.easeInOut(duration: 0.3), value: progress)
             }
@@ -122,7 +122,7 @@ private struct FeatureHighlight: View {
         HStack(alignment: .center, spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 28))
-                .foregroundColor(.accentColor)
+                .foregroundColor(.customAccent)
                 .frame(width: 40, height: 40)
             
             VStack(alignment: .leading, spacing: 4) {
@@ -166,7 +166,7 @@ private struct WelcomeStep: View {
                 // App Icon
                 Image(systemName: "camera.viewfinder")
                     .font(.system(size: 100))
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.customAccent)
                     .padding(.bottom, 40)
                     .accessibilityLabel("ScreenshotEditor App Icon")
                 
@@ -193,7 +193,7 @@ private struct WelcomeStep: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.accentColor)
+                        .background(Color.customAccent)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
@@ -244,7 +244,7 @@ private struct FeaturesStep: View {
                 // Features icon
                 Image(systemName: "sparkles")
                     .font(.system(size: 80))
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.customAccent)
                     .padding(.bottom, 32)
                 
                 // Headline
@@ -298,7 +298,7 @@ private struct FeaturesStep: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.accentColor)
+                        .background(Color.customAccent)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
@@ -338,7 +338,7 @@ private struct PhotoAccessStep: View {
                 // Photo access icon
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.system(size: 80))
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.customAccent)
                     .padding(.bottom, 32)
                 
                 // Headline
@@ -364,7 +364,7 @@ private struct PhotoAccessStep: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.accentColor)
+                        .background(Color.customAccent)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }

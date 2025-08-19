@@ -38,7 +38,7 @@ struct StyleSliderControl: View {
                 step: 1,
                 onEditingChanged: onEditingChanged
             )
-            .accentColor(.accentColor)
+            .accentColor(.customAccent)
         }
     }
 }

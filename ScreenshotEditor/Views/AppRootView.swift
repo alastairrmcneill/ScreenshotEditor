@@ -24,6 +24,7 @@ struct AppRootView: View {
                 }
             }
         }
+        .tint(.customAccent)
     }
 }
 

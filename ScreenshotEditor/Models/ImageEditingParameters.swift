@@ -26,7 +26,7 @@ struct ImageEditingParameters {
     
     // MARK: - Background Parameters
     var backgroundType: BackgroundType = .gradient
-    var selectedSolidColor: BackgroundColor = .lightBlue
+    var selectedSolidColor: BackgroundColor = .white
     var selectedGradient: BackgroundGradient = .sunset
     
     // MARK: - Canvas Parameters

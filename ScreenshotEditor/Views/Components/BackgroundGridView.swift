@@ -24,7 +24,7 @@ struct BackgroundGridView: View {
                             .frame(width: 50, height: 50)
                             .overlay(
                                 Circle()
-                                    .stroke(Color.accentColor, lineWidth: editingViewModel.parameters.selectedSolidColor == color ? 3 : 0)
+                                    .stroke(Color.customAccent, lineWidth: editingViewModel.parameters.selectedSolidColor == color ? 3 : 0)
                             )
                             .overlay(
                                 // Special handling for white color to show a border
@@ -52,7 +52,7 @@ struct BackgroundGridView: View {
                             .frame(width: 50, height: 50)
                             .overlay(
                                 Circle()
-                                    .stroke(Color.accentColor, lineWidth: editingViewModel.parameters.selectedGradient == gradient ? 3 : 0)
+                                    .stroke(Color.customAccent, lineWidth: editingViewModel.parameters.selectedGradient == gradient ? 3 : 0)
                             )
                     }
                 }

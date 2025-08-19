@@ -34,7 +34,7 @@ struct ShareOptionsPanel: View {
                     SocialMediaButton(
                         icon: "square.and.arrow.down.fill",
                         title: AppStrings.UI.save,
-                        backgroundColor: Color.accentColor,
+                        backgroundColor: Color.customAccent,
                         action: onSaveToDevice
                     )
                     

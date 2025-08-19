@@ -37,7 +37,7 @@ struct WatermarkOverlay: View {
 #Preview {
     ZStack {
         Rectangle()
-            .fill(Color.blue)
+            .fill(Color.gray)
             .frame(width: 300, height: 400)
         
         WatermarkOverlay()

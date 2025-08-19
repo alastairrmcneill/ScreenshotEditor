@@ -23,7 +23,7 @@ struct PanelHeaderView: View {
             Button(AppStrings.UI.done) {
                 onDone()
             }
-            .foregroundColor(.accentColor)
+            .foregroundColor(.customAccent)
         }
     }
 }

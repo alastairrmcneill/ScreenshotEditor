@@ -1,4 +1,4 @@
-//
+ //
 //  SafariWebView.swift
 //  ScreenshotEditor
 //

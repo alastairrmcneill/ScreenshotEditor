@@ -176,6 +176,7 @@ struct PaywallView: View {
                         Spacer()
                         Toggle("", isOn: $viewModel.freeTrialEnabled)
                             .toggleStyle(SwitchToggleStyle())
+                            .tint(.accentColor)
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)

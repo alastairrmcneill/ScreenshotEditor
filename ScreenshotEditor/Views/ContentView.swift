@@ -108,7 +108,7 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, AppConstants.Layout.standardPadding)
-                                .background(Color.accentColor)
+                                .background(Color.customAccent)
                                 .cornerRadius(AppConstants.Layout.largeCornerRadius)
                         }
                         .onChange(of: selectedPhotoItem) { _, _ in
@@ -128,7 +128,7 @@ struct ContentView: View {
                                 showingBackPhotosPicker = true
                                 AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
                             }
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.customAccent)
                             
                             Spacer()
                             
@@ -174,7 +174,7 @@ struct ContentView: View {
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(Color.accentColor)
+                                    .background(Color.customAccent)
                                     .cornerRadius(8)
                                 }
                                 .disabled(isSavingToPhotos || isGeneratingShareImage)
@@ -188,13 +188,13 @@ struct ContentView: View {
                                 }) {
                                     HStack {
                                         Text(AppStrings.UI.share)
-                                            .foregroundColor(.accentColor)
+                                            .foregroundColor(.customAccent)
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.accentColor, lineWidth: 1)
+                                            .stroke(Color.customAccent, lineWidth: 1)
                                     )
                                 }
                                 .disabled(isSavingToPhotos)
@@ -252,7 +252,7 @@ struct ContentView: View {
                                             showingCropView = true
                                             AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
                                         }
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(.customAccent)
                                         
                                         Spacer()
                                         
@@ -262,7 +262,7 @@ struct ContentView: View {
                                             }
                                             AnalyticsManager.shared.track(AppStrings.Analytics.styleButtonTapped)
                                         }
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(.customAccent)
                                         
                                         Spacer()
                                         
@@ -272,7 +272,7 @@ struct ContentView: View {
                                             }
                                             AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
                                         }
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(.customAccent)
                                     }
                                     .padding(.horizontal, AppConstants.Layout.controlsHorizontalPadding)
                                     .padding(.vertical, AppConstants.Layout.standardPadding)
