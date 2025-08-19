@@ -13,6 +13,7 @@ struct AppStrings {
     // MARK: - UI Labels
     struct UI {
         static let importPhoto = "Import Photo"
+        static let importPictureHere = "Import a picture here"
         static let back = "Back"
         static let share = "Share"
         static let saveToPhotos = "Save to Photos"

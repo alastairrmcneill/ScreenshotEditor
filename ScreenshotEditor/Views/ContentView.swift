@@ -12,6 +12,8 @@ struct ContentView: View {
     @StateObject private var editingViewModel = ImageEditingViewModel()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var backButtonPhotoItem: PhotosPickerItem?
+    @State private var showingBackPhotosPicker = false
     @State private var showingShareSheet = false
     @State private var showingCropView = false
     @State private var showingStylePanel = false
@@ -21,6 +23,7 @@ struct ContentView: View {
     @State private var isSavingToPhotos = false
     @State private var showingPaywall = false
     @State private var showingPostOnboardingPaywall = false
+    @State private var hasReturnedFromBack = false
     
     var body: some View {
         ZStack {
@@ -38,51 +41,60 @@ struct ContentView: View {
                             .font(.system(size: AppConstants.Layout.emptyStateIconSize))
                             .foregroundColor(.secondary)
                         
-                        // Title and subtitle
+                        // Title and subtitle - show different text if user came from back button
                         VStack(spacing: AppConstants.Layout.emptyStateTitleSpacing) {
-                            Text(AppStrings.UI.noImageSelected)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            
-                            Text(AppStrings.UI.importPhotoToGetStarted)
-                                .font(.body)
-                                .foregroundColor(.secondary)
+                            if hasReturnedFromBack {
+                                Text(AppStrings.UI.importPictureHere)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                            } else {
+                                Text(AppStrings.UI.noImageSelected)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                
+                                Text(AppStrings.UI.importPhotoToGetStarted)
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                         
-                        // Premium Status Display
-                        VStack(spacing: 8) {
-                            HStack {
-                                Image(systemName: subscriptionManager.hasPremiumAccess ? AppStrings.SystemImages.crownFill : AppStrings.SystemImages.crown)
-                                    .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
+                        // Premium Status Display - only show if not returning from back
+                        if !hasReturnedFromBack {
+                            VStack(spacing: 8) {
+                                HStack {
+                                    Image(systemName: subscriptionManager.hasPremiumAccess ? AppStrings.SystemImages.crownFill : AppStrings.SystemImages.crown)
+                                        .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
+                                    
+                                    Text(subscriptionManager.hasPremiumAccess ? AppStrings.UI.premiumActive : AppStrings.UI.freePlan)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(subscriptionManager.hasPremiumAccess ? .primary : .secondary)
+                                }
                                 
-                                Text(subscriptionManager.hasPremiumAccess ? AppStrings.UI.premiumActive : AppStrings.UI.freePlan)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(subscriptionManager.hasPremiumAccess ? .primary : .secondary)
+                                if !subscriptionManager.activeEntitlements.isEmpty {
+                                    Text("\(AppStrings.UI.entitlements) \(subscriptionManager.activeEntitlements.joined(separator: ", "))")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                }
+                                
+                                if subscriptionManager.hasPremiumAccess {
+                                    Text(AppStrings.UI.unlimitedExportsNowatermark)
+                                        .font(.caption2)
+                                        .foregroundColor(.green)
+                                } else {
+                                    Text(AppStrings.UI.freeExportsWatermarked)
+                                        .font(.caption2)
+                                        .foregroundColor(.orange)
+                                }
                             }
-                            
-                            if !subscriptionManager.activeEntitlements.isEmpty {
-                                Text("\(AppStrings.UI.entitlements) \(subscriptionManager.activeEntitlements.joined(separator: ", "))")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.center)
-                            }
-                            
-                            if subscriptionManager.hasPremiumAccess {
-                                Text(AppStrings.UI.unlimitedExportsNowatermark)
-                                    .font(.caption2)
-                                    .foregroundColor(.green)
-                            } else {
-                                Text(AppStrings.UI.freeExportsWatermarked)
-                                    .font(.caption2)
-                                    .foregroundColor(.orange)
-                            }
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
+                            .padding(.horizontal)
                         }
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
-                        .padding(.horizontal)
                         
                         // Import Button
                         PhotosPicker(
@@ -98,6 +110,9 @@ struct ContentView: View {
                                 .background(Color.accentColor)
                                 .cornerRadius(AppConstants.Layout.largeCornerRadius)
                         }
+                        .onChange(of: selectedPhotoItem) { _, _ in
+                            hasReturnedFromBack = false
+                        }
                         .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
                     }
                 } else {
@@ -108,6 +123,8 @@ struct ContentView: View {
                             Button(AppStrings.UI.back) {
                                 editingViewModel.resetParameters()
                                 editingViewModel.setOriginalImage(nil)
+                                hasReturnedFromBack = true
+                                showingBackPhotosPicker = true
                                 AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
                             }
                             .foregroundColor(.accentColor)
@@ -281,9 +298,21 @@ struct ContentView: View {
             }
             
         }
+        .photosPicker(isPresented: $showingBackPhotosPicker, selection: $backButtonPhotoItem, matching: .screenshots, photoLibrary: .shared())
         .onChange(of: selectedPhotoItem) { _, newItem in
             Task {
                 await loadSelectedImage(from: newItem)
+            }
+        }
+        .onChange(of: backButtonPhotoItem) { _, newItem in
+            Task {
+                await loadSelectedImage(from: newItem)
+                // Reset the back button photo item after processing
+                backButtonPhotoItem = nil
+                // If user selected an image, clear the hasReturnedFromBack flag
+                if newItem != nil {
+                    hasReturnedFromBack = false
+                }
             }
         }
         .sheet(isPresented: $showingPaywall) {
@@ -351,6 +380,7 @@ struct ContentView: View {
     @MainActor
     private func loadSelectedImage(from item: PhotosPickerItem?) async {
         guard let item = item else {
+            // If user cancelled and we're in the back button flow, keep the hasReturnedFromBack flag
             AnalyticsManager.shared.track(AppStrings.Analytics.photoImportCancelled)
             return
         }
