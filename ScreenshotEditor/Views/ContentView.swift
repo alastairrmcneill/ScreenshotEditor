@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var backButtonPhotoItem: PhotosPickerItem?
     @State private var showingBackPhotosPicker = false
     @State private var showingShareSheet = false
+    @State private var showingShareOptions = false
     @State private var showingCropView = false
     @State private var showingStylePanel = false
     @State private var showingBackgroundPanel = false
@@ -180,19 +181,14 @@ struct ContentView: View {
                                 
                                 // Share button
                                 Button(action: {
-                                    Task {
-                                        await shareImage()
+                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                        showingShareOptions = true
                                     }
+                                    AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
                                 }) {
                                     HStack {
-                                        if isGeneratingShareImage {
-                                            ProgressView()
-                                                .scaleEffect(AppConstants.Layout.emptyStateProgressScale)
-                                                .foregroundColor(.accentColor)
-                                        } else {
-                                            Text(AppStrings.UI.share)
-                                                .foregroundColor(.accentColor)
-                                        }
+                                        Text(AppStrings.UI.share)
+                                            .foregroundColor(.accentColor)
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
@@ -201,7 +197,7 @@ struct ContentView: View {
                                             .stroke(Color.accentColor, lineWidth: 1)
                                     )
                                 }
-                                .disabled(isGeneratingShareImage || isSavingToPhotos)
+                                .disabled(isSavingToPhotos)
                             }
                         }
                         .padding(.horizontal, AppConstants.Layout.largePadding)
@@ -235,10 +231,11 @@ struct ContentView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             // Dismiss any open panels when tapping on canvas
-                            if showingStylePanel || showingBackgroundPanel {
+                            if showingStylePanel || showingBackgroundPanel || showingShareOptions {
                                 withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                     showingStylePanel = false
                                     showingBackgroundPanel = false
+                                    showingShareOptions = false
                                 }
                             }
                         }
@@ -246,7 +243,7 @@ struct ContentView: View {
                         // Bottom Controls Area and Panels
                         VStack(spacing: 0) {
                             // Show main controls only when no panel is active
-                            if !showingStylePanel && !showingBackgroundPanel {
+                            if !showingStylePanel && !showingBackgroundPanel && !showingShareOptions {
                                 VStack {
                                     Divider()
                                     
@@ -298,6 +295,38 @@ struct ContentView: View {
                                 BackgroundPanelInline(
                                     editingViewModel: editingViewModel,
                                     isPresented: $showingBackgroundPanel
+                                )
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
+                            
+                            // Share Options Panel
+                            if showingShareOptions {
+                                ShareOptionsPanel(
+                                    isPresented: $showingShareOptions,
+                                    onSaveToDevice: {
+                                        showingShareOptions = false
+                                        Task {
+                                            await saveToPhotos()
+                                        }
+                                    },
+                                    onFacebook: {
+                                        showingShareOptions = false
+                                        Task {
+                                            await generateImageAndOpenFacebook()
+                                        }
+                                    },
+                                    onInstagram: {
+                                        showingShareOptions = false
+                                        Task {
+                                            await generateImageAndOpenInstagram()
+                                        }
+                                    },
+                                    onMoreOptions: {
+                                        showingShareOptions = false
+                                        Task {
+                                            await shareImage()
+                                        }
+                                    }
                                 )
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                             }
@@ -495,8 +524,94 @@ struct ContentView: View {
         }
     }
     
-    /// Saves the image directly to Photos
+    /// Generates image and opens Facebook Stories or feed
     @MainActor
+    private func generateImageAndOpenFacebook() async {
+        guard let finalImage = await generateImageForSharing() else { return }
+        
+        // Try to open Facebook Stories first, fall back to main Facebook app
+        let facebookStoriesURL = "facebook-stories://share"
+        let facebookURL = "fb://"
+        
+        if let url = URL(string: facebookStoriesURL), UIApplication.shared.canOpenURL(url) {
+            // Save image to pasteboard for Facebook Stories
+            UIPasteboard.general.image = finalImage
+            await UIApplication.shared.open(url)
+        } else if let url = URL(string: facebookURL), UIApplication.shared.canOpenURL(url) {
+            // Save image to pasteboard and open main Facebook app
+            UIPasteboard.general.image = finalImage
+            await UIApplication.shared.open(url)
+        } else {
+            // Facebook not installed, fall back to share sheet
+            imageToShare = finalImage
+            showingShareSheet = true
+        }
+    }
+    
+    /// Generates image and opens Instagram Stories
+    @MainActor
+    private func generateImageAndOpenInstagram() async {
+        guard let finalImage = await generateImageForSharing() else { return }
+        
+        // Try to open Instagram Stories
+        let instagramStoriesURL = "instagram-stories://share"
+        let instagramURL = "instagram://"
+        
+        if let url = URL(string: instagramStoriesURL), UIApplication.shared.canOpenURL(url) {
+            // Save image to pasteboard for Instagram Stories
+            UIPasteboard.general.image = finalImage
+            await UIApplication.shared.open(url)
+        } else if let url = URL(string: instagramURL), UIApplication.shared.canOpenURL(url) {
+            // Save image to pasteboard and open main Instagram app
+            UIPasteboard.general.image = finalImage
+            await UIApplication.shared.open(url)
+        } else {
+            // Instagram not installed, fall back to share sheet
+            imageToShare = finalImage
+            showingShareSheet = true
+        }
+    }
+    
+    /// Helper method to generate image for sharing with proper analytics and limits
+    @MainActor
+    private func generateImageForSharing() async -> UIImage? {
+        // Check export limit for free users
+        if !subscriptionManager.hasPremiumAccess && UserDefaultsManager.shared.hasReachedFreeExportLimit {
+            showingPaywall = true
+            return nil
+        }
+        
+        // Generate image on background thread
+        let finalImage = await Task.detached { [editingViewModel] in
+            return editingViewModel.generateFinalImage()
+        }.value
+        
+        if let finalImage = finalImage {
+            // Increment export count for free users after successful generation
+            if !subscriptionManager.hasPremiumAccess {
+                UserDefaultsManager.shared.incrementFreeExportCount()
+            }
+            
+            // Track export analytics
+            AnalyticsManager.shared.track(AppStrings.Analytics.exportCompleted, properties: [
+                AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
+                AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess,
+                AppStrings.AnalyticsProperties.cornerRadius: Double(editingViewModel.parameters.cornerRadius),
+                AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
+                AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
+                AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
+                AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? AppStrings.AnalyticsProperties.solid : AppStrings.AnalyticsProperties.gradient,
+                AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue
+            ])
+            
+            // Request review after successful export
+            ReviewManager.shared.requestExportReview()
+        }
+        
+        return finalImage
+    }
+    
+    /// Saves image to Photos library
     private func saveToPhotos() async {
         // Track save button tap
         AnalyticsManager.shared.track(AppStrings.Analytics.editorSaveToPhotosButtonTapped)
