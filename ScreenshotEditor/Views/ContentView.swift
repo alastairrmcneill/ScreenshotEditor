@@ -208,7 +208,7 @@ struct ContentView: View {
                         .padding(.vertical, AppConstants.Layout.standardPadding)
                         .background(Color(.systemBackground))
                         
-                        // Main Canvas Area
+                        // Main Canvas Area - dynamically sized based on panel state
                         ZStack {
                             Color(.systemGray6)
                             
@@ -231,42 +231,77 @@ struct ContentView: View {
                                 .opacity(AppConstants.Layout.fallbackImageOpacity)
                             }
                         }
-                        
-                        // Bottom Controls Area (placeholder for future stories)
-                        VStack {
-                            Divider()
-                            
-                            HStack {
-                                Button(AppStrings.UI.crop) {
-                                    showingCropView = true
-                                    AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
+                        .frame(maxHeight: showingStylePanel || showingBackgroundPanel ? .infinity : .infinity)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            // Dismiss any open panels when tapping on canvas
+                            if showingStylePanel || showingBackgroundPanel {
+                                withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                    showingStylePanel = false
+                                    showingBackgroundPanel = false
                                 }
-                                .foregroundColor(.accentColor)
-                                
-                                Spacer()
-                                
-                                Button(AppStrings.UI.style) {
-                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
-                                        showingStylePanel = true
-                                    }
-                                    AnalyticsManager.shared.track(AppStrings.Analytics.styleButtonTapped)
-                                }
-                                .foregroundColor(.accentColor)
-                                
-                                Spacer()
-                                
-                                Button(AppStrings.UI.background) {
-                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
-                                        showingBackgroundPanel = true
-                                    }
-                                    AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
-                                }
-                                .foregroundColor(.accentColor)
                             }
-                            .padding(.horizontal, AppConstants.Layout.controlsHorizontalPadding)
-                            .padding(.vertical, AppConstants.Layout.standardPadding)
                         }
-                        .background(Color(.systemBackground))
+                        
+                        // Bottom Controls Area and Panels
+                        VStack(spacing: 0) {
+                            // Show main controls only when no panel is active
+                            if !showingStylePanel && !showingBackgroundPanel {
+                                VStack {
+                                    Divider()
+                                    
+                                    HStack {
+                                        Button(AppStrings.UI.crop) {
+                                            showingCropView = true
+                                            AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
+                                        }
+                                        .foregroundColor(.accentColor)
+                                        
+                                        Spacer()
+                                        
+                                        Button(AppStrings.UI.style) {
+                                            withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                                showingStylePanel = true
+                                            }
+                                            AnalyticsManager.shared.track(AppStrings.Analytics.styleButtonTapped)
+                                        }
+                                        .foregroundColor(.accentColor)
+                                        
+                                        Spacer()
+                                        
+                                        Button(AppStrings.UI.background) {
+                                            withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                                showingBackgroundPanel = true
+                                            }
+                                            AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
+                                        }
+                                        .foregroundColor(.accentColor)
+                                    }
+                                    .padding(.horizontal, AppConstants.Layout.controlsHorizontalPadding)
+                                    .padding(.vertical, AppConstants.Layout.standardPadding)
+                                }
+                                .background(Color(.systemBackground))
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
+                            
+                            // Style Panel (inline)
+                            if showingStylePanel {
+                                StylePanelInline(
+                                    editingViewModel: editingViewModel,
+                                    isPresented: $showingStylePanel
+                                )
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
+                            
+                            // Background Panel (inline)
+                            if showingBackgroundPanel {
+                                BackgroundPanelInline(
+                                    editingViewModel: editingViewModel,
+                                    isPresented: $showingBackgroundPanel
+                                )
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
+                        }
                     }
                     .onAppear {
                         if let originalImage = editingViewModel.originalImage {
@@ -278,25 +313,6 @@ struct ContentView: View {
                     }
                 }
             }
-            
-            // Style Panel Overlay
-            if showingStylePanel {
-                StylePanel(
-                    editingViewModel: editingViewModel,
-                    isPresented: $showingStylePanel
-                )
-                .transition(.opacity)
-            }
-            
-            // Background Panel Overlay
-            if showingBackgroundPanel {
-                BackgroundPanel(
-                    editingViewModel: editingViewModel,
-                    isPresented: $showingBackgroundPanel
-                )
-                .transition(.opacity)
-            }
-            
         }
         .photosPicker(isPresented: $showingBackPhotosPicker, selection: $backButtonPhotoItem, matching: .screenshots, photoLibrary: .shared())
         .onChange(of: selectedPhotoItem) { _, newItem in
