@@ -18,6 +18,7 @@ struct AppStrings {
         static let share = "Share"
         static let saveToPhotos = "Save to Photos"
         static let saveToDevice = "Save to Device"
+        static let save = "Save"
         static let facebook = "Facebook"
         static let instagram = "Instagram"
         static let moreOptions = "More"

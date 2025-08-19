@@ -20,7 +20,7 @@ struct ShareOptionsPanel: View {
             PanelHandleView()
             
             // Content
-            VStack(spacing: 24) {
+            VStack(spacing: 32) {
                 // Title and done button
                 PanelHeaderView(title: AppStrings.UI.shareOptions) {
                     withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
@@ -28,44 +28,38 @@ struct ShareOptionsPanel: View {
                     }
                 }
                 
-                // Share options
-                VStack(spacing: 16) {
+                // Share options - all in one horizontal row
+                HStack(spacing: 20) {
                     // Save to Device
-                    ShareOptionButton(
-                        icon: "square.and.arrow.down",
-                        title: AppStrings.UI.saveToDevice,
-                        backgroundColor: .accentColor,
-                        foregroundColor: .white,
+                    SocialMediaButton(
+                        icon: "square.and.arrow.down.fill",
+                        title: AppStrings.UI.save,
+                        backgroundColor: Color.accentColor,
                         action: onSaveToDevice
                     )
                     
-                    // Social media options
-                    HStack(spacing: 16) {
-                        // Facebook
-                        ShareOptionButton(
-                            icon: "f.circle.fill",
-                            title: AppStrings.UI.facebook,
-                            backgroundColor: Color(red: 0.255, green: 0.412, blue: 0.882),
-                            foregroundColor: .white,
-                            action: onFacebook
-                        )
-                        
-                        // Instagram
-                        ShareOptionButton(
-                            icon: "camera.circle.fill",
-                            title: AppStrings.UI.instagram,
-                            backgroundColor: Color(red: 0.845, green: 0.318, blue: 0.588),
-                            foregroundColor: .white,
-                            action: onInstagram
-                        )
-                    }
+                    // Facebook
+                    SocialMediaButton(
+                        icon: "f.square.fill",
+                        title: AppStrings.UI.facebook,
+                        backgroundColor: Color(red: 0.255, green: 0.412, blue: 0.882),
+                        action: onFacebook
+                    )
+                    
+                    // Instagram
+                    SocialMediaButton(
+                        icon: "camera.fill",
+                        title: AppStrings.UI.instagram,
+                        backgroundColor: Color(red: 0.845, green: 0.318, blue: 0.588),
+                        action: onInstagram
+                    )
                     
                     // More options
-                    ShareOptionButton(
-                        icon: "ellipsis.circle",
+                    SocialMediaButton(
+                        icon: "ellipsis",
                         title: AppStrings.UI.moreOptions,
-                        backgroundColor: Color(.systemGray5),
-                        foregroundColor: .primary,
+                        backgroundColor: Color(.systemGray4),
+                        textColor: .primary,
                         action: onMoreOptions
                     )
                 }
@@ -78,32 +72,36 @@ struct ShareOptionsPanel: View {
     }
 }
 
-/// Individual share option button
-private struct ShareOptionButton: View {
+/// Individual social media button with circular design
+private struct SocialMediaButton: View {
     let icon: String
     let title: String
     let backgroundColor: Color
-    let foregroundColor: Color
+    var textColor: Color = .white
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundColor(foregroundColor)
-                
-                Text(title)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(foregroundColor)
+        VStack(spacing: 8) {
+            Button(action: action) {
+                Circle()
+                    .fill(backgroundColor)
+                    .frame(width: 64, height: 64)
+                    .overlay(
+                        Image(systemName: icon)
+                            .font(.title2)
+                            .fontWeight(.medium)
+                            .foregroundColor(textColor == .primary ? .primary : .white)
+                    )
+                    .shadow(color: backgroundColor.opacity(0.3), radius: 8, x: 0, y: 4)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(backgroundColor)
-            .cornerRadius(12)
+            .buttonStyle(PlainButtonStyle())
+            
+            Text(title)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
+                .multilineTextAlignment(.center)
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
