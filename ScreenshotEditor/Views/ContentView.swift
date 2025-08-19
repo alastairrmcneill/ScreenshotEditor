@@ -121,12 +121,16 @@ struct ContentView: View {
                     VStack(spacing: AppConstants.Layout.zeroSpacing) {
                         // Navigation Bar Area
                         HStack {
-                            Button(AppStrings.UI.back) {
+                            Button(action: {
                                 editingViewModel.resetParameters()
                                 editingViewModel.setOriginalImage(nil)
                                 hasReturnedFromBack = true
                                 showingBackPhotosPicker = true
                                 AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
+                            }) {
+                                Image(systemName: "arrow.left")
+                                    .font(.title2)
+                                    .fontWeight(.medium)
                             }
                             .foregroundColor(.customAccent)
                             
