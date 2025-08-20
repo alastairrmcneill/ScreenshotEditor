@@ -143,15 +143,21 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 HStack(spacing: 12) {
-                                    // Crown button (paywall)
+                                    // Crown button (paywall) with gradient overlay
                                     Button(action: {
                                         showingPaywall = true
                                     }) {
                                         Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
                                             .font(.title2)
                                             .fontWeight(.medium)
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: BackgroundGradient.ocean.colors.map { Color(cgColor: $0) },
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                )
+                                            )
                                     }
-                                    .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .customAccent)
                                     
                                     // Share button
                                     Button(action: {
