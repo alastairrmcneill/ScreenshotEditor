@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ShareOptionsPanel: View {
     @Binding var isPresented: Bool
-    let onSaveToDevice: () -> Void
     let onFacebook: () -> Void
     let onInstagram: () -> Void
     let onMoreOptions: () -> Void
@@ -30,14 +29,6 @@ struct ShareOptionsPanel: View {
                 
                 // Share options - all in one horizontal row
                 HStack(spacing: 20) {
-                    // Save to Device
-                    SocialMediaButton(
-                        icon: "square.and.arrow.down.fill",
-                        title: AppStrings.UI.save,
-                        backgroundColor: Color.customAccent,
-                        action: onSaveToDevice
-                    )
-                    
                     // Facebook
                     SocialMediaButton(
                         icon: "f.square.fill",
@@ -108,7 +99,6 @@ private struct SocialMediaButton: View {
 #Preview {
     ShareOptionsPanel(
         isPresented: .constant(true),
-        onSaveToDevice: {},
         onFacebook: {},
         onInstagram: {},
         onMoreOptions: {}

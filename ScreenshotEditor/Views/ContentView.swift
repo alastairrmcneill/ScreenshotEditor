@@ -21,7 +21,6 @@ struct ContentView: View {
     @State private var showingBackgroundPanel = false
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
-    @State private var isSavingToPhotos = false
     @State private var showingPaywall = false
     @State private var showingPostOnboardingPaywall = false
     @State private var hasReturnedFromBack = false
@@ -120,88 +119,54 @@ struct ContentView: View {
                     // Editor Canvas
                     VStack(spacing: AppConstants.Layout.zeroSpacing) {
                         // Navigation Bar Area
-                        HStack {
-                            Button(action: {
-                                editingViewModel.resetParameters()
-                                editingViewModel.setOriginalImage(nil)
-                                hasReturnedFromBack = true
-                                showingBackPhotosPicker = true
-                                AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
-                            }) {
-                                Image(systemName: "arrow.left")
-                                    .font(.title2)
-                                    .fontWeight(.medium)
-                            }
-                            .foregroundColor(.customAccent)
+                        ZStack {
+                            // Centered title
+                            Text("Vanta")
+                                .font(.title2)
+                                .fontWeight(.medium)
                             
-                            Spacer()
-                            
-                            VStack(spacing: AppConstants.Layout.navigationAreaSpacing) {
-                                Text(AppStrings.UI.editPhoto)
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
+                            // Left and right buttons
+                            HStack {
+                                Button(action: {
+                                    editingViewModel.resetParameters()
+                                    editingViewModel.setOriginalImage(nil)
+                                    hasReturnedFromBack = true
+                                    showingBackPhotosPicker = true
+                                    AnalyticsManager.shared.track(AppStrings.Analytics.editorBackButtonTapped)
+                                }) {
+                                    Image(systemName: "arrow.left")
+                                        .font(.title2)
+                                        .fontWeight(.medium)
+                                }
+                                .foregroundColor(.customAccent)
                                 
-                                // Premium status indicator
-                                HStack(spacing: 4) {
-                                    Image(systemName: subscriptionManager.hasPremiumAccess ? AppStrings.SystemImages.crownFill : AppStrings.SystemImages.crown)
-                                        .font(.caption2)
-                                        .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
+                                Spacer()
+                                
+                                HStack(spacing: 12) {
+                                    // Crown button (paywall)
+                                    Button(action: {
+                                        showingPaywall = true
+                                    }) {
+                                        Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
+                                            .font(.title2)
+                                            .fontWeight(.medium)
+                                    }
+                                    .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .customAccent)
                                     
-                                    Text(subscriptionManager.hasPremiumAccess ? AppStrings.UI.premium : AppStrings.UI.free)
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                }
-                                .onTapGesture {
-                                    // Debug: Force refresh entitlements
-                                    subscriptionManager.checkSubscriptionStatus()
-                                }
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 12) {
-                                // Save to Photos button
-                                Button(action: {
-                                    Task {
-                                        await saveToPhotos()
-                                    }
-                                }) {
-                                    HStack {
-                                        if isSavingToPhotos {
-                                            ProgressView()
-                                                .scaleEffect(AppConstants.Layout.emptyStateProgressScale)
-                                                .foregroundColor(.white)
-                                        } else {
-                                            Text(AppStrings.UI.saveToPhotos)
-                                                .foregroundColor(.white)
+                                    // Share button
+                                    Button(action: {
+                                        withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                            showingShareOptions = true
                                         }
+                                        AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
+                                    }) {
+                                        Image(systemName: "square.and.arrow.up")
+                                            .font(.title2)
+                                            .fontWeight(.medium)
                                     }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(Color.customAccent)
-                                    .cornerRadius(8)
+                                    .foregroundColor(.customAccent)
+                                    .disabled(isGeneratingShareImage)
                                 }
-                                .disabled(isSavingToPhotos || isGeneratingShareImage)
-                                
-                                // Share button
-                                Button(action: {
-                                    withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
-                                        showingShareOptions = true
-                                    }
-                                    AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
-                                }) {
-                                    HStack {
-                                        Text(AppStrings.UI.share)
-                                            .foregroundColor(.customAccent)
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.customAccent, lineWidth: 1)
-                                    )
-                                }
-                                .disabled(isSavingToPhotos)
                             }
                         }
                         .padding(.horizontal, AppConstants.Layout.largePadding)
@@ -307,12 +272,6 @@ struct ContentView: View {
                             if showingShareOptions {
                                 ShareOptionsPanel(
                                     isPresented: $showingShareOptions,
-                                    onSaveToDevice: {
-                                        showingShareOptions = false
-                                        Task {
-                                            await saveToPhotos()
-                                        }
-                                    },
                                     onFacebook: {
                                         showingShareOptions = false
                                         Task {
@@ -613,81 +572,6 @@ struct ContentView: View {
         }
         
         return finalImage
-    }
-    
-    /// Saves image to Photos library
-    private func saveToPhotos() async {
-        // Track save button tap
-        AnalyticsManager.shared.track(AppStrings.Analytics.editorSaveToPhotosButtonTapped)
-        
-        // Check export limit for free users
-        if !subscriptionManager.hasPremiumAccess && UserDefaultsManager.shared.hasReachedFreeExportLimit {
-            // Show paywall for free users who have reached the limit
-            AnalyticsManager.shared.track(AppStrings.Analytics.exportLimitReached, properties: [
-                AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
-                AppStrings.AnalyticsProperties.exportLimitReason: "free_limit_reached"
-            ])
-            showingPaywall = true
-            return
-        }
-        
-        // Start loading state
-        isSavingToPhotos = true
-        
-        // Generate image on background thread
-        let finalImage = await Task.detached { [editingViewModel] in
-            return editingViewModel.generateFinalImage()
-        }.value
-        
-        // Update UI on main thread
-        if let finalImage = finalImage {
-            do {
-                // Save directly to Photos
-                try await PhotosLibraryManager.shared.saveImageToPhotos(finalImage)
-                
-                // Increment export count for free users after successful save
-                if !subscriptionManager.hasPremiumAccess {
-                    UserDefaultsManager.shared.incrementFreeExportCount()
-                }
-                
-                // Track successful save
-                AnalyticsManager.shared.track(AppStrings.Analytics.exportCompleted, properties: [
-                    AppStrings.AnalyticsProperties.exportCount: UserDefaultsManager.shared.freeExportCount,
-                    AppStrings.AnalyticsProperties.isSubscribed: subscriptionManager.hasPremiumAccess,
-                    AppStrings.AnalyticsProperties.cornerRadius: Double(editingViewModel.parameters.cornerRadius),
-                    AppStrings.AnalyticsProperties.padding: Double(editingViewModel.parameters.padding),
-                    AppStrings.AnalyticsProperties.shadowOpacity: Double(editingViewModel.parameters.shadowOpacity),
-                    AppStrings.AnalyticsProperties.shadowBlur: Double(editingViewModel.parameters.shadowBlur),
-                    AppStrings.AnalyticsProperties.backgroundType: editingViewModel.parameters.backgroundType == .solid ? AppStrings.AnalyticsProperties.solid : AppStrings.AnalyticsProperties.gradient,
-                    AppStrings.AnalyticsProperties.aspectRatio: editingViewModel.parameters.aspectRatio.rawValue
-                ])
-                
-                // Request review after first successful export
-                ReviewManager.shared.requestExportReview()
-                
-                // Show success snackbar
-                SnackbarManager.shared.showSuccess(AppStrings.UI.imageSavedToPhotos)
-                
-            } catch {
-                // Show error snackbar
-                if let photosError = error as? PhotosError {
-                    switch photosError {
-                    case .accessDenied:
-                        SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailedPermissions)
-                    case .saveFailed:
-                        SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailed)
-                    }
-                } else {
-                    SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailed)
-                }
-            }
-        } else {
-            // Show error for image generation failure
-            SnackbarManager.shared.showError(AppStrings.UI.imageSaveFailed)
-        }
-        
-        // End loading state
-        isSavingToPhotos = false
     }
 }
 
