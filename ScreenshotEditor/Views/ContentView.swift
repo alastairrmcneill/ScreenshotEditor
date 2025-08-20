@@ -147,12 +147,12 @@ struct ContentView: View {
                                     Button(action: {
                                         showingPaywall = true
                                     }) {
-                                        Image(systemName: subscriptionManager.hasPremiumAccess ? "crown.fill" : "crown")
+                                        Image(systemName: subscriptionManager.hasPremiumAccess ? "crown" : "crown.fill")
                                             .font(.title2)
                                             .fontWeight(.medium)
                                             .foregroundStyle(
                                                 LinearGradient(
-                                                    colors: BackgroundGradient.ocean.colors.map { Color(cgColor: $0) },
+                                                    colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
                                                     startPoint: .topLeading,
                                                     endPoint: .bottomTrailing
                                                 )
