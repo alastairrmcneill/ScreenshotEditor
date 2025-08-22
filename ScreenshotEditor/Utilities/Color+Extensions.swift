@@ -15,9 +15,15 @@ extension Color {
     )
     
     /// Button background color: white in light mode, lighter dark grey in dark mode
-    static let buttonBackground = Color(
+    static let editingButtonBackground = Color(
         light: Color.white,                             // White for light mode
         dark: Color(red: 0.2, green: 0.2, blue: 0.2)   // Lighter dark grey for dark mode
+    )
+
+        /// Button background color: white in light mode, lighter dark grey in dark mode
+    static let buttonBackground = Color(
+        light: Color(red: 0.2, green: 0.2, blue: 0.2),
+        dark: Color(red: 0.2, green: 0.2, blue: 0.2)
     )
 }
 

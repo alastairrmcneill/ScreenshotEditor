@@ -37,7 +37,7 @@ struct AspectRatioControlView: View {
                             .frame(height: 36)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(editingViewModel.parameters.aspectRatio == ratio ? Color.customAccent : Color(.systemGray5))
+                                    .fill(editingViewModel.parameters.aspectRatio == ratio ? Color(.systemGray6): Color.buttonBackground)
                             )
                     }
                 }

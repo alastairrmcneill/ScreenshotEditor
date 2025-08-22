@@ -33,87 +33,10 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 
                 if editingViewModel.originalImage == nil {
-                    // Empty State UI
-                    VStack(spacing: AppConstants.Layout.extraLargePadding) {
-                        // Icon
-                        Image(systemName: "photo.badge.plus")
-                            .font(.system(size: AppConstants.Layout.emptyStateIconSize))
-                            .foregroundColor(.secondary)
-                        
-                        // Title and subtitle - show different text if user came from back button
-                        VStack(spacing: AppConstants.Layout.emptyStateTitleSpacing) {
-                            if hasReturnedFromBack {
-                                Text(AppStrings.UI.importPictureHere)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                            } else {
-                                Text(AppStrings.UI.noImageSelected)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                
-                                Text(AppStrings.UI.importPhotoToGetStarted)
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        
-                        // Premium Status Display - only show if not returning from back
-                        if !hasReturnedFromBack {
-                            VStack(spacing: 8) {
-                                HStack {
-                                    Image(systemName: subscriptionManager.hasPremiumAccess ? AppStrings.SystemImages.crownFill : AppStrings.SystemImages.crown)
-                                        .foregroundColor(subscriptionManager.hasPremiumAccess ? .yellow : .secondary)
-                                    
-                                    Text(subscriptionManager.hasPremiumAccess ? AppStrings.UI.premiumActive : AppStrings.UI.freePlan)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(subscriptionManager.hasPremiumAccess ? .primary : .secondary)
-                                }
-                                
-                                if !subscriptionManager.activeEntitlements.isEmpty {
-                                    Text("\(AppStrings.UI.entitlements) \(subscriptionManager.activeEntitlements.joined(separator: ", "))")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                        .multilineTextAlignment(.center)
-                                }
-                                
-                                if subscriptionManager.hasPremiumAccess {
-                                    Text(AppStrings.UI.unlimitedExportsNowatermark)
-                                        .font(.caption2)
-                                        .foregroundColor(.green)
-                                } else {
-                                    Text(AppStrings.UI.freeExportsWatermarked)
-                                        .font(.caption2)
-                                        .foregroundColor(.orange)
-                                }
-                            }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
-                            .padding(.horizontal)
-                        }
-                        
-                        // Import Button
-                        PhotosPicker(
-                            selection: $selectedPhotoItem,
-                            matching: .screenshots,
-                            photoLibrary: .shared()
-                        ) {
-                            Text(AppStrings.UI.importPhoto)
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, AppConstants.Layout.standardPadding)
-                                .background(Color.customAccent)
-                                .cornerRadius(AppConstants.Layout.largeCornerRadius)
-                        }
-                        .onChange(of: selectedPhotoItem) { _, _ in
-                            hasReturnedFromBack = false
-                        }
-                        .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
-                    }
+                    EmptyStateView(
+                        selectedPhotoItem: $selectedPhotoItem,
+                        hasReturnedFromBack: $hasReturnedFromBack
+                    )
                 } else {
                     // Editor Canvas
                     VStack(spacing: AppConstants.Layout.zeroSpacing) {

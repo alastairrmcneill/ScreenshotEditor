@@ -27,7 +27,7 @@ struct EditorControlButton: View {
                     .lineLimit(1)
             }
             .frame(width: 70, height: 70)
-            .background(Color.buttonBackground)
+            .background(Color.editingButtonBackground)
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
     }
