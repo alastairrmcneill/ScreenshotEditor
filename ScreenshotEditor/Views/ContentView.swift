@@ -220,48 +220,24 @@ struct ContentView: View {
                             // Show main controls only when no panel is active
                             if !showingStylePanel && !showingBackgroundPanel && !showingShareOptions {
                                 VStack {
-                                    HStack(spacing: 20) {
-                                        Button(action: {
+                                    HStack(spacing: 30) {
+                                        EditorControlButton(systemImage: "crop", text: "Crop") {
                                             showingCropView = true
                                             AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
-                                        }) {
-                                            Image(systemName: "crop")
-                                                .font(.title2)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.customAccent)
-                                                .frame(width: 60, height: 60)
-                                                .background(Color.white)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
                                         }
                                         
-                                        Button(action: {
+                                        EditorControlButton(systemImage: "square.on.square", text: "Style") {
                                             withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                                 showingStylePanel = true
                                             }
                                             AnalyticsManager.shared.track(AppStrings.Analytics.styleButtonTapped)
-                                        }) {
-                                            Image(systemName: "square.on.square")
-                                                .font(.title2)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.customAccent)
-                                                .frame(width: 60, height: 60)
-                                                .background(Color.white)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
                                         }
                                         
-                                        Button(action: {
+                                        EditorControlButton(systemImage: "paintpalette", text: "Colours") {
                                             withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                                 showingBackgroundPanel = true
                                             }
                                             AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
-                                        }) {
-                                            Image(systemName: "paintpalette")
-                                                .font(.title2)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.customAccent)
-                                                .frame(width: 60, height: 60)
-                                                .background(Color.white)
-                                                .clipShape(RoundedRectangle(cornerRadius: 15))
                                         }
                                     }
                                     .frame(maxWidth: .infinity)
