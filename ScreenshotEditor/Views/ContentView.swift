@@ -15,7 +15,6 @@ struct ContentView: View {
     @State private var backButtonPhotoItem: PhotosPickerItem?
     @State private var showingBackPhotosPicker = false
     @State private var showingShareSheet = false
-    @State private var showingShareOptions = false
     @State private var showingCropView = false
     @State private var showingStylePanel = false
     @State private var showingBackgroundPanel = false
@@ -142,36 +141,20 @@ struct ContentView: View {
                                 
                                 Spacer()
                                 
-                                HStack(spacing: 12) {
-                                    // Crown button (paywall) with gradient overlay
-                                    Button(action: {
-                                        showingPaywall = true
-                                    }) {
-                                        Image(systemName: subscriptionManager.hasPremiumAccess ? "crown" : "crown.fill")
-                                            .font(.title2)
-                                            .fontWeight(.medium)
-                                            .foregroundStyle(
-                                                LinearGradient(
-                                                    colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
-                                                    startPoint: .topLeading,
-                                                    endPoint: .bottomTrailing
-                                                )
+                                // Crown button (paywall) with gradient overlay
+                                Button(action: {
+                                    showingPaywall = true
+                                }) {
+                                    Image(systemName: subscriptionManager.hasPremiumAccess ? "crown" : "crown.fill")
+                                        .font(.title2)
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
                                             )
-                                    }
-                                    
-                                    // Share button
-                                    Button(action: {
-                                        withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
-                                            showingShareOptions = true
-                                        }
-                                        AnalyticsManager.shared.track(AppStrings.Analytics.editorShareButtonTapped)
-                                    }) {
-                                        Image(systemName: "square.and.arrow.up")
-                                            .font(.title2)
-                                            .fontWeight(.medium)
-                                    }
-                                    .foregroundColor(.customAccent)
-                                    .disabled(isGeneratingShareImage)
+                                        )
                                 }
                             }
                         }
@@ -202,15 +185,13 @@ struct ContentView: View {
                                 .opacity(AppConstants.Layout.fallbackImageOpacity)
                             }
                         }
-                        .frame(maxHeight: showingStylePanel || showingBackgroundPanel ? .infinity : .infinity)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             // Dismiss any open panels when tapping on canvas
-                            if showingStylePanel || showingBackgroundPanel || showingShareOptions {
+                            if showingStylePanel || showingBackgroundPanel {
                                 withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                     showingStylePanel = false
                                     showingBackgroundPanel = false
-                                    showingShareOptions = false
                                 }
                             }
                         }
@@ -218,9 +199,9 @@ struct ContentView: View {
                         // Bottom Controls Area and Panels
                         VStack(spacing: 0) {
                             // Show main controls only when no panel is active
-                            if !showingStylePanel && !showingBackgroundPanel && !showingShareOptions {
+                            if !showingStylePanel && !showingBackgroundPanel {
                                 VStack {
-                                    HStack(spacing: 30) {
+                                    HStack(spacing: 20) {
                                         EditorControlButton(systemImage: "crop", text: "Crop") {
                                             showingCropView = true
                                             AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
@@ -268,32 +249,6 @@ struct ContentView: View {
                                 BackgroundPanelInline(
                                     editingViewModel: editingViewModel,
                                     isPresented: $showingBackgroundPanel
-                                )
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                            }
-                            
-                            // Share Options Panel
-                            if showingShareOptions {
-                                ShareOptionsPanel(
-                                    isPresented: $showingShareOptions,
-                                    onFacebook: {
-                                        showingShareOptions = false
-                                        Task {
-                                            await generateImageAndOpenFacebook()
-                                        }
-                                    },
-                                    onInstagram: {
-                                        showingShareOptions = false
-                                        Task {
-                                            await generateImageAndOpenInstagram()
-                                        }
-                                    },
-                                    onMoreOptions: {
-                                        showingShareOptions = false
-                                        Task {
-                                            await shareImage()
-                                        }
-                                    }
                                 )
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                             }
