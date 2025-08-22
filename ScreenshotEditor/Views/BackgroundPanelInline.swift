@@ -31,7 +31,7 @@ struct BackgroundPanelInline: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 34) // Extra padding for home indicator
         }
-        .background(Color(.systemBackground))
+        .background(Color(.systemGray5))
         .panelDragGesture(isPresented: $isPresented)
     }
 }
