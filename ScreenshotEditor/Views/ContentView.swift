@@ -239,6 +239,12 @@ struct ContentView: View {
                                             }
                                             AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
                                         }
+                                        
+                                        EditorControlButton(systemImage: "square.and.arrow.up", text: "Share") {
+                                            Task {
+                                                await shareImage()
+                                            }
+                                        }
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.horizontal, AppConstants.Layout.controlsHorizontalPadding)
