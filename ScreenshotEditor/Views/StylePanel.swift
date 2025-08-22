@@ -34,13 +34,6 @@ struct StylePanel: View {
                         
                         // Content
                         VStack(spacing: 24) {
-                            // Title and done button
-                            PanelHeaderView(title: AppStrings.UI.style) {
-                                withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
-                                    isPresented = false
-                                }
-                            }
-                            
                             // Style controls
                             StyleControlsView(
                                 editingViewModel: editingViewModel,

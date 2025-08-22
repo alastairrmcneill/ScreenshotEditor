@@ -18,16 +18,9 @@ struct StyleSliderControl: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(title)
-                    .font(.headline)
-                
-                Spacer()
-                
-                Text("\(Int(value))pt")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-            }
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.secondary)
             
             Slider(
                 value: Binding(
