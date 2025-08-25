@@ -73,32 +73,16 @@ struct StandardModalBottomSheet<Content: View>: View {
                         .padding(.bottom, AppConstants.Layout.hugePadding + 2) // Extra padding for home indicator (34)
                     }
                     .background(Color(.systemBackground))
-                    .cornerRadius(AppConstants.Layout.largeCornerRadius, corners: [.topLeft, .topRight])
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: AppConstants.Layout.largeCornerRadius,
+                            topTrailingRadius: AppConstants.Layout.largeCornerRadius
+                        )
+                    )
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
                 }
             }
         }
-    }
-}
-
-// MARK: - Corner Radius Extension
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
     }
 }
 

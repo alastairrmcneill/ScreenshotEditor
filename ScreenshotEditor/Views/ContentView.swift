@@ -126,10 +126,11 @@ struct ContentView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             // Dismiss any open panels when tapping on canvas
-                            if showingStylePanel || showingBackgroundPanel {
+                            if showingStylePanel || showingBackgroundPanel || showingAspectRatioPanel {
                                 withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
                                     showingStylePanel = false
                                     showingBackgroundPanel = false
+                                    showingAspectRatioPanel = false
                                 }
                             }
                         }
