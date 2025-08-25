@@ -39,12 +39,12 @@ struct AspectRatioControlView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(editingViewModel.parameters.aspectRatio == ratio ? 
-                                     Color.customAccent : 
+                                     selectedBackgroundColor : 
                                      Color(.systemGray6))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(editingViewModel.parameters.aspectRatio == ratio ? 
-                                               Color.customAccent : 
+                                               selectedBackgroundColor : 
                                                Color.clear, lineWidth: 2)
                                 )
                         )
@@ -53,6 +53,14 @@ struct AspectRatioControlView: View {
                 }
             }
         }
+    }
+    
+    /// Background color for selected aspect ratio buttons
+    private var selectedBackgroundColor: Color {
+        Color(
+            light: Color(red: 0.2, green: 0.2, blue: 0.2), // Dark grey for light mode
+            dark: Color(red: 0.3, green: 0.3, blue: 0.3)   // Much darker grey for dark mode
+        )
     }
 }
 
@@ -87,7 +95,7 @@ struct AspectRatioIconView: View {
                                 cornerHandle
                             }
                         }
-                        .frame(width: 30, height: 24)
+                        .frame(width: 24, height: 18)
                     }
                     
                 case .square:
@@ -119,7 +127,7 @@ struct AspectRatioIconView: View {
     }
     
     private var iconColor: Color {
-        isSelected ? Color.primary : Color.secondary
+        isSelected ? Color.white : Color.secondary
     }
     
     private var ratioLabel: String {
