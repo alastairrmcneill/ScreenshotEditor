@@ -30,7 +30,6 @@ struct StandardBottomSheet<Content: View>: View {
             .padding(.bottom, AppConstants.Layout.hugePadding + 2) // Extra padding for home indicator (34)
         }
         .background(Color(.systemBackground))
-        .cornerRadius(AppConstants.Layout.largeCornerRadius, corners: [.topLeft, .topRight])
         .panelDragGesture(isPresented: $isPresented)
     }
 }

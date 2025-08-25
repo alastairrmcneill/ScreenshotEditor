@@ -35,7 +35,7 @@ struct AspectRatioControlView: View {
                             isSelected: editingViewModel.parameters.aspectRatio == ratio
                         )
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                        .frame(height: 60)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(editingViewModel.parameters.aspectRatio == ratio ? 
@@ -62,16 +62,16 @@ struct AspectRatioIconView: View {
     let isSelected: Bool
     
     var body: some View {
-        VStack(spacing: 4) {
-            // Icon representation
+        VStack(spacing: 8) {
+            // Icon representation - all icons in consistent 24pt height frame
             Group {
                 switch ratio {
                 case .free:
                     // Free aspect ratio - represented by expanding/resize icon
                     ZStack {
-                        RoundedRectangle(cornerRadius: 2)
-                            .stroke(iconColor, lineWidth: 1.5)
-                            .frame(width: 16, height: 12)
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(iconColor, lineWidth: 2)
+                            .frame(width: 24, height: 18)
                         
                         // Corner resize handles
                         VStack {
@@ -87,28 +87,29 @@ struct AspectRatioIconView: View {
                                 cornerHandle
                             }
                         }
-                        .frame(width: 20, height: 16)
+                        .frame(width: 30, height: 24)
                     }
                     
                 case .square:
                     // 1:1 Square ratio
-                    RoundedRectangle(cornerRadius: 2)
-                        .stroke(iconColor, lineWidth: 1.5)
-                        .frame(width: 14, height: 14)
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(iconColor, lineWidth: 2)
+                        .frame(width: 20, height: 20)
                     
                 case .portrait:
                     // 9:16 Portrait ratio
-                    RoundedRectangle(cornerRadius: 2)
-                        .stroke(iconColor, lineWidth: 1.5)
-                        .frame(width: 10, height: 16)
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(iconColor, lineWidth: 2)
+                        .frame(width: 14, height: 22)
                     
                 case .landscape:
                     // 16:9 Landscape ratio
-                    RoundedRectangle(cornerRadius: 2)
-                        .stroke(iconColor, lineWidth: 1.5)
-                        .frame(width: 18, height: 10)
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(iconColor, lineWidth: 2)
+                        .frame(width: 26, height: 14)
                 }
             }
+            .frame(height: 24) // Consistent height for all icons
             
             // Ratio label
             Text(ratioLabel)
@@ -137,7 +138,7 @@ struct AspectRatioIconView: View {
     private var cornerHandle: some View {
         RoundedRectangle(cornerRadius: 0.5)
             .fill(iconColor)
-            .frame(width: 2, height: 2)
+            .frame(width: 3, height: 3)
     }
 }
 

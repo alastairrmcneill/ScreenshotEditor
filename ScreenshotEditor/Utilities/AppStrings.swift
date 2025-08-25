@@ -40,7 +40,7 @@ struct AppStrings {
         static let shadow = "Shadow"
         static let solid = "Solid"
         static let gradient = "Gradient"
-        static let aspectRatio = "Aspect Ratio"
+        static let aspectRatio = "Export Size"
         static let square = "1:1"
         static let portrait = "9:16"
         static let landscape = "16:9"
