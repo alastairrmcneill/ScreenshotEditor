@@ -17,7 +17,7 @@ struct StyleSliderControl: View {
     let onEditingChanged: (Bool) -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.headline)
                 .foregroundColor(.secondary)

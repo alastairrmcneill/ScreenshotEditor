@@ -33,13 +33,6 @@ struct BackgroundPanel: View {
                         
                         // Content
                         VStack(spacing: 24) {
-                            // Title and done button
-                            PanelHeaderView(title: AppStrings.UI.background) {
-                                withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
-                                    isPresented = false
-                                }
-                            }
-                            
                             // Background controls
                             BackgroundControlsView(editingViewModel: editingViewModel)
                         }
