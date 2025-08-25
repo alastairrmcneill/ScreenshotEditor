@@ -143,6 +143,11 @@ struct ContentView: View {
                                             }
                                             AnalyticsManager.shared.track(AppStrings.Analytics.backgroundButtonTapped)
                                         }
+
+                                        EditorControlButton(systemImage: "aspectratio", text: "Ratio") {
+                                            showingCropView = true
+                                            AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
+                                        }
                                         
                                         EditorControlButton(systemImage: "square.and.arrow.up", text: "Share") {
                                             Task {
