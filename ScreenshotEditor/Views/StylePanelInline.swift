@@ -13,22 +13,13 @@ struct StylePanelInline: View {
     @StateObject private var sliderViewModel = StyleSliderViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Handle indicator
-            PanelHandleView()
-            
-            // Content
-            VStack(spacing: 24) {
-                // Style controls
-                StyleControlsView(
-                    editingViewModel: editingViewModel,
-                    sliderViewModel: sliderViewModel
-                )
-            }
-            .padding(16)
+        StandardBottomSheet(isPresented: $isPresented) {
+            // Style controls
+            StyleControlsView(
+                editingViewModel: editingViewModel,
+                sliderViewModel: sliderViewModel
+            )
         }
-        .background(Color(.systemBackground))
-        .panelDragGesture(isPresented: $isPresented)
     }
 }
 

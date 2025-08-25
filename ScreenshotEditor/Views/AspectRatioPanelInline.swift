@@ -12,20 +12,10 @@ struct AspectRatioPanelInline: View {
     @Binding var isPresented: Bool
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Handle indicator
-            PanelHandleView()
-            
-            // Content
-            VStack(spacing: 24) {
-                // Aspect ratio controls
-                AspectRatioControlView(editingViewModel: editingViewModel)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 34) // Extra padding for home indicator
+        StandardBottomSheet(isPresented: $isPresented) {
+            // Aspect ratio controls
+            AspectRatioControlView(editingViewModel: editingViewModel)
         }
-        .background(Color(.systemGray5))
-        .panelDragGesture(isPresented: $isPresented)
     }
 }
 

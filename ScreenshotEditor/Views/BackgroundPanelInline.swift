@@ -12,20 +12,10 @@ struct BackgroundPanelInline: View {
     @Binding var isPresented: Bool
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Handle indicator
-            PanelHandleView()
-            
-            // Content
-            VStack(spacing: 24) {
-                // Background controls
-                BackgroundControlsView(editingViewModel: editingViewModel)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 34) // Extra padding for home indicator
+        StandardBottomSheet(isPresented: $isPresented) {
+            // Background controls
+            BackgroundControlsView(editingViewModel: editingViewModel)
         }
-        .background(Color(.systemGray5))
-        .panelDragGesture(isPresented: $isPresented)
     }
 }
     #Preview {
