@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var showingCropView = false
     @State private var showingStylePanel = false
     @State private var showingBackgroundPanel = false
+    @State private var showingAspectRatioPanel = false
     @State private var imageToShare: UIImage?
     @State private var isGeneratingShareImage = false
     @State private var showingPaywall = false
@@ -64,20 +65,34 @@ struct ContentView: View {
                                 
                                 Spacer()
                                 
-                                // Crown button (paywall) with gradient overlay
-                                Button(action: {
-                                    showingPaywall = true
-                                }) {
-                                    Image(systemName: subscriptionManager.hasPremiumAccess ? "crown" : "crown.fill")
-                                        .font(.title2)
-                                        .fontWeight(.medium)
-                                        .foregroundStyle(
-                                            LinearGradient(
-                                                colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
+                                HStack(spacing: 16) {
+                                    // Share button
+                                    Button(action: {
+                                        Task {
+                                            await shareImage()
+                                        }
+                                    }) {
+                                        Image(systemName: "square.and.arrow.up")
+                                            .font(.title2)
+                                            .fontWeight(.medium)
+                                    }
+                                    .foregroundColor(.customAccent)
+                                    
+                                    // Crown button (paywall) with gradient overlay
+                                    Button(action: {
+                                        showingPaywall = true
+                                    }) {
+                                        Image(systemName: subscriptionManager.hasPremiumAccess ? "crown" : "crown.fill")
+                                            .font(.title2)
+                                            .fontWeight(.medium)
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                )
                                             )
-                                        )
+                                    }
                                 }
                             }
                         }
@@ -122,7 +137,7 @@ struct ContentView: View {
                         // Bottom Controls Area and Panels
                         VStack(spacing: 0) {
                             // Show main controls only when no panel is active
-                            if !showingStylePanel && !showingBackgroundPanel {
+                            if !showingStylePanel && !showingBackgroundPanel && !showingAspectRatioPanel {
                                 VStack {
                                     HStack(spacing: 20) {
                                         EditorControlButton(systemImage: "crop", text: "Crop") {
@@ -145,14 +160,12 @@ struct ContentView: View {
                                         }
 
                                         EditorControlButton(systemImage: "aspectratio", text: "Ratio") {
-                                            showingCropView = true
-                                            AnalyticsManager.shared.track(AppStrings.Analytics.cropButtonTapped)
-                                        }
-                                        
-                                        EditorControlButton(systemImage: "square.and.arrow.up", text: "Share") {
-                                            Task {
-                                                await shareImage()
+                                            withAnimation(.easeInOut(duration: AppConstants.StylePanel.animationDuration)) {
+                                                showingAspectRatioPanel = true
                                             }
+                                            AnalyticsManager.shared.track(AppStrings.Analytics.aspectRatioChanged, properties: [
+                                                "source": "button"
+                                            ])
                                         }
                                     }
                                     .frame(maxWidth: .infinity)
@@ -177,6 +190,15 @@ struct ContentView: View {
                                 BackgroundPanelInline(
                                     editingViewModel: editingViewModel,
                                     isPresented: $showingBackgroundPanel
+                                )
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
+                            
+                            // Aspect Ratio Panel (inline)
+                            if showingAspectRatioPanel {
+                                AspectRatioPanelInline(
+                                    editingViewModel: editingViewModel,
+                                    isPresented: $showingAspectRatioPanel
                                 )
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                             }

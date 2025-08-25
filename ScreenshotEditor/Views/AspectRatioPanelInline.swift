@@ -1,13 +1,13 @@
 //
-//  BackgroundPanelInline.swift
+//  AspectRatioPanelInline.swift
 //  ScreenshotEditor
 //
-//  Created by Alastair McNeill on 19/08/2025.
+//  Created by Alastair McNeill on 25/08/2025.
 //
 
 import SwiftUI
 
-struct BackgroundPanelInline: View {
+struct AspectRatioPanelInline: View {
     @ObservedObject var editingViewModel: ImageEditingViewModel
     @Binding var isPresented: Bool
     
@@ -18,8 +18,8 @@ struct BackgroundPanelInline: View {
             
             // Content
             VStack(spacing: 24) {
-                // Background controls
-                BackgroundControlsView(editingViewModel: editingViewModel)
+                // Aspect ratio controls
+                AspectRatioControlView(editingViewModel: editingViewModel)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 34) // Extra padding for home indicator
@@ -28,8 +28,9 @@ struct BackgroundPanelInline: View {
         .panelDragGesture(isPresented: $isPresented)
     }
 }
-    #Preview {
-    BackgroundPanelInline(
+
+#Preview {
+    AspectRatioPanelInline(
         editingViewModel: ImageEditingViewModel(),
         isPresented: .constant(true)
     )

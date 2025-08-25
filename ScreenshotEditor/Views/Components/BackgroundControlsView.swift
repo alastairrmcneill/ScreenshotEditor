@@ -13,9 +13,6 @@ struct BackgroundControlsView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            // Aspect Ratio Section
-            AspectRatioControlView(editingViewModel: editingViewModel)
-            
             // Background Type Picker
             BackgroundTypePickerView(editingViewModel: editingViewModel)
             
