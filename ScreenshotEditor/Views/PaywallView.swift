@@ -357,18 +357,15 @@ private struct FeatureRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            ZStack {
-                color
-                    .frame(width: 28, height: 28)
-                    .clipShape(Circle())
-                Image(systemName: icon)
+                            Image(systemName: icon)
                     .font(.title3)
-                    .foregroundColor(.white)
-            }
-            .frame(width: 28, height: 28)
+                .foregroundColor(color)
+                .frame(width: 24)
+            
             Text(text)
                 .font(.body)
                 .foregroundColor(.primary)
+            
             Spacer()
         }
     }
@@ -409,16 +406,6 @@ private struct PricingPlanView: View {
                 Spacer()
                 HStack(spacing: 12) {
                     // Badge
-                    if badge == AppStrings.UI.bestValue || badge.contains("Save") {
-                        Text(badge)
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.sunset)
-                            .cornerRadius(6)
-                    } else {
                         Text(badge)
                             .font(.caption)
                             .fontWeight(.bold)
@@ -427,11 +414,11 @@ private struct PricingPlanView: View {
                             .padding(.vertical, 4)
                             .background(badgeColor)
                             .cornerRadius(6)
-                    }
+                    
                     // Radio button
                     Image(systemName: isSelected ? AppStrings.SystemImages.checkmarkCircleFill : AppStrings.SystemImages.circle)
                         .font(.title2)
-                        .foregroundColor(isSelected ? .customAccent : .gray)
+                        .foregroundColor(isSelected ? .blue : .gray)
                 }
             }
             .padding(16)
@@ -439,10 +426,7 @@ private struct PricingPlanView: View {
             .contentShape(Rectangle())
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        isSelected ? AnyShapeStyle(Color.sunset) : AnyShapeStyle(Color.gray.opacity(0.3)),
-                        lineWidth: isSelected ? 2 : 1
-                    )
+                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
             )
         }
         .buttonStyle(PlainButtonStyle())
