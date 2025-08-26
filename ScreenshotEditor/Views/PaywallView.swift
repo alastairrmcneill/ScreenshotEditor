@@ -91,10 +91,10 @@ struct PaywallView: View {
                 
                 // Feature List
                VStack(alignment: .leading, spacing: 15) {
-                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature, color: .blue)
-                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature, color: .blue)
-                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature, color: .blue)
-                   FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature, color: .blue)
+                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature)
+                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature)
+                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature)
+                   FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature)
                }
                .padding(.horizontal, 32)
                .padding(.top, 32)
@@ -354,14 +354,17 @@ struct PaywallView: View {
 private struct FeatureRow: View {
     let icon: String
     let text: String
-    let color: Color
     
     var body: some View {
         HStack(spacing: 12) {
-                            Image(systemName: icon)
-                    .font(.title3)
-                .foregroundColor(color)
-                .frame(width: 24)
+            Rectangle()
+                .fill(Color.sunset)
+                .frame(width: 20, height: 20)
+                .mask(
+                    Image(systemName: icon)
+                        .resizable()
+                        .scaledToFit()
+                )
             
             Text(text)
                 .font(.body)
@@ -417,23 +420,54 @@ private struct PricingPlanView<S: ShapeStyle>: View {
                         .padding(.vertical, 4)
                         .background(badgeColor)
                         .cornerRadius(6)
-                    
-                    // Radio button
-                    Image(systemName: isSelected ? AppStrings.SystemImages.checkmarkCircleFill : AppStrings.SystemImages.circle)
-                        .font(.title2)
-                        .foregroundColor(isSelected ? .blue : .gray)
+
+                    // Radio Button
+                    GradientSymbol(
+                        systemName: isSelected
+                            ? AppStrings.SystemImages.checkmarkCircleFill
+                            : AppStrings.SystemImages.circle,
+                        isSelected: isSelected,
+                        size: 24
+                    )
                 }
             }
             .padding(16)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3),
-                            lineWidth: isSelected ? 2 : 1)
-            )
+            .overlay {
+                let shape = RoundedRectangle(cornerRadius: 12)
+                ZStack {
+                    shape
+                        .stroke(Color.gray.opacity(0.3), lineWidth: isSelected ? 0 : 1)
+                    shape
+                        .stroke(Color.sunset, lineWidth: isSelected ? 3 : 0)
+                }
+            }
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+
+private struct GradientSymbol: View {
+    let systemName: String
+    let isSelected: Bool
+    var size: CGFloat = 24
+
+    var body: some View {
+        // Use foregroundStyle so it works on iOS 15+
+        let base = Image(systemName: systemName)
+            .resizable()
+            .scaledToFit()
+
+        Group {
+            if isSelected {
+                base.foregroundStyle(Color.sunset)
+            } else {
+                base.foregroundStyle(Color.gray.opacity(0.3))
+            }
+        }
+        .frame(width: size, height: size)
     }
 }
 
