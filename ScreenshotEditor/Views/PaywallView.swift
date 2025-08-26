@@ -174,7 +174,7 @@ struct PaywallView: View {
                     Spacer()
                     Toggle("", isOn: $viewModel.freeTrialEnabled)
                         .toggleStyle(SwitchToggleStyle())
-                        .tint(viewModel.freeTrialEnabled ? Color.sunset : Color.customAccent)
+                        .tint( Color.customAccent)
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
@@ -214,7 +214,7 @@ struct PaywallView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(
-                        viewModel.isPurchasing ? Color.gray : Color.sunset
+                        viewModel.isPurchasing ? Color.gray : Color.customAccent
                     )
                     .cornerRadius(12)
                 }
