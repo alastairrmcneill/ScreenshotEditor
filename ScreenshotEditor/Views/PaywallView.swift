@@ -174,8 +174,15 @@ struct PaywallView: View {
                         .font(.headline)
                     Spacer()
                     Toggle("", isOn: $viewModel.freeTrialEnabled)
-                        .toggleStyle(SwitchToggleStyle())
-                        .tint( Color.customAccent)
+                        .toggleStyle(
+                            GradientSwitchToggleStyle(
+                                onGradient: Color.sunset,
+                                offColor: .gray.opacity(0.30),
+                                knobColor: .white,
+                                trackHeight: 31
+                            )
+                        )
+                        .disabled(viewModel.isPurchasing) // optional, matches your button state
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
@@ -454,6 +461,64 @@ private struct PricingPlanView<S: ShapeStyle>: View {
     }
 }
 
+struct GradientSwitchToggleStyle: ToggleStyle {
+    // Pass just the colors; we build the gradient inside.
+    var onGradient: LinearGradient = Color.sunset
+    var offColor: Color = .gray.opacity(0.30)
+    var knobColor: Color = .white
+    var trackHeight: CGFloat = 31   // ~ native UISwitch height
+
+    func makeBody(configuration: ToggleStyle.Configuration) -> some View {
+        SwitchBody(configuration: configuration,
+                   onGradient: onGradient,
+                   offColor: offColor,
+                   knobColor: knobColor,
+                   trackHeight: trackHeight)
+    }
+
+    private struct SwitchBody: View {
+        @Environment(\.isEnabled) private var isEnabled
+
+        let configuration: ToggleStyle.Configuration
+        let onGradient: LinearGradient
+        let offColor: Color
+        let knobColor: Color
+        let trackHeight: CGFloat
+
+        var body: some View {
+            let trackWidth = trackHeight * 1.65
+            let knobSize = trackHeight - 6
+
+            Button {
+                withAnimation(.spring(response: 0.22, dampingFraction: 0.85)) {
+                    configuration.isOn.toggle()
+                }
+            } label: {
+                ZStack(alignment: configuration.isOn ? .trailing : .leading) {
+                    // OFF track
+                    Capsule()
+                        .fill(offColor)
+
+                    // ON (gradient) track
+                    Capsule()
+                        .fill(onGradient)
+                        .opacity(configuration.isOn ? 1 : 0)
+
+                    // Knob
+                    Circle()
+                        .fill(knobColor)
+                        .frame(width: knobSize, height: knobSize)
+                        .shadow(color: .black.opacity(0.12), radius: 1, x: 0, y: 1)
+                        .padding(3)
+                }
+                .frame(width: trackWidth, height: trackHeight)
+                .opacity(isEnabled ? 1 : 0.5)
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(.isButton)
+        }
+    }
+}
 
 private struct GradientSymbol: View {
     let systemName: String
