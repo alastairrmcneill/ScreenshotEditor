@@ -214,14 +214,20 @@ struct PaywallView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(
-                        viewModel.isPurchasing ? Color.gray : Color.customAccent
-                    )
-                    .cornerRadius(12)
+                    .background {
+                        if viewModel.isPurchasing {
+                            Color.gray
+                        } else {
+                            Color.sunset
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .animation(.easeInOut(duration: 0.2), value: viewModel.isPurchasing)
                 }
                 .disabled(viewModel.isPurchasing)
                 .padding(.horizontal)
                 .padding(.top, 16)
+
                 
                 // Bottom Links - Right at the bottom of safe area
                 HStack(spacing: 40) {
