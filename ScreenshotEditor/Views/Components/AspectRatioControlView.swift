@@ -39,28 +39,14 @@ struct AspectRatioControlView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(editingViewModel.parameters.aspectRatio == ratio ? 
-                                     selectedBackgroundColor : 
-                                     Color(.systemGray6))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(editingViewModel.parameters.aspectRatio == ratio ? 
-                                               selectedBackgroundColor : 
-                                               Color.clear, lineWidth: 2)
-                                )
+                                     Color.aspectRatioButtonSelectedBackground : 
+                                     Color.aspectRatioButtonBackground)
                         )
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
             }
         }
-    }
-    
-    /// Background color for selected aspect ratio buttons
-    private var selectedBackgroundColor: Color {
-        Color(
-            light: Color(red: 0.2, green: 0.2, blue: 0.2), // Dark grey for light mode
-            dark: Color(red: 0.3, green: 0.3, blue: 0.3)   // Much darker grey for dark mode
-        )
     }
 }
 
@@ -81,19 +67,40 @@ struct AspectRatioIconView: View {
                             .stroke(iconColor, lineWidth: 2)
                             .frame(width: 24, height: 18)
                         
-                        // Corner resize handles
+                        // Dashed crosshair lines
                         VStack {
-                            HStack {
-                                cornerHandle
-                                Spacer()
-                                cornerHandle
-                            }
                             Spacer()
-                            HStack {
-                                cornerHandle
-                                Spacer()
-                                cornerHandle
-                            }
+                            // Horizontal dashed line
+                            Rectangle()
+                                .fill(iconColor)
+                                .frame(width: 16, height: 1)
+                                .mask(
+                                    HStack(spacing: 1) {
+                                        ForEach(0..<8, id: \.self) { _ in
+                                            Rectangle()
+                                                .frame(width: 1, height: 1)
+                                        }
+                                    }
+                                )
+                            Spacer()
+                        }
+                        .frame(width: 24, height: 18)
+                        
+                        HStack {
+                            Spacer()
+                            // Vertical dashed line
+                            Rectangle()
+                                .fill(iconColor)
+                                .frame(width: 1, height: 12)
+                                .mask(
+                                    VStack(spacing: 1) {
+                                        ForEach(0..<6, id: \.self) { _ in
+                                            Rectangle()
+                                                .frame(width: 1, height: 1)
+                                        }
+                                    }
+                                )
+                            Spacer()
                         }
                         .frame(width: 24, height: 18)
                     }
@@ -127,7 +134,7 @@ struct AspectRatioIconView: View {
     }
     
     private var iconColor: Color {
-        isSelected ? Color.white : Color.secondary
+        isSelected ? Color.aspectRatioButtonSelectedForeground : Color.aspectRatioButtonForeground
     }
     
     private var ratioLabel: String {
