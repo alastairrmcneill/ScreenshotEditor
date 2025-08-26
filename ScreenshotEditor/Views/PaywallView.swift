@@ -114,7 +114,7 @@ struct PaywallView: View {
                             subtitle: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
                             originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
                             badge: calculateYearlySavings(yearlyProduct),
-                            badgeColor: Color.sunset,
+                            badgeColor: Color.brandGradient,
                             isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
                             viewModel.selectPlan(.yearly)
@@ -126,7 +126,7 @@ struct PaywallView: View {
                             title: AppStrings.UI.yearlyPlan,
                             subtitle: AppStrings.UI.loadingPricing,
                             badge: AppStrings.UI.bestValue,
-                            badgeColor: Color.sunset,
+                            badgeColor: Color.brandGradient,
                             isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
                             viewModel.selectPlan(.yearly)
@@ -176,7 +176,7 @@ struct PaywallView: View {
                     Toggle("", isOn: $viewModel.freeTrialEnabled)
                         .toggleStyle(
                             GradientSwitchToggleStyle(
-                                onGradient: Color.sunset,
+                                onGradient: Color.brandGradient,
                                 offColor: .gray.opacity(0.30),
                                 knobColor: .white,
                                 trackHeight: 31
@@ -225,7 +225,7 @@ struct PaywallView: View {
                         if viewModel.isPurchasing {
                             Color.gray
                         } else {
-                            Color.sunset
+                            Color.brandGradient
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -371,7 +371,7 @@ private struct FeatureRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Rectangle()
-                .fill(Color.sunset)
+                .fill(Color.brandGradient)
                 .frame(width: 20, height: 20)
                 .mask(
                     Image(systemName: icon)
@@ -453,7 +453,7 @@ private struct PricingPlanView<S: ShapeStyle>: View {
                     shape
                         .stroke(Color.gray.opacity(0.3), lineWidth: isSelected ? 0 : 1)
                     shape
-                        .stroke(Color.sunset, lineWidth: isSelected ? 3 : 0)
+                        .stroke(Color.brandGradient, lineWidth: isSelected ? 3 : 0)
                 }
             }
         }
@@ -463,7 +463,7 @@ private struct PricingPlanView<S: ShapeStyle>: View {
 
 struct GradientSwitchToggleStyle: ToggleStyle {
     // Pass just the colors; we build the gradient inside.
-    var onGradient: LinearGradient = Color.sunset
+    var onGradient: LinearGradient = Color.brandGradient
     var offColor: Color = .gray.opacity(0.30)
     var knobColor: Color = .white
     var trackHeight: CGFloat = 31   // ~ native UISwitch height
@@ -533,7 +533,7 @@ private struct GradientSymbol: View {
 
         Group {
             if isSelected {
-                base.foregroundStyle(Color.sunset)
+                base.foregroundStyle(Color.brandGradient)
             } else {
                 base.foregroundStyle(Color.gray.opacity(0.3))
             }

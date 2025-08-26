@@ -48,8 +48,8 @@ extension Color {
         dark: Color.white
     )
 
-    /// Brand gradient: sunset (orange-pink)
-    static var sunset: LinearGradient {
+    /// Brand gradient
+    static var brandGradient: LinearGradient {
         LinearGradient(
             gradient: Gradient(colors: [
                 Color(red: 1.0, green: 0.6, blue: 0.2), // orange
