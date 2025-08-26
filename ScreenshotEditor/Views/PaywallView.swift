@@ -91,10 +91,10 @@ struct PaywallView: View {
                 
                 // Feature List
                VStack(alignment: .leading, spacing: 15) {
-                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature, color: .sunset)
-                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature, color: .sunset)
-                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature, color: .sunset)
-                   FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature, color: .sunset)
+                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature, color: .blue)
+                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature, color: .blue)
+                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature, color: .blue)
+                   FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature, color: .blue)
                }
                .padding(.horizontal, 32)
                .padding(.top, 32)
