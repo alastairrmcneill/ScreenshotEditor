@@ -114,7 +114,7 @@ struct PaywallView: View {
                             subtitle: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
                             originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
                             badge: calculateYearlySavings(yearlyProduct),
-                            badgeColor: .customAccent,
+                            badgeColor: Color.sunset,
                             isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
                             viewModel.selectPlan(.yearly)
@@ -126,6 +126,7 @@ struct PaywallView: View {
                             title: AppStrings.UI.yearlyPlan,
                             subtitle: AppStrings.UI.loadingPricing,
                             badge: AppStrings.UI.bestValue,
+                            badgeColor: Color.sunset,
                             isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
                             viewModel.selectPlan(.yearly)
@@ -371,12 +372,12 @@ private struct FeatureRow: View {
     }
 }
 
-private struct PricingPlanView: View {
+private struct PricingPlanView<S: ShapeStyle>: View {
     let title: String
     var subtitle: String? = nil
     var originalPrice: String? = nil
     let badge: String
-    var badgeColor: Color = .red
+    var badgeColor: S
     let isSelected: Bool
     var isTrialPlan: Bool = false
     let onTap: () -> Void
@@ -389,7 +390,8 @@ private struct PricingPlanView: View {
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                    HStack{
+                    
+                    HStack {
                         if let originalPrice = originalPrice {
                             Text(originalPrice)
                                 .font(.subheadline)
@@ -404,16 +406,17 @@ private struct PricingPlanView: View {
                     }
                 }
                 Spacer()
+                
                 HStack(spacing: 12) {
                     // Badge
-                        Text(badge)
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(badgeColor)
-                            .cornerRadius(6)
+                    Text(badge)
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(badgeColor)
+                        .cornerRadius(6)
                     
                     // Radio button
                     Image(systemName: isSelected ? AppStrings.SystemImages.checkmarkCircleFill : AppStrings.SystemImages.circle)
@@ -426,7 +429,8 @@ private struct PricingPlanView: View {
             .contentShape(Rectangle())
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3),
+                            lineWidth: isSelected ? 2 : 1)
             )
         }
         .buttonStyle(PlainButtonStyle())
