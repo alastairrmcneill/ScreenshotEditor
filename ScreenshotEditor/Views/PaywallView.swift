@@ -90,14 +90,15 @@ struct PaywallView: View {
                 .frame(height: 240) // Fixed height for header section
                 
                 // Feature List
-               VStack(alignment: .leading, spacing: 12) {
-                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature, color: .blue)
-                   FeatureRow(icon: "wand.and.stars", text: AppStrings.UI.premiumEditingFeature, color: .blue)
-                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature, color: .blue)
-                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature, color: .blue)
+               VStack(alignment: .leading, spacing: 15) {
+                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature, color: .sunset)
+                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature, color: .sunset)
+                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature, color: .sunset)
+                   FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature, color: .sunset)
                }
-               .padding(.horizontal)
-               .padding(.top, 20)
+               .padding(.horizontal, 32)
+               .padding(.top, 32)
+               .padding(.bottom, 16)
 
                 // Flexible spacer to push bottom content down
                 Spacer()
@@ -110,9 +111,10 @@ struct PaywallView: View {
                     if let yearlyProduct = subscriptionManager.yearlyProduct {
                         PricingPlanView(
                             title: AppStrings.UI.yearlyPlan,
+                            subtitle: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
                             originalPrice: calculateOriginalYearlyPrice(yearlyProduct),
-                            currentPrice: "\(yearlyProduct.storeProduct.localizedPriceString) per year",
                             badge: calculateYearlySavings(yearlyProduct),
+                            badgeColor: .customAccent,
                             isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
                             viewModel.selectPlan(.yearly)
@@ -122,8 +124,7 @@ struct PaywallView: View {
                         // Fallback to loading state while fetching
                         PricingPlanView(
                             title: AppStrings.UI.yearlyPlan,
-                            originalPrice: nil,
-                            currentPrice: AppStrings.UI.loadingPricing,
+                            subtitle: AppStrings.UI.loadingPricing,
                             badge: AppStrings.UI.bestValue,
                             isSelected: viewModel.selectedPlan == .yearly && !viewModel.freeTrialEnabled
                         ) {
@@ -141,7 +142,7 @@ struct PaywallView: View {
                             title: hasFreeTrial ? (trialText ?? AppStrings.UI.threeDayFreeTrial) : AppStrings.UI.weeklyPlan,
                             subtitle: hasFreeTrial ? "then \(weeklyProduct.storeProduct.localizedPriceString) weekly" : "\(weeklyProduct.storeProduct.localizedPriceString) weekly",
                             badge: hasFreeTrial ? AppStrings.UI.freeBadge : AppStrings.UI.weekly,
-                            badgeColor: hasFreeTrial ? .green : .blue,
+                            badgeColor: hasFreeTrial ? .green : .customAccent,
                             isSelected: viewModel.selectedPlan == .weekly || (viewModel.freeTrialEnabled && hasFreeTrial),
                             isTrialPlan: hasFreeTrial
                         ) {
@@ -167,27 +168,24 @@ struct PaywallView: View {
                 }
                 .padding(.horizontal)
                 
-                // Free Trial Toggle (only show if weekly product has free trial)
-                if let weeklyProduct = subscriptionManager.weeklyProduct,
-                   weeklyProduct.storeProduct.introductoryDiscount != nil {
-                    HStack {
-                        Text(AppStrings.UI.freeTrialEnabled)
-                            .font(.headline)
-                        Spacer()
-                        Toggle("", isOn: $viewModel.freeTrialEnabled)
-                            .toggleStyle(SwitchToggleStyle())
-                            .tint(.accentColor)
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 12)
-                    .onChange(of: viewModel.freeTrialEnabled) { enabled in
-                        if enabled {
-                            viewModel.selectPlan(.weekly)
-                        } else {
-                            viewModel.selectPlan(.yearly)
-                        }
+                HStack {
+                    Text(AppStrings.UI.freeTrialEnabled)
+                        .font(.headline)
+                    Spacer()
+                    Toggle("", isOn: $viewModel.freeTrialEnabled)
+                        .toggleStyle(SwitchToggleStyle())
+                        .tint(viewModel.freeTrialEnabled ? Color.sunset : Color.customAccent)
+                }
+                .padding(.horizontal)
+                .padding(.top, 12)
+                .onChange(of: viewModel.freeTrialEnabled) { enabled in
+                    if enabled {
+                        viewModel.selectPlan(.weekly)
+                    } else {
+                        viewModel.selectPlan(.yearly)
                     }
                 }
+                
                 
                 
                 // Purchase Button
@@ -208,7 +206,6 @@ struct PaywallView: View {
                             Text(viewModel.getButtonText())
                                 .font(.headline)
                                 .fontWeight(.semibold)
-                            
                             Image(systemName: "chevron.right")
                                 .font(.headline)
                         }
@@ -216,7 +213,9 @@ struct PaywallView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(viewModel.isPurchasing ? Color.gray : Color.blue)
+                    .background(
+                        viewModel.isPurchasing ? Color.gray : Color.sunset
+                    )
                     .cornerRadius(12)
                 }
                 .disabled(viewModel.isPurchasing)
@@ -358,15 +357,18 @@ private struct FeatureRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
-                .frame(width: 24)
-            
+            ZStack {
+                color
+                    .frame(width: 28, height: 28)
+                    .clipShape(Circle())
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(.white)
+            }
+            .frame(width: 28, height: 28)
             Text(text)
                 .font(.body)
                 .foregroundColor(.primary)
-            
             Spacer()
         }
     }
@@ -376,7 +378,6 @@ private struct PricingPlanView: View {
     let title: String
     var subtitle: String? = nil
     var originalPrice: String? = nil
-    var currentPrice: String? = nil
     let badge: String
     var badgeColor: Color = .red
     let isSelected: Bool
@@ -391,52 +392,57 @@ private struct PricingPlanView: View {
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                    
-                    if let originalPrice = originalPrice {
-                        Text(originalPrice)
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .strikethrough()
-                    }
-                    
-                    if let currentPrice = currentPrice {
-                        Text(currentPrice)
-                            .font(.subheadline)
-                            .foregroundColor(.primary)
-                    }
-                    
-                    if let subtitle = subtitle {
-                        Text(subtitle)
-                            .font(.subheadline)
-                            .foregroundColor(.primary)
+                    HStack{
+                        if let originalPrice = originalPrice {
+                            Text(originalPrice)
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                                .strikethrough()
+                        }
+                        if let subtitle = subtitle {
+                            Text(subtitle)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                        }
                     }
                 }
-                
                 Spacer()
-                
                 HStack(spacing: 12) {
                     // Badge
-                    Text(badge)
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(badgeColor)
-                        .cornerRadius(6)
-                    
+                    if badge == AppStrings.UI.bestValue || badge.contains("Save") {
+                        Text(badge)
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.sunset)
+                            .cornerRadius(6)
+                    } else {
+                        Text(badge)
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(badgeColor)
+                            .cornerRadius(6)
+                    }
                     // Radio button
                     Image(systemName: isSelected ? AppStrings.SystemImages.checkmarkCircleFill : AppStrings.SystemImages.circle)
                         .font(.title2)
-                        .foregroundColor(isSelected ? .blue : .gray)
+                        .foregroundColor(isSelected ? .customAccent : .gray)
                 }
             }
             .padding(16)
-            .frame(maxWidth: .infinity) // Ensure button expands to full width
-            .contentShape(Rectangle()) // Make entire area tappable
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                    .strokeBorder(
+                        isSelected ? AnyShapeStyle(Color.sunset) : AnyShapeStyle(Color.gray.opacity(0.3)),
+                        lineWidth: isSelected ? 2 : 1
+                    )
             )
         }
         .buttonStyle(PlainButtonStyle())

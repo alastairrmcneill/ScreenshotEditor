@@ -58,8 +58,9 @@ struct AppStrings {
         
         // New Paywall
         static let unlimitedAccess = "Unlimited Access"
-        static let unlimitedExportsFeature = "Unlimited exports"
-        static let noWatermarkFeature = "No watermark"
+        static let unlimitedExportsFeature = "Unlimited Exports"
+        static let noWatermarkFeature = "No Watermark"
+        static let noAnnoyingAdsFeature = "No annoying paywall ads"
         static let premiumEditingFeature = "Premium editing tools"
         static let highQualityExportsFeature = "High-quality exports"
         static let yearlyPlan = "Yearly Plan"

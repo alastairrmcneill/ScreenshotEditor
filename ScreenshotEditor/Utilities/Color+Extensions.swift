@@ -47,6 +47,18 @@ extension Color {
         light: Color(red: 0.25, green: 0.25, blue: 0.25),
         dark: Color.white
     )
+
+    /// Brand gradient: sunset (orange-pink)
+    static var sunset: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                Color(red: 1.0, green: 0.6, blue: 0.2), // orange
+                Color(red: 1.0, green: 0.3, blue: 0.5)  // pink
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 }
 
 extension Color {
