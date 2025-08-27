@@ -71,7 +71,7 @@ struct EmptyStateView: View {
                 .padding(.vertical, AppConstants.Layout.standardPadding)
                 .overlay(
                     RoundedRectangle(cornerRadius: AppConstants.Layout.largeCornerRadius)
-                        .stroke(.primary, lineWidth: 1)
+                        .stroke(Color.brandGradient, lineWidth: 2)
                 )
             }
             .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
@@ -96,14 +96,14 @@ struct CustomDeviceIcon: View {
     var body: some View {
         ZStack {
             // Soft glow effect behind the device
-            RoundedRectangle(cornerRadius: 22)
-                .fill(Color.blue.opacity(0.15))
+            RoundedRectangle(cornerRadius: 40)
+                .fill(Color.brandGradient.opacity(0.15))
                 .blur(radius: 25)
                 .frame(width: 170, height: 250)
             
             // Secondary glow layer for more depth
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.blue.opacity(0.08))
+            RoundedRectangle(cornerRadius: 40)
+                .fill(Color.brandGradient.opacity(0.08))
                 .blur(radius: 15)
                 .frame(width: 140, height: 230)
             

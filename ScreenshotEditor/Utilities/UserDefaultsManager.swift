@@ -52,7 +52,7 @@ class UserDefaultsManager {
     /// The number of exports performed by free users
     var freeExportCount: Int {
         get {
-            return 3 // userDefaults.integer(forKey: Keys.freeExportCount)
+            return userDefaults.integer(forKey: Keys.freeExportCount)
         }
         set {
             userDefaults.set(newValue, forKey: Keys.freeExportCount)
@@ -74,7 +74,7 @@ class UserDefaultsManager {
     /// Indicates whether the user has an active subscription
     var isSubscribed: Bool {
         get {
-            return false //userDefaults.bool(forKey: Keys.isSubscribed)
+            return userDefaults.bool(forKey: Keys.isSubscribed)
         }
         set {
             userDefaults.set(newValue, forKey: Keys.isSubscribed)

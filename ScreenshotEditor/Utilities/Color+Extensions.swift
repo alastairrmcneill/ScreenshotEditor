@@ -28,7 +28,7 @@ extension Color {
 
     /// Aspect ratio control background color: dark grey in light mode, off-white in dark mode
     static let aspectRatioButtonBackground = Color(
-        light: Color.white,
+        light: Color(red: 0.9, green: 0.9, blue: 0.9),
         dark: Color(red: 0.2, green: 0.2, blue: 0.2)
     )
 

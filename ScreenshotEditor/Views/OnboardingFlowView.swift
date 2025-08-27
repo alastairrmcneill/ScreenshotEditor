@@ -163,12 +163,12 @@ private struct WelcomeStep: View {
             VStack(spacing: 0) {
                 Spacer(minLength: 60)
                 
-                // App Icon
-                Image(systemName: "camera.viewfinder")
-                    .font(.system(size: 100))
-                    .foregroundColor(.customAccent)
+                // App Image
+                Image("Onboarding_image_1")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 200, height: 250)
                     .padding(.bottom, 40)
-                    .accessibilityLabel("ScreenshotEditor App Icon")
                 
                 // Headline
                 Text("Welcome to\nVanta!")
@@ -183,7 +183,6 @@ private struct WelcomeStep: View {
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
-                    .padding(.bottom, 64)
                 
                 Spacer()
                 
@@ -346,7 +345,7 @@ private struct FeaturesStep: View {
                 // Features icon
                 Image(systemName: "sparkles")
                     .font(.system(size: 80))
-                    .foregroundColor(Color.brandGradient)
+                    .foregroundStyle(Color.brandGradient)
                     .padding(.bottom, 32)
                 
                 // Headline
@@ -369,25 +368,25 @@ private struct FeaturesStep: View {
                     FeatureHighlight(
                         icon: "crop",
                         title: "Cropping",
-                        description: "Keep only the useful part of the screenshot"
+                        description: "Keep only the good bits"
                     )
                     
                     FeatureHighlight(
                         icon: "paintbrush.fill",
                         title: "Custom Backgrounds",
-                        description: "Choose from gradients, colors, and beautiful effects"
+                        description: "Beautiful colours and gradients"
                     )
                     
                     FeatureHighlight(
                         icon: "rectangle.3.group.fill",
                         title: "Style Presets",
-                        description: "Apply professional styles with a single tap"
+                        description: "Apply professional styling"
                     )
                     
                     FeatureHighlight(
                         icon: "square.and.arrow.up",
                         title: "Easy Sharing",
-                        description: "Export in high quality and share anywhere"
+                        description: "Export and share anywhere"
                     )
                 }
                 .padding(.bottom, 48)
@@ -440,7 +439,7 @@ private struct PhotoAccessStep: View {
                 // Photo access icon
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.system(size: 80))
-                    .foregroundColor(.customAccent)
+                    .foregroundStyle(Color.brandGradient)
                     .padding(.bottom, 32)
                 
                 // Headline
