@@ -79,19 +79,21 @@ struct ContentView: View {
                                     .foregroundColor(.customAccent)
                                     
                                     // Crown button (paywall) with gradient overlay
-                                    Button(action: {
-                                        showingPaywall = true
-                                    }) {
-                                        Image(systemName: subscriptionManager.hasPremiumAccess ? "crown" : "crown.fill")
-                                            .font(.title2)
-                                            .fontWeight(.medium)
-                                            .foregroundStyle(
-                                                LinearGradient(
-                                                    colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
-                                                    startPoint: .topLeading,
-                                                    endPoint: .bottomTrailing
+                                    if !subscriptionManager.hasPremiumAccess {
+                                        Button(action: {
+                                            showingPaywall = true
+                                        }) {
+                                            Image(systemName: "crown.fill")
+                                                .font(.title2)
+                                                .fontWeight(.medium)
+                                                .foregroundStyle(
+                                                    LinearGradient(
+                                                        colors: BackgroundGradient.golden.colors.map { Color(cgColor: $0) },
+                                                        startPoint: .topLeading,
+                                                        endPoint: .bottomTrailing
+                                                    )
                                                 )
-                                            )
+                                        }
                                     }
                                 }
                             }

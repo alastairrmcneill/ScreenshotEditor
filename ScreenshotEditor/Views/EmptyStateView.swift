@@ -57,26 +57,26 @@ struct EmptyStateView: View {
             .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
 
             // Go Premium Button
-            Button(action: {
-                showingPaywall = true
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "crown.fill")
-                        .font(.headline)
-                    Text("Go \(AppStrings.UI.premium)")
-                        .font(.headline)
+            if !UserDefaultsManager.shared.isSubscribed {
+                Button(action: {
+                    showingPaywall = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "crown.fill")
+                            .font(.headline)
+                        Text("Go \(AppStrings.UI.premium)")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.primary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, AppConstants.Layout.standardPadding)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppConstants.Layout.largeCornerRadius)
+                            .stroke(Color.brandGradient, lineWidth: 2)
+                    )
                 }
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, AppConstants.Layout.standardPadding)
-                .overlay(
-                    RoundedRectangle(cornerRadius: AppConstants.Layout.largeCornerRadius)
-                        .stroke(Color.brandGradient, lineWidth: 2)
-                )
+                .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
             }
-            .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
-
-            
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView(
