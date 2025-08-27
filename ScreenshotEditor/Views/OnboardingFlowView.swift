@@ -171,14 +171,14 @@ private struct WelcomeStep: View {
                     .accessibilityLabel("ScreenshotEditor App Icon")
                 
                 // Headline
-                Text("Welcome to\nScreenshotEditor!")
+                Text("Welcome to\nVanta!")
                     .font(.system(size: 32, weight: .bold))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                     .padding(.bottom, 16)
                 
                 // Subheadline
-                Text("Transform your screenshots into beautiful, professional-looking images with custom backgrounds and styles.")
+                Text("Make beautiful, professional-looking screenshots in seconds!")
                     .font(.system(size: 18, weight: .regular))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -187,18 +187,42 @@ private struct WelcomeStep: View {
                 
                 Spacer()
                 
+                // Testimonial Carousel
+                TestimonialCarouselView(testimonials: [
+                    Testimonial(
+                        userImage: Image(systemName: "person.crop.circle"),
+                        name: "Jake B.",
+                        quote: "These screenshots look so much better!",
+                        starCount: 5
+                    ),
+                    Testimonial(
+                        userImage: Image(systemName: "person.crop.circle"),
+                        name: "Danielle A.",
+                        quote: "Much happier posting these to LinkedIn!",
+                        starCount: 5
+                    ),
+                    Testimonial(
+                        userImage: Image(systemName: "person.crop.circle"),
+                        name: "Ritchie N.",
+                        quote: "Fast and easy. What more could you ask for?",
+                        starCount: 5
+                    ) 
+                ])
+
+                Spacer()
+
                 // Continue Button
                 Button(action: action) {
                     Text("Get Started")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.customAccent)
+                        .background(Color.brandGradient)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 8)
+                .padding(.bottom, 10)
                 
                 // User count below button
                 HStack(spacing: 6) {
@@ -210,12 +234,90 @@ private struct WelcomeStep: View {
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.green)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 16)
             }
         }
         .onAppear { 
             print("Onboarding: Step 0 (Welcome) appeared.")
             AnalyticsManager.shared.track(AppStrings.Analytics.onboardingWelcomeViewed)
+        }
+    }
+}
+
+// MARK: - Testimonial View
+private struct TestimonialView: View {
+    let userImage: Image
+    let name: String
+    let quote: String
+    let starCount: Int
+    var body: some View {
+        HStack(alignment: .center, spacing: 16) {
+            Image(systemName: "laurel.leading")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 70)
+                .foregroundStyle(Color.brandGradient)
+            VStack(spacing: 6) {
+                Text(name)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Text(quote)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 0)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 2) {
+                    ForEach(0..<starCount, id: \ .self) { _ in
+                        Image(systemName: "star.fill")
+                            .font(.caption)
+                            .foregroundColor(.yellow)
+                    }
+                }
+            }
+            Image(systemName: "laurel.trailing")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 70)
+                .foregroundStyle(Color.brandGradient)
+        }
+        .padding(.horizontal, 40)
+    }
+}
+
+// MARK: - Testimonial Carousel View
+private struct Testimonial: Identifiable {
+    let id = UUID()
+    let userImage: Image
+    let name: String
+    let quote: String
+    let starCount: Int
+}
+
+private struct TestimonialCarouselView: View {
+    let testimonials: [Testimonial]
+    @State private var currentIndex = 0
+    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    
+    var body: some View {
+        TabView(selection: $currentIndex) {
+            ForEach(Array(testimonials.enumerated()), id: \ .element.id) { index, testimonial in
+                TestimonialView(
+                    userImage: testimonial.userImage,
+                    name: testimonial.name,
+                    quote: testimonial.quote,
+                    starCount: testimonial.starCount
+                )
+                .tag(index)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        .frame(height: 120)
+        .onReceive(timer) { _ in
+            withAnimation {
+                currentIndex = (currentIndex + 1) % testimonials.count
+            }
         }
     }
 }
@@ -244,11 +346,11 @@ private struct FeaturesStep: View {
                 // Features icon
                 Image(systemName: "sparkles")
                     .font(.system(size: 80))
-                    .foregroundColor(.customAccent)
+                    .foregroundColor(Color.brandGradient)
                     .padding(.bottom, 32)
                 
                 // Headline
-                Text("Powerful Features")
+                Text("Beauty is in your hands!")
                     .font(.system(size: 32, weight: .bold))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -266,8 +368,8 @@ private struct FeaturesStep: View {
                 VStack(spacing: 24) {
                     FeatureHighlight(
                         icon: "crop",
-                        title: "Smart Cropping",
-                        description: "Automatically detect and crop your screenshot content"
+                        title: "Cropping",
+                        description: "Keep only the useful part of the screenshot"
                     )
                     
                     FeatureHighlight(
@@ -298,7 +400,7 @@ private struct FeaturesStep: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.customAccent)
+                        .background(Color.brandGradient)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
@@ -349,7 +451,7 @@ private struct PhotoAccessStep: View {
                     .padding(.bottom, 16)
                 
                 // Subheadline
-                Text("We need access to your photo library to import screenshots and save your edited images.")
+                Text("To make beautiful screenshots, we need access to your photos.")
                     .font(.system(size: 18, weight: .regular))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -364,12 +466,12 @@ private struct PhotoAccessStep: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.customAccent)
+                        .background(Color.brandGradient)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 60)
+                .padding(.bottom, 40)
             }
         }
         .onAppear { 
