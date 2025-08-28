@@ -225,6 +225,7 @@ struct AppStrings {
     // MARK: - Asset Images
     struct AssetImages {
         static let appIconImage = "AppIconImage"
+        static let appIconImageDark = "AppIconImageDark"
     }
     
     // MARK: - Accessibility Labels

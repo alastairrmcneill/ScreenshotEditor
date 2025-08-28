@@ -549,9 +549,10 @@ private struct AnimatedAppIconView: View {
     @State private var rotationAngle: Double = 0
     @State private var yOffset: CGFloat = 0
     @State private var scale: CGFloat = 1.0
-    
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        Image(AppStrings.AssetImages.appIconImage)
+        Image(colorScheme == .dark ? AppStrings.AssetImages.appIconImageDark : AppStrings.AssetImages.appIconImage)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 130, height: 130)
@@ -563,7 +564,7 @@ private struct AnimatedAppIconView: View {
                 startAnimation()
             }
     }
-    
+
     private func startAnimation() {
         // Create a repeating animation sequence
         withAnimation(.easeInOut(duration: 0.25)) {

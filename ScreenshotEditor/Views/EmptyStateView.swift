@@ -11,6 +11,7 @@ import PhotosUI
 struct EmptyStateView: View {
     @Binding var selectedPhotoItem: PhotosPickerItem?
     @Binding var hasReturnedFromBack: Bool
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var showingPaywall = false
     
     var body: some View {
@@ -57,7 +58,7 @@ struct EmptyStateView: View {
             .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
 
             // Go Premium Button
-            if !UserDefaultsManager.shared.isSubscribed {
+            if !subscriptionManager.hasPremiumAccess {
                 Button(action: {
                     showingPaywall = true
                 }) {
