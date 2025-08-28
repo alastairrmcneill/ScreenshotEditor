@@ -1,0 +1,12 @@
+//
+//  Config.xcconfig
+//  ScreenshotEditor
+//
+//  Created by Alastair McNeill on 07/08/2025.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+MIXPANEL_API_KEY = 78c84d451160adff2d5a8751c97c8b93
+REVENUECAT_API_KEY = appl_FiYtkalIXoSmbOnjMYXdmLKxPZT

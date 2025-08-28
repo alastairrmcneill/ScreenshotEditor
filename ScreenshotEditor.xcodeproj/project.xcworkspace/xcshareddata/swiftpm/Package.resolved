@@ -1,0 +1,24 @@
+{
+  "originHash" : "c63dff31418ac86cf3439dba72908d93009cd5a0d8297e20a10206758e7f6c22",
+  "pins" : [
+    {
+      "identity" : "mixpanel-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mixpanel/mixpanel-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "7459dd6b61665cce9f4f284ccd5dfd1d902aa568"
+      }
+    },
+    {
+      "identity" : "purchases-ios-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RevenueCat/purchases-ios-spm.git",
+      "state" : {
+        "revision" : "d9155fd20755ce900878275d56e4878c7fdfe2c1",
+        "version" : "5.34.0"
+      }
+    }
+  ],
+  "version" : 3
+}

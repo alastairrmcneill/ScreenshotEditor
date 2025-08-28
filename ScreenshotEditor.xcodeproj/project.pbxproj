@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D326147C2E4CC138008AACA7 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = D326147B2E4CC138008AACA7 /* RevenueCat */; };
+		D32614812E4CE4AD008AACA7 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32614802E4CE4AD008AACA7 /* StoreKit.framework */; };
+		D32681912E4555BA00842D52 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = D32681902E4555BA00842D52 /* Mixpanel */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D38F48792E44861C0035E177 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,25 +30,29 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D38F486B2E44861B0035E177 /* ScreenshotEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScreenshotEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D32614802E4CE4AD008AACA7 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		D38F486B2E44861B0035E177 /* Vanta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vanta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38F48782E44861C0035E177 /* ScreenshotEditorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenshotEditorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38F48822E44861D0035E177 /* ScreenshotEditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenshotEditorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D32681932E4559F300842D52 /* Exceptions for "ScreenshotEditor" folder in "Vanta" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D38F486A2E44861B0035E177 /* Vanta */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D38F486D2E44861B0035E177 /* ScreenshotEditor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D32681932E4559F300842D52 /* Exceptions for "ScreenshotEditor" folder in "Vanta" target */,
+			);
 			path = ScreenshotEditor;
-			sourceTree = "<group>";
-		};
-		D38F487B2E44861C0035E177 /* ScreenshotEditorTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScreenshotEditorTests;
-			sourceTree = "<group>";
-		};
-		D38F48852E44861D0035E177 /* ScreenshotEditorUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScreenshotEditorUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +62,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D32614812E4CE4AD008AACA7 /* StoreKit.framework in Frameworks */,
+				D326147C2E4CC138008AACA7 /* RevenueCat in Frameworks */,
+				D32681912E4555BA00842D52 /* Mixpanel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +85,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D326147F2E4CE4AD008AACA7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D32614802E4CE4AD008AACA7 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D38F48622E44861B0035E177 = {
 			isa = PBXGroup;
 			children = (
 				D38F486D2E44861B0035E177 /* ScreenshotEditor */,
-				D38F487B2E44861C0035E177 /* ScreenshotEditorTests */,
-				D38F48852E44861D0035E177 /* ScreenshotEditorUITests */,
+				D326147F2E4CE4AD008AACA7 /* Frameworks */,
 				D38F486C2E44861B0035E177 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,7 +105,7 @@
 		D38F486C2E44861B0035E177 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D38F486B2E44861B0035E177 /* ScreenshotEditor.app */,
+				D38F486B2E44861B0035E177 /* Vanta.app */,
 				D38F48782E44861C0035E177 /* ScreenshotEditorTests.xctest */,
 				D38F48822E44861D0035E177 /* ScreenshotEditorUITests.xctest */,
 			);
@@ -95,9 +115,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D38F486A2E44861B0035E177 /* ScreenshotEditor */ = {
+		D38F486A2E44861B0035E177 /* Vanta */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D38F488C2E44861D0035E177 /* Build configuration list for PBXNativeTarget "ScreenshotEditor" */;
+			buildConfigurationList = D38F488C2E44861D0035E177 /* Build configuration list for PBXNativeTarget "Vanta" */;
 			buildPhases = (
 				D38F48672E44861B0035E177 /* Sources */,
 				D38F48682E44861B0035E177 /* Frameworks */,
@@ -110,11 +130,13 @@
 			fileSystemSynchronizedGroups = (
 				D38F486D2E44861B0035E177 /* ScreenshotEditor */,
 			);
-			name = ScreenshotEditor;
+			name = Vanta;
 			packageProductDependencies = (
+				D32681902E4555BA00842D52 /* Mixpanel */,
+				D326147B2E4CC138008AACA7 /* RevenueCat */,
 			);
 			productName = ScreenshotEditor;
-			productReference = D38F486B2E44861B0035E177 /* ScreenshotEditor.app */;
+			productReference = D38F486B2E44861B0035E177 /* Vanta.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D38F48772E44861C0035E177 /* ScreenshotEditorTests */ = {
@@ -129,9 +151,6 @@
 			);
 			dependencies = (
 				D38F487A2E44861C0035E177 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D38F487B2E44861C0035E177 /* ScreenshotEditorTests */,
 			);
 			name = ScreenshotEditorTests;
 			packageProductDependencies = (
@@ -152,9 +171,6 @@
 			);
 			dependencies = (
 				D38F48842E44861D0035E177 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D38F48852E44861D0035E177 /* ScreenshotEditorUITests */,
 			);
 			name = ScreenshotEditorUITests;
 			packageProductDependencies = (
@@ -195,12 +211,16 @@
 			);
 			mainGroup = D38F48622E44861B0035E177;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D326818F2E4555BA00842D52 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
+				D326147A2E4CC138008AACA7 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D38F486C2E44861B0035E177 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D38F486A2E44861B0035E177 /* ScreenshotEditor */,
+				D38F486A2E44861B0035E177 /* Vanta */,
 				D38F48772E44861C0035E177 /* ScreenshotEditorTests */,
 				D38F48812E44861D0035E177 /* ScreenshotEditorUITests */,
 			);
@@ -258,12 +278,12 @@
 /* Begin PBXTargetDependency section */
 		D38F487A2E44861C0035E177 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D38F486A2E44861B0035E177 /* ScreenshotEditor */;
+			target = D38F486A2E44861B0035E177 /* Vanta */;
 			targetProxy = D38F48792E44861C0035E177 /* PBXContainerItemProxy */;
 		};
 		D38F48842E44861D0035E177 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D38F486A2E44861B0035E177 /* ScreenshotEditor */;
+			target = D38F486A2E44861B0035E177 /* Vanta */;
 			targetProxy = D38F48832E44861D0035E177 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -271,6 +291,8 @@
 /* Begin XCBuildConfiguration section */
 		D38F488A2E44861D0035E177 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D38F486D2E44861B0035E177 /* ScreenshotEditor */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -335,6 +357,8 @@
 		};
 		D38F488B2E44861D0035E177 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D38F486D2E44861B0035E177 /* ScreenshotEditor */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -400,21 +424,31 @@
 				DEVELOPMENT_TEAM = 4R5HGU4283;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenshotEditor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Vanta;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app needs access to save your edited screenshots to your Photos library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs access to your Photos library to import screenshots for editing and to save your edited images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alastairrmcneill.ScreenshotEditor;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alastairrmcneill.vanta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -428,21 +462,31 @@
 				DEVELOPMENT_TEAM = 4R5HGU4283;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenshotEditor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Vanta;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app needs access to save your edited screenshots to your Photos library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs access to your Photos library to import screenshots for editing and to save your edited images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alastairrmcneill.ScreenshotEditor;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alastairrmcneill.vanta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -530,7 +574,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D38F488C2E44861D0035E177 /* Build configuration list for PBXNativeTarget "ScreenshotEditor" */ = {
+		D38F488C2E44861D0035E177 /* Build configuration list for PBXNativeTarget "Vanta" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D38F488D2E44861D0035E177 /* Debug */,
@@ -558,6 +602,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D326147A2E4CC138008AACA7 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.34.0;
+			};
+		};
+		D326818F2E4555BA00842D52 /* XCRemoteSwiftPackageReference "mixpanel-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mixpanel/mixpanel-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D326147B2E4CC138008AACA7 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D326147A2E4CC138008AACA7 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		D32681902E4555BA00842D52 /* Mixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D326818F2E4555BA00842D52 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
+			productName = Mixpanel;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D38F48632E44861B0035E177 /* Project object */;
 }
