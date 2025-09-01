@@ -409,7 +409,7 @@ class CoreImageRenderer {
             image.draw(at: .zero)
             
             // Configure watermark text
-            let watermarkText = AppStrings.UI.madeWithSnapPolish
+            let watermarkText = AppStrings.UI.madeWithVanta
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 12, weight: .medium),
                 .foregroundColor: UIColor.white

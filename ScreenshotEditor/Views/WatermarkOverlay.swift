@@ -17,7 +17,7 @@ struct WatermarkOverlay: View {
             HStack {
                 Spacer()
                 
-                Text(AppStrings.UI.madeWithSnapPolish)
+                Text(AppStrings.UI.madeWithVanta)
                     .font(.caption2)
                     .fontWeight(.medium)
                     .foregroundColor(.white)

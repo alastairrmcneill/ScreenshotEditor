@@ -503,9 +503,9 @@ private struct PhotoAccessStep: View {
         case .denied, .restricted:
             return "Open Settings"
         case .notDetermined:
-            return "Grant Photo Access"
+            return "Continue"
         @unknown default:
-            return "Grant Photo Access"
+            return "Continue"
         }
     }
     
