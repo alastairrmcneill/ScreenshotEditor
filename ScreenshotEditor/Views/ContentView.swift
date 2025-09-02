@@ -235,7 +235,7 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingPaywall) {
+        .fullScreenCover(isPresented: $showingPaywall) {
             PaywallView(
                 isPresented: $showingPaywall,
                 placement: AppStrings.AnalyticsProperties.featureLock,
@@ -259,7 +259,7 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingPostOnboardingPaywall) {
+        .fullScreenCover(isPresented: $showingPostOnboardingPaywall) {
             PaywallView(
                 isPresented: $showingPostOnboardingPaywall,
                 placement: AppStrings.AnalyticsProperties.onboardingGate,

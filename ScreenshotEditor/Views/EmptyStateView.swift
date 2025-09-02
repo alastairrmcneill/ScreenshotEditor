@@ -79,7 +79,7 @@ struct EmptyStateView: View {
                 .padding(.horizontal, AppConstants.Layout.buttonHorizontalPadding)
             }
         }
-        .sheet(isPresented: $showingPaywall) {
+        .fullScreenCover(isPresented: $showingPaywall) {
             PaywallView(
                 isPresented: $showingPaywall,
                 placement: AppStrings.AnalyticsProperties.featureLock,

@@ -21,8 +21,6 @@ struct PaywallView: View {
     @State private var timer: Timer?
     @State private var showCloseButton: Bool = false
     @State private var progress: CGFloat = 0.0
-    @State private var showErrorAlert: Bool = false
-    @State private var errorMessage: String = ""
     
     private let allowCloseAfter: CGFloat = 3.0 // time in seconds until close is allowed
     
@@ -38,72 +36,80 @@ struct PaywallView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.clear
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Header with Animated App Icon, Title, and Exit Button - Fixed Height
-                ZStack(alignment: .top) {
-                    // Centered Animated App Icon and Title
-                    VStack(spacing: 16) {
-                        AnimatedAppIconView()
-                            .frame(width: 150, height: 150)
-                            .padding(.top, 20)
-                        
-                        // Headline directly under icon
-                        Text(AppStrings.UI.unlimitedAccess)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                    }
-                    
-                    // Exit Button in Top-Right Corner
-                    HStack {
-                        Spacer()
-                        
-                        if !showCloseButton {
-                            Circle()
-                                .trim(from: 0.0, to: progress)
-                                .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                                .foregroundColor(.gray)
-                                .opacity(0.3 + 0.3 * self.progress)
-                                .rotationEffect(Angle(degrees: -90))
-                                .frame(width: 30, height: 30)
-                        } else {
-                            Button(action: {
-                                dismissPaywall()
-                            }) {
-                                Image(systemName: AppStrings.SystemImages.xmark)
-                                    .font(.headline)
-                                    .foregroundColor(.gray)
-                                    .frame(width: 30, height: 30)
-                                    .background(Color.gray.opacity(0.1))
-                                    .clipShape(Circle())
+        GeometryReader { geometry in
+            ZStack {
+                Color(.systemBackground)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        // Header with Animated App Icon, Title, and Exit Button - Fixed Height
+                        ZStack(alignment: .top) {
+                            // Centered Animated App Icon and Title
+                            VStack(spacing: 16) {
+                                AnimatedAppIconView()
+                                    .frame(width: 150, height: 150)
+                                    .padding(.top, 20)
+                                
+                                // Headline directly under icon
+                                Text(AppStrings.UI.unlimitedAccess)
+                                    .font(.largeTitle)
+                                    .fontWeight(.bold)
+                                    .multilineTextAlignment(.center)
                             }
+                            
+                            // Exit Button in Top-Right Corner
+                            HStack {
+                                Spacer()
+                                
+                                if !showCloseButton {
+                                    Circle()
+                                        .trim(from: 0.0, to: progress)
+                                        .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                        .foregroundColor(.gray)
+                                        .opacity(0.3 + 0.3 * self.progress)
+                                        .rotationEffect(Angle(degrees: -90))
+                                        .frame(width: 30, height: 30)
+                                } else {
+                                    Button(action: {
+                                        dismissPaywall()
+                                    }) {
+                                        Image(systemName: AppStrings.SystemImages.xmark)
+                                            .font(.headline)
+                                            .foregroundColor(.gray)
+                                            .frame(width: 30, height: 30)
+                                            .background(Color.gray.opacity(0.1))
+                                            .clipShape(Circle())
+                                    }
+                                }
+                            }
+                            .padding(.top, 20)
+                            .padding(.trailing, 20)
                         }
-                    }
-                    .padding(.top, 20)
-                    .padding(.trailing, 20)
-                }
-                .frame(height: 240) // Fixed height for header section
-                
-                // Feature List
-               VStack(alignment: .leading, spacing: 15) {
-                   FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature)
-                   FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature)
-                   FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature)
-                   FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature)
-               }
-               .padding(.horizontal, 32)
-               .padding(.top, 32)
-               .padding(.bottom, 16)
+                        .frame(height: 240) // Fixed height for header section
+                        
+                        // Feature List
+                       VStack(alignment: .leading, spacing: 15) {
+                           FeatureRow(icon: "photo.fill", text: AppStrings.UI.unlimitedExportsFeature)
+                           FeatureRow(icon: "square.and.arrow.up.fill", text: AppStrings.UI.highQualityExportsFeature)
+                           FeatureRow(icon: "checkmark.seal.fill", text: AppStrings.UI.noWatermarkFeature)
+                           FeatureRow(icon: "eye.slash.fill", text: AppStrings.UI.noAnnoyingAdsFeature)
+                       }
+                       .padding(.horizontal, 32)
+                       .padding(.top, 32)
+                       .padding(.bottom, 16)
 
-                // Flexible spacer to push bottom content down
-                Spacer()
-                
-                // Bottom section - wrapped to keep content grouped at bottom
+                        // Dynamic spacer to ensure content reaches bottom or allows scrolling
+                        let availableHeight = geometry.size.height
+                        let estimatedContent = estimatedContentHeight()
+                        let shouldScroll = estimatedContent > availableHeight
+                        
+                        if !shouldScroll {
+                            Spacer(minLength: availableHeight - estimatedContent)
+                        }
+                        
+                        // Bottom section - wrapped to keep content grouped at bottom
                 VStack(spacing: 0) {
                     // Pricing Plans
                     VStack(spacing: 12) {
@@ -262,9 +268,13 @@ struct PaywallView: View {
                 }
                 .font(.footnote)
                 .padding(.top, 12)
+                .padding(.bottom, 20) // Add some bottom padding
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                 }
+                .scrollDisabled(estimatedContentHeight() <= geometry.size.height)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
@@ -305,6 +315,20 @@ struct PaywallView: View {
         } message: {
             Text(viewModel.errorMessage)
         }
+    }
+    
+    private func estimatedContentHeight() -> CGFloat {
+        // Estimate the total content height more accurately
+        let headerHeight: CGFloat = 240 // Fixed header height
+        let featuresHeight: CGFloat = 215 // 4 features * 15 spacing + 32 top padding + 16 bottom padding + ~140 content
+        let pricingPlansHeight: CGFloat = 200 // Two pricing plans with spacing and padding
+        let toggleHeight: CGFloat = 75 // Toggle with padding
+        let purchaseButtonHeight: CGFloat = 90 // Button with padding
+        let linksHeight: CGFloat = 60 // Bottom links
+        let bottomPadding: CGFloat = 20 // Bottom padding we added
+        let additionalPadding: CGFloat = 50 // Extra buffer for safe areas and spacing
+        
+        return headerHeight + featuresHeight + pricingPlansHeight + toggleHeight + purchaseButtonHeight + linksHeight + bottomPadding + additionalPadding
     }
     
     private func dismissPaywall() {
